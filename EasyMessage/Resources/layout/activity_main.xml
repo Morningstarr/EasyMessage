@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <EditText
+    <EditText android:layout_marginTop="30dp"
         android:layout_width="match_parent"
-        android:layout_height="20" android:id="@+id/edtMail"/>
+        android:layout_height="wrap_content" 
+        android:id="@+id/edtMail"/>
    <EditText
-        android:layout_width="200"
-        android:layout_height="20" android:id="@+id/edtPass"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_marginTop="90dp" 
+        android:id="@+id/edtPass"/>
     <Button
-        android:layout_width="100"
-        android:layout_height="50"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/btnOK"
-        android:layout_marginRight="0.0dp" />
+        android:layout_marginTop="150dp" />
 </RelativeLayout>
