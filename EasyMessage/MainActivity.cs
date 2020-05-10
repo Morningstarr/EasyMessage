@@ -13,14 +13,20 @@ namespace EasyMessage
     [Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat.Light.DarkActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, IOnCompleteListener
     {
+        public static FirebaseApp app;
         FirebaseAuth auth;
+
+        //private FirebaseAuth.AuthStateListener mAuthListener;
+
+        EditText eMail;
+        EditText pss;
 
         public void OnComplete(Android.Gms.Tasks.Task task)
         {
             if (task.IsSuccessful)
             {
                 Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                Finish();
+                //Finish();
             }
             else
             {
@@ -36,25 +42,46 @@ namespace EasyMessage
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            //auth = FirebaseAuth.Instance;
+            
 
             var ok = FindViewById<Button>(Resource.Id.btnOK);
-            ok.Click += async delegate
+            ok.Click += delegate
             {
-                await ok_Click();
+                ok_Click();
             };
         }
 
-        public async Task<string> ok_Click()
+        public void ok_Click()
         {
-            var eMail = FindViewById<EditText>(Resource.Id.edtMail);
-            var pss = FindViewById<EditText>(Resource.Id.edtPass);
-            
+            initFireBaseAuth();
+        }
 
-            var user = await FirebaseAuth.Instance.
-                        CreateUserWithEmailAndPasswordAsync(eMail.Text, pss.Text);
-            var token = await user.User.GetIdTokenAsync(false);
-            return token.Token;
+        private void initFireBaseAuth()
+        {
+            var options = new FirebaseOptions.Builder()
+                .SetApplicationId("1:323956276016:android:fcf09b75b366f4fa50a6f5")
+                .SetApiKey("AIzaSyAOvDOj-PKpxFZcDgMO7uI4rxrP3i2GakM")
+                .Build();
+
+            if(app == null)
+            {
+                app = FirebaseApp.InitializeApp(Application.Context, options);
+                
+            }
+            auth = FirebaseAuth.Instance;
+            auth = FirebaseAuth.GetInstance(app);
+
+            LoginUser();
+
+        }
+
+        private void LoginUser()
+        {
+            eMail = FindViewById<EditText>(Resource.Id.edtMail);
+            pss = FindViewById<EditText>(Resource.Id.edtPass);
+
+            auth.SignInWithEmailAndPassword(eMail.Text, pss.Text)
+                .AddOnCompleteListener(this);
         }
     }
 }
