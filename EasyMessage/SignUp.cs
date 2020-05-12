@@ -52,11 +52,20 @@ namespace EasyMessage
             };
         }
 
-        public void ok_Click()
+        public async void ok_Click()
         {
             try
             {
-                initFireBaseAuth();
+                eMail = FindViewById<EditText>(Resource.Id.edtMail);
+                pss = FindViewById<EditText>(Resource.Id.edtPass);
+
+                FirebaseController.instance.initFireBaseAuth();
+                string s = await FirebaseController.instance.LoginUser(eMail.Text, pss.Text);
+                if (s != string.Empty)
+                {
+                    Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
+                    //StartActivity(new Android.Content.Intent(this, typeof(Splash)));
+                }
             }
             catch(Exception ex)
             {
@@ -101,7 +110,7 @@ namespace EasyMessage
             eMail = FindViewById<EditText>(Resource.Id.edtMail);
             pss = FindViewById<EditText>(Resource.Id.edtPass);
 
-            auth.SignInWithEmailAndPasswordAsync(eMail.Text, pss.Text)
+            auth.SignInWithEmailAndPassword(eMail.Text, pss.Text)
                 .AddOnCompleteListener(this);
         }
     }
