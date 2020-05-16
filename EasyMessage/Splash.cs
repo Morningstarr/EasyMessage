@@ -7,6 +7,7 @@ using Android.Animation;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
@@ -33,7 +34,17 @@ namespace EasyMessage
 
             spImage.Animation.AnimationEnd += delegate
             {
-                var intent = new Intent(this, typeof(SignUp));
+                Intent intent;
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                bool isUser = prefs.GetBoolean("bool_value", false);
+                if (isUser)
+                {
+                    intent = new Intent(this, typeof(SignUp));
+                }
+                else
+                {
+                    intent = new Intent(this, typeof(Registration));
+                }
                 intent.SetFlags(ActivityFlags.NewTask);
                 StartActivity(intent);
                 Finish();

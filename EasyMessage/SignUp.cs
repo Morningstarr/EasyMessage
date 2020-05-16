@@ -6,6 +6,7 @@ using Android.App;
 using Android.Content;
 using Android.Gms.Tasks;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
@@ -14,27 +15,33 @@ using Firebase;
 using Firebase.Auth;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 
+
 namespace EasyMessage
 {
     [Activity(Label = "SignUp")]
     public class SignUp : AppCompatActivity, IOnCompleteListener
     {
-        public static FirebaseApp app;
-        private FirebaseAuth auth;
         private EditText eMail;
         private EditText pss;
-
+        private Button ok;
+        private ProgressBar pbar;
+        private TextView fpass;
         public void OnComplete(Android.Gms.Tasks.Task task)
         {
             if (task.IsSuccessful)
             {
                 Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                //StartActivity(new Android.Content.Intent(this, typeof(Splash)));
-                //Finish();
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                bool isUser = prefs.GetBoolean("bool_value", false);
+                if (!isUser)
+                {
+                    ISharedPreferencesEditor editor = prefs.Edit();
+                    editor.PutBoolean("bool_value", true);
+                }
             }
             else
             {
-                MessageBox(task.Exception.Message);
+                Utils.MessageBox(task.Exception.Message, this);
                 Toast.MakeText(this, "Failed", ToastLength.Short).Show();
                 //Finish();
             }
@@ -45,10 +52,15 @@ namespace EasyMessage
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.sign_up);
 
-            var ok = FindViewById<Button>(Resource.Id.btnOK);
+            fpass = FindViewById<TextView>(Resource.Id.fpass);
+            ok = FindViewById<Button>(Resource.Id.btnOK);
             ok.Click += delegate
             {
                 ok_Click();
+            };
+            fpass.Click += delegate
+            {
+                forgot_pass();
             };
         }
 
@@ -58,60 +70,47 @@ namespace EasyMessage
             {
                 eMail = FindViewById<EditText>(Resource.Id.edtMail);
                 pss = FindViewById<EditText>(Resource.Id.edtPass);
+                pbar = FindViewById<ProgressBar>(Resource.Id.progressBar2);
+                pbar.Visibility = ViewStates.Visible;
+
+                edit_contols(false);
 
                 FirebaseController.instance.initFireBaseAuth();
                 string s = await FirebaseController.instance.LoginUser(eMail.Text, pss.Text);
                 if (s != string.Empty)
                 {
                     Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                    //StartActivity(new Android.Content.Intent(this, typeof(Splash)));
+                    Intent intent = new Intent(this, typeof(MainActivity));
+                    //intent.AddCategory(Intent.CategoryHome);
+                    //intent.SetFlags(ActivityFlags.NewTask);
+                    intent.SetFlags(ActivityFlags.NoHistory);
+                    StartActivity(intent);
+                    //Finish();
                 }
             }
             catch(Exception ex)
             {
-                MessageBox(ex.Message);
+                Utils.MessageBox(ex.Message, this);
+                edit_contols(true);
+                pbar.Visibility = ViewStates.Invisible;
             }
+            edit_contols(true);
+            pbar.Visibility = ViewStates.Invisible;
         }
 
-        public void MessageBox(string MyMessage)
+        public void forgot_pass()
         {
-            AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Warning");
-            builder.SetMessage(MyMessage);
-            builder.SetCancelable(false);
-            builder.SetPositiveButton("OK", delegate { });
-            Dialog dialog = builder.Create();
-            dialog.Show();
-            return;
+            Intent intent = new Intent(this, typeof(ForgotPassword));
+            //intent.SetFlags(ActivityFlags.NewTask);
+            StartActivity(intent);
+            //Finish();
         }
 
-        private void initFireBaseAuth()
+        public void edit_contols(bool c)
         {
-            var options = new FirebaseOptions.Builder()
-                .SetApplicationId("1:323956276016:android:fcf09b75b366f4fa50a6f5")
-                .SetApiKey("AIzaSyAOvDOj-PKpxFZcDgMO7uI4rxrP3i2GakM")
-                .Build();
-
-            if (app == null)
-            {
-                app = FirebaseApp.InitializeApp(Application.Context, options);
-
-            }
-            auth = FirebaseAuth.Instance;
-            auth = FirebaseAuth.GetInstance(app);
-
-            LoginUser();
-
-        }
-
-        private void LoginUser()
-        {
-            eMail = FindViewById<EditText>(Resource.Id.edtMail);
-            pss = FindViewById<EditText>(Resource.Id.edtPass);
-
-            auth.SignInWithEmailAndPassword(eMail.Text, pss.Text)
-                .AddOnCompleteListener(this);
+            ok.Enabled = c;
+            eMail.Enabled = c;
+            pss.Enabled = c;
         }
     }
 }

@@ -65,11 +65,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FirebaseController.cs" />
+    <Compile Include="ForgotPassword.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Registration.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignUp.cs" />
     <Compile Include="Splash.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -132,10 +135,20 @@
     <AndroidResource Include="Resources\drawable\mail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\anim\shrink.xml" />
+    <AndroidResource Include="Resources\layout\sign_up.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\sign_up.xml">
+    <AndroidResource Include="Resources\layout\registration.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\avatar.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\forgot_password.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

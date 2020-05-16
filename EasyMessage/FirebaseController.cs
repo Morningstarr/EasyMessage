@@ -47,6 +47,18 @@ namespace EasyMessage
             var token = await user.User.GetIdTokenAsync(false);
             return token.Token;
         }
+
+        public async Task<string> Register(string eMail, string password)
+        {
+            IAuthResult user = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(eMail, password);
+            var token = await user.User.GetIdTokenAsync(false);
+            return token.Token;
+        }
+
+        public async void ResetPassword(string eMail)
+        {
+            await FirebaseAuth.Instance.SendPasswordResetEmailAsync(eMail);
+        }
     }
 
 }

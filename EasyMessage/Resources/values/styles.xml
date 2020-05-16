@@ -1,8 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-  <style name="AppTheme" parent="MainTheme.Base">
-  </style>
+  <style name="AppTheme" parent="MainTheme.Base"><item name="android:colorPrimaryDark">#ff24136b</item></style>
   <!-- Base theme applied no matter what API -->
   <style name="MainTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
     <!--If you are using revision 22.1 please use just windowNoTitle. Without android:-->

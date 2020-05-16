@@ -18,6 +18,25 @@
         android:id="@+id/btnOK"
         android:layout_marginTop="150dp"
         android:text="Войти"/>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2" 
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:visibility="invisible"/>
+    <TextView
+        android:text="Забыли пароль?"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fpass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:autoLink="all"
+        android:linksClickable="true"
+        
+    />
 
     
 </RelativeLayout>
