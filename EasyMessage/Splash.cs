@@ -14,6 +14,8 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Java.Lang;
+using EasyMessage.Controllers;
+using EasyMessage.Entities;
 
 namespace EasyMessage
 {
@@ -35,15 +37,30 @@ namespace EasyMessage
             spImage.Animation.AnimationEnd += delegate
             {
                 Intent intent;
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-                bool isUser = prefs.GetBoolean("bool_value", false);
-                if (isUser)
+                AccountsController.instance.CreateTable();
+                AccountsController.instance.GetItems();
+                if (AccountsController.instance.deviceAccsP.Count < 1)
                 {
-                    intent = new Intent(this, typeof(SignUp));
+                    intent = new Intent(this, typeof(Registration));
                 }
                 else
                 {
-                    intent = new Intent(this, typeof(Registration));
+                    foreach (Account a in AccountsController.instance.deviceAccsP)
+                    {
+                        if (a.isMainP)
+                        {
+                            AccountsController.mainAccP = a;
+                            
+                        }
+                    }
+                    if (AccountsController.mainAccP == null)
+                    {
+                        intent = new Intent(this, typeof(SignUp));
+                    }
+                    else
+                    {
+                        intent = new Intent(this, typeof(MainActivity));
+                    }
                 }
                 intent.SetFlags(ActivityFlags.NewTask);
                 StartActivity(intent);

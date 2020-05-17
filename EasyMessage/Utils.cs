@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Text.RegularExpressions;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -14,6 +14,34 @@ namespace EasyMessage
 {
     public static class Utils
     {
+        private static List<char> symbols;
+        
+        private static void FillSymbols()
+        {
+            symbols.Add('[');
+            symbols.Add(']');
+            symbols.Add(',');
+            symbols.Add(';');
+            symbols.Add(':');
+            symbols.Add('$');
+            symbols.Add('#');
+            symbols.Add('@');
+            symbols.Add('!');
+            symbols.Add('^');
+            symbols.Add('&');
+            symbols.Add('?');
+            symbols.Add('-');
+            symbols.Add('(');
+            symbols.Add(')');
+            symbols.Add('=');
+            symbols.Add('{');
+            symbols.Add('}');
+            symbols.Add('%');
+            symbols.Add('\'');
+            symbols.Add('\"');
+            symbols.Add('*');
+            symbols.Add(',');
+        }
         public static void MessageBox(string MyMessage, Context c)
         {
             AlertDialog.Builder builder;
@@ -25,6 +53,41 @@ namespace EasyMessage
             Dialog dialog = builder.Create();
             dialog.Show();
             return;
+        }
+
+        public static bool IsCorrectEmail(string email)
+        {
+            Regex regex = new Regex(@"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}\b");
+            MatchCollection matches = regex.Matches(email);
+            if (matches.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                throw new Exception("Некорректный адрес электронной почты!");
+            }
+        }
+
+        public static bool IsCorrectLogin(string login)
+        {
+            symbols = new List<char>();
+            FillSymbols();
+            if(login.Length > 5)
+            {
+                for (int i = 0; i < symbols.Count; i++) 
+                {
+                    if (login.Contains(symbols[i])) 
+                    {
+                        throw new Exception("Логин не должен содержать символов [ , - { } & ? ^ ; : $ # @ № ! ' \" ( = + ) % * ]");
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                throw new Exception("Длина логина должна составлять минимум 6 символов!");
+            }
         }
     }
 }

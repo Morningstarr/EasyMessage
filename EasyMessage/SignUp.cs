@@ -14,6 +14,8 @@ using Android.Widget;
 using Firebase;
 using Firebase.Auth;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
+using EasyMessage.Controllers;
+using EasyMessage.Entities;
 
 
 namespace EasyMessage
@@ -38,6 +40,8 @@ namespace EasyMessage
                     ISharedPreferencesEditor editor = prefs.Edit();
                     editor.PutBoolean("bool_value", true);
                 }
+
+                AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text).isMainP = true;
             }
             else
             {
@@ -81,11 +85,18 @@ namespace EasyMessage
                 {
                     Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
                     Intent intent = new Intent(this, typeof(MainActivity));
-                    //intent.AddCategory(Intent.CategoryHome);
-                    //intent.SetFlags(ActivityFlags.NewTask);
-                    intent.SetFlags(ActivityFlags.NoHistory);
+                    AccountsController.instance.CreateTable();
+                    AccountsController.instance.GetItems();
+                    if (AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text) == null)
+                    {
+                        AccountsController.instance.deviceAccsP.Add(new Account { emailP = eMail.Text, passwordP = pss.Text });
+                    }
+                    var p = AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text);
+                    p.isMainP = true;
+                    AccountsController.instance.SaveItem(p);
+                    intent.SetFlags(ActivityFlags.NewTask);
                     StartActivity(intent);
-                    //Finish();
+                    Finish();
                 }
             }
             catch(Exception ex)

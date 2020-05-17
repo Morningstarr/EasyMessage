@@ -64,7 +64,9 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FirebaseController.cs" />
+    <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Entities\Account.cs" />
+    <Compile Include="Controllers\FirebaseController.cs" />
     <Compile Include="ForgotPassword.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Registration.cs" />
@@ -109,6 +111,9 @@
     <AndroidResource Include="Resources\anim\enlarge.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.7.335</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.Core.Utils" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.CustomTabs" Version="28.0.0.3" />

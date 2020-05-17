@@ -10,6 +10,8 @@ using Android.Preferences;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using EasyMessage.Controllers;
+using EasyMessage.Entities;
 
 namespace EasyMessage
 {
@@ -70,26 +72,26 @@ namespace EasyMessage
             password = FindViewById<EditText>(Resource.Id.pass);
             repass = FindViewById<EditText>(Resource.Id.repass);
             
-
             edit_controls(false);
 
             try
             {
-                if (password.Text.Length > 8)
+                if (password.Text.Length > 7)
                 {
                     if (password.Text == repass.Text)
                     {
-                        //Utils.isCorrectEmail();
-                        //Utils.isCorrectLogin();
+                        Utils.IsCorrectEmail(email.Text);
+                        Utils.IsCorrectLogin(login.Text);
                         FirebaseController.instance.initFireBaseAuth();
                         string s = await FirebaseController.instance.Register(email.Text, password.Text);
                         if (s != string.Empty)
                         {
                             Toast.MakeText(this, "Register success", ToastLength.Short).Show();
-                            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-                            ISharedPreferencesEditor editor = prefs.Edit();
-                            editor.PutBoolean("bool_value", true);
-                            editor.Commit();
+
+                            //AccountsController.instance.deviceAccsP.Add(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
+                            AccountsController.instance.CreateTable();
+                            AccountsController.instance.SaveItem(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
+
                             Intent intent = new Intent(this, typeof(SignUp));
                             intent.SetFlags(ActivityFlags.NewTask);
                             StartActivity(intent);
