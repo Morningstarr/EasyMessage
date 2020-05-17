@@ -28,6 +28,8 @@ namespace EasyMessage
         private Button ok;
         private ProgressBar pbar;
         private TextView fpass;
+        private TextView reg;
+
         public void OnComplete(Android.Gms.Tasks.Task task)
         {
             if (task.IsSuccessful)
@@ -58,6 +60,8 @@ namespace EasyMessage
 
             fpass = FindViewById<TextView>(Resource.Id.fpass);
             ok = FindViewById<Button>(Resource.Id.btnOK);
+            reg = FindViewById<TextView>(Resource.Id.reg);
+
             ok.Click += delegate
             {
                 ok_Click();
@@ -65,6 +69,10 @@ namespace EasyMessage
             fpass.Click += delegate
             {
                 forgot_pass();
+            };
+            reg.Click += delegate
+            {
+                register();
             };
         }
 
@@ -75,6 +83,7 @@ namespace EasyMessage
                 eMail = FindViewById<EditText>(Resource.Id.edtMail);
                 pss = FindViewById<EditText>(Resource.Id.edtPass);
                 pbar = FindViewById<ProgressBar>(Resource.Id.progressBar2);
+                
                 pbar.Visibility = ViewStates.Visible;
 
                 edit_contols(false);
@@ -109,6 +118,13 @@ namespace EasyMessage
             pbar.Visibility = ViewStates.Invisible;
         }
 
+        public void register()
+        {
+            Intent intent = new Intent(this, typeof(Registration));
+            //intent.SetFlags(ActivityFlags.NewTask);
+            StartActivity(intent);
+        }
+
         public void forgot_pass()
         {
             Intent intent = new Intent(this, typeof(ForgotPassword));
@@ -122,6 +138,7 @@ namespace EasyMessage
             ok.Enabled = c;
             eMail.Enabled = c;
             pss.Enabled = c;
+            reg.Enabled = c;
         }
     }
 }
