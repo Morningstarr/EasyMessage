@@ -35,13 +35,7 @@ namespace EasyMessage
             if (task.IsSuccessful)
             {
                 Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-                bool isUser = prefs.GetBoolean("bool_value", false);
-                if (!isUser)
-                {
-                    ISharedPreferencesEditor editor = prefs.Edit();
-                    editor.PutBoolean("bool_value", true);
-                }
+                
 
                 AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text).isMainP = true;
             }
@@ -103,6 +97,7 @@ namespace EasyMessage
                     var p = AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text);
                     p.isMainP = true;
                     AccountsController.instance.SaveItem(p);
+                    AccountsController.mainAccP = p;
                     intent.SetFlags(ActivityFlags.NewTask);
                     StartActivity(intent);
                     Finish();

@@ -49,7 +49,7 @@ namespace EasyMessage
 
         public void ok_Click()
         {
-
+            StartActivity(new Android.Content.Intent(this, typeof(Profile)));
         }
     }
 }
