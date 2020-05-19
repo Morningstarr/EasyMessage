@@ -24,19 +24,46 @@ namespace EasyMessage
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.profile);
 
-            list = FindViewById<ListView>(Resource.Id.settingslist);
             username = FindViewById<TextView>(Resource.Id.username);
-
             username.Text = AccountsController.mainAccP.loginP;
 
-            List<string> elements = new List<string>();
-            elements.AddRange(new string[] { "Электронный адрес", "Пароль", "Логин" });
-
-            //ArrayAdapter<string> adapter = new ArrayAdapter<string>(this, Resource.Layout.list_item, elements);
+            list = FindViewById<ListView>(Resource.Id.settingslist);
             var adapter = new ListItemAdapter(fillList());
-
             list.Adapter = adapter;
-            // Create your application here
+
+            list.ItemClick += (sender, e) =>
+            {
+                item_click(sender, e);
+            };
+                // Create your application here
+        }
+
+        protected override void OnRestart()
+        {
+            base.OnRestart();
+            username = FindViewById<TextView>(Resource.Id.username);
+            username.Text = AccountsController.mainAccP.loginP;
+
+            list = FindViewById<ListView>(Resource.Id.settingslist);
+            var adapter = new ListItemAdapter(fillList());
+            list.Adapter = adapter;
+        }
+
+
+        private void item_click(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            Intent intent = new Intent(this, typeof(EditProfileData));
+            intent.PutExtra("id", e.Id.ToString());
+            StartActivity(intent);
+        }
+
+        private void item_click(object sender, Java.Lang.Object selectedItem)
+        {
+            
+            Intent intent = new Intent(this, typeof(EditProfileData));
+            intent.PutExtra("input", "1");
+            StartActivity(intent);
+
         }
 
         private IList<ItemTemplate> fillList()

@@ -59,6 +59,18 @@ namespace EasyMessage
         {
             await FirebaseAuth.Instance.SendPasswordResetEmailAsync(eMail);
         }
+
+        public async void ResetEmail(string newm)
+        {
+            FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
+            await user.UpdateEmailAsync(newm);
+        }
+
+        public async void ChangePass(string newpass)
+        {
+            FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
+            await user.UpdatePasswordAsync(newpass);
+        }
     }
 
 }

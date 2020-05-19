@@ -40,6 +40,9 @@ namespace EasyMessage
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
+            //ActionBar.SetHomeButtonEnabled(true);
+            //ActionBar.SetDisplayHomeAsUpEnabled(true);
+
             var ok = FindViewById<Button>(Resource.Id.btnOK);
             ok.Click += delegate
             {

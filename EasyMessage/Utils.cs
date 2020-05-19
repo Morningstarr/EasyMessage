@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -89,5 +90,7 @@ namespace EasyMessage
                 throw new Exception("Длина логина должна составлять минимум 6 символов!");
             }
         }
+
+        
     }
 }

@@ -50,6 +50,11 @@ namespace EasyMessage
 			var val = view.FindViewById<TextView>(Resource.Id.i_value);
 			var desc = view.FindViewById<TextView>(Resource.Id.i_desc);
 
+			if (position == 2)
+			{
+				val.InputType = Android.Text.InputTypes.TextVariationPassword | Android.Text.InputTypes.ClassText;
+			}
+
 			val.Text = _items[position].s_value;
 			desc.Text = _items[position].s_description;
 

@@ -19,7 +19,7 @@ using EasyMessage.Entities;
 
 namespace EasyMessage
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat.Light.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class Splash : AppCompatActivity
     {
         private Animation mEnlargeAnimation;

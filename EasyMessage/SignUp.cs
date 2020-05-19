@@ -20,7 +20,7 @@ using EasyMessage.Entities;
 
 namespace EasyMessage
 {
-    [Activity(Label = "SignUp")]
+    [Activity(Label = "SignUp", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
     public class SignUp : AppCompatActivity, IOnCompleteListener
     {
         private EditText eMail;
