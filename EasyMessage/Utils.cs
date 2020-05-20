@@ -47,7 +47,7 @@ namespace EasyMessage
         {
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(c);
-            builder.SetTitle("Warning");
+            builder.SetTitle("Предупреждение");
             builder.SetMessage(MyMessage);
             builder.SetCancelable(false);
             builder.SetPositiveButton("OK", delegate { });

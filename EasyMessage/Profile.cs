@@ -48,6 +48,8 @@ namespace EasyMessage
 
             deleteUser = FindViewById<Button>(Resource.Id.button1);
             changeUser = FindViewById<Button>(Resource.Id.button2);
+            deleteUser.Text = "Удалить учетную запись";
+            changeUser.Text = "Сменить учетную запись";
 
             deleteUser.Click += delegate
             {
@@ -61,26 +63,39 @@ namespace EasyMessage
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.Blue));
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
+        }
+
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    Finish();
+                    return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
+            }
         }
 
         private void change_user()
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Warning");
+            builder.SetTitle("Предупреждение");
             builder.SetMessage("Вы уверены, что хотите сменить учетную запись?");
             builder.SetCancelable(true);
-            builder.SetNegativeButton("No", (s, ev) =>
+            builder.SetNegativeButton("Нет", (s, ev) =>
             {
 
             });
             try
             {
-                builder.SetPositiveButton("Yes", (s, ev) =>
+                builder.SetPositiveButton("Да", (s, ev) =>
                 {
                     AccountsController.mainAccP = null;
                     AccountsController.instance.CreateTable();
-                    //находить по id только текущего пользователя (тоже самое в EditProfile)
+                    //находить по id только текущего пользователя (тоже самое в EditProfile) ???
                     foreach (var acc in AccountsController.instance.deviceAccsP)
                     {
                         acc.isMainP = false;
@@ -106,16 +121,16 @@ namespace EasyMessage
         private void delete_user()
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Warning");
+            builder.SetTitle("Предупреждение");
             builder.SetMessage("Вы уверены, что хотите удалить учетную запись?");
             builder.SetCancelable(true);
-            builder.SetNegativeButton("No", (s, ev) =>
+            builder.SetNegativeButton("Нет", (s, ev) =>
             {
 
             });
             try
             {
-                builder.SetPositiveButton("Yes", (s, ev) =>
+                builder.SetPositiveButton("Да", (s, ev) =>
                 {
                     pbar.Visibility = ViewStates.Visible;
                     disableControls();

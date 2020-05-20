@@ -58,7 +58,7 @@ namespace EasyMessage
 
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.Blue));
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -73,10 +73,10 @@ namespace EasyMessage
             try
             {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.SetTitle("Warning");
+                builder.SetTitle("Предупреждение");
                 builder.SetMessage("Вы уверены, что хотите изменить данные учетной записи?");
                 builder.SetCancelable(true);
-                builder.SetNegativeButton("No", (s, ev) =>
+                builder.SetNegativeButton("Нет", (s, ev) =>
                 {
 
                 });
@@ -90,7 +90,7 @@ namespace EasyMessage
                         {
                             if (Utils.IsCorrectLogin(data.Text))
                             {
-                                builder.SetPositiveButton("Yes", (s, ev) =>
+                                builder.SetPositiveButton("Да", (s, ev) =>
                                 {
                                     AccountsController.mainAccP.loginP = data.Text;
                                     AccountsController.instance.CreateTable();
@@ -108,7 +108,7 @@ namespace EasyMessage
                         {
                             if (Utils.IsCorrectEmail(data.Text))
                             {
-                                builder.SetPositiveButton("Yes", (s, ev) =>
+                                builder.SetPositiveButton("Да", (s, ev) =>
                                 {
                                     AccountsController.mainAccP.emailP = data.Text;
                                     AccountsController.instance.CreateTable();
@@ -126,7 +126,7 @@ namespace EasyMessage
                         //todo отпечаток пальца, поле под старый пароль
                         if (text.Text.Contains("пароля"))
                         {
-                            builder.SetPositiveButton("Yes", (s, ev) =>
+                            builder.SetPositiveButton("Да", (s, ev) =>
                             {
                                 AccountsController.mainAccP.passwordP = data.Text;
                                 AccountsController.instance.CreateTable();

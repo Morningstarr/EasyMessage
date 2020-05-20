@@ -35,8 +35,6 @@ namespace EasyMessage
             if (task.IsSuccessful)
             {
                 Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                
-
                 AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text).isMainP = true;
             }
             else
@@ -98,7 +96,7 @@ namespace EasyMessage
                     p.isMainP = true;
                     AccountsController.instance.SaveItem(p);
                     AccountsController.mainAccP = p;
-                    intent.SetFlags(ActivityFlags.NewTask);
+                    intent.SetFlags(ActivityFlags.ClearTask);
                     StartActivity(intent);
                     Finish();
                 }
@@ -134,6 +132,7 @@ namespace EasyMessage
             eMail.Enabled = c;
             pss.Enabled = c;
             reg.Enabled = c;
+            fpass.Enabled = c;
         }
     }
 }
