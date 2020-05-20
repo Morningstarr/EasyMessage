@@ -21,11 +21,12 @@ using Android.Gms.Tasks;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Имя пользователя")]
+    [Activity(Label = "Изменение данных")]
     public class EditProfileData : AppCompatActivity, IOnCompleteListener
     {
         private TextView text;
         private EditText data;
+        private EditText oldpass;
         private ProgressBar progress;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,6 +35,8 @@ namespace EasyMessage
 
             data = FindViewById<EditText>(Resource.Id.newData);
             text = FindViewById<TextView>(Resource.Id.description);
+            oldpass = FindViewById<EditText>(Resource.Id.oldpassword);
+
             progress = FindViewById<ProgressBar>(Resource.Id.progressBar1);
 
             string name = "id";
@@ -51,7 +54,11 @@ namespace EasyMessage
                     break;
                 case 2:
                     data.InputType = Android.Text.InputTypes.TextVariationPassword | Android.Text.InputTypes.ClassText;
-                    data.Text = AccountsController.mainAccP.passwordP;
+                    oldpass.InputType = Android.Text.InputTypes.TextVariationPassword | Android.Text.InputTypes.ClassText;
+                    text.SetPadding(10, 300, 10, 0);
+                    data.Hint = "Новый пароль";
+                    oldpass.Hint = "Старый пароль";
+                    oldpass.Visibility = ViewStates.Visible;
                     text.Text = "Внимание! Изменение пароля приведет к выходу из учетной записи!";
                     break;
             }
@@ -123,17 +130,25 @@ namespace EasyMessage
                                 return true;
                             }
                         }
-                        //todo отпечаток пальца, поле под старый пароль
                         if (text.Text.Contains("пароля"))
                         {
                             builder.SetPositiveButton("Да", (s, ev) =>
                             {
-                                AccountsController.mainAccP.passwordP = data.Text;
-                                AccountsController.instance.CreateTable();
-                                AccountsController.instance.SaveItem(AccountsController.mainAccP);
-                                progress.Visibility = ViewStates.Visible;
-                                turnOnControls(false);
-                                change_pass();
+                                if (oldpass.Text == AccountsController.mainAccP.passwordP)
+                                {
+                                    AccountsController.mainAccP.passwordP = data.Text;
+                                    AccountsController.instance.CreateTable();
+                                    AccountsController.instance.SaveItem(AccountsController.mainAccP);
+                                    progress.Visibility = ViewStates.Visible;
+                                    turnOnControls(false);
+                                    change_pass();
+                                }
+                                else
+                                {
+                                    oldpass.Text = "";
+                                    data.Text = "";
+                                    Utils.MessageBox("Некорректный пароль учетной записи!", this);
+                                }
                             });
                             Dialog dialog = builder.Create();
                             dialog.Show();
