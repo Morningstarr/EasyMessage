@@ -16,11 +16,12 @@ using Firebase.Auth;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
-
+using Android.Graphics.Drawables;
+using Android.Graphics;
 
 namespace EasyMessage
 {
-    [Activity(Label = "SignUp", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
+    [Activity(Label = "Вход", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
     public class SignUp : AppCompatActivity, IOnCompleteListener
     {
         private EditText eMail;
@@ -66,6 +67,22 @@ namespace EasyMessage
             {
                 register();
             };
+
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    Finish();
+                    return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
+            }
         }
 
         public async void ok_Click()
@@ -90,15 +107,15 @@ namespace EasyMessage
                     AccountsController.instance.GetItems();
                     if (AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text) == null)
                     {
-                        AccountsController.instance.deviceAccsP.Add(new Account { emailP = eMail.Text, passwordP = pss.Text });
+                        AccountsController.instance.deviceAccsP.Add(new Account { emailP = eMail.Text, passwordP = pss.Text, loginP = FirebaseController.instance.GetCurrentUser().DisplayName });
                     }
                     var p = AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text);
                     p.isMainP = true;
                     AccountsController.instance.SaveItem(p);
                     AccountsController.mainAccP = p;
+                    Finish();
                     intent.SetFlags(ActivityFlags.ClearTask);
                     StartActivity(intent);
-                    Finish();
                 }
             }
             catch(Exception ex)

@@ -80,6 +80,7 @@ namespace EasyMessage
                 {
 
                 });
+                FirebaseController.instance.initFireBaseAuth();
                 switch (item.ItemId)
                 {
                     case Android.Resource.Id.Home:
@@ -95,9 +96,9 @@ namespace EasyMessage
                                     AccountsController.mainAccP.loginP = data.Text;
                                     AccountsController.instance.CreateTable();
                                     AccountsController.instance.SaveItem(AccountsController.mainAccP);
-                                    //progress.Visibility = ViewStates.Visible;
-                                    //turnOnControls(false);
-                                    //change_login();
+                                    progress.Visibility = ViewStates.Visible;
+                                    turnOnControls(false);
+                                    change_login();
                                 });
                                 Dialog dialog = builder.Create();
                                 dialog.Show();
@@ -113,7 +114,6 @@ namespace EasyMessage
                                     AccountsController.mainAccP.emailP = data.Text;
                                     AccountsController.instance.CreateTable();
                                     AccountsController.instance.SaveItem(AccountsController.mainAccP);
-                                    FirebaseController.instance.initFireBaseAuth();
                                     progress.Visibility = ViewStates.Visible;
                                     turnOnControls(false);
                                     change_mail();
@@ -131,7 +131,6 @@ namespace EasyMessage
                                 AccountsController.mainAccP.passwordP = data.Text;
                                 AccountsController.instance.CreateTable();
                                 AccountsController.instance.SaveItem(AccountsController.mainAccP);
-                                FirebaseController.instance.initFireBaseAuth();
                                 progress.Visibility = ViewStates.Visible;
                                 turnOnControls(false);
                                 change_pass();
@@ -160,6 +159,11 @@ namespace EasyMessage
         public void change_pass()
         {
             FirebaseController.instance.ChangePass(data.Text, this);
+        }
+
+        public void change_login()
+        {
+            FirebaseController.instance.ChangeLogin(data.Text, this);
         }
 
         public void OnComplete(Task task)

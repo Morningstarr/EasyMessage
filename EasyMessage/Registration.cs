@@ -83,7 +83,7 @@ namespace EasyMessage
                         Utils.IsCorrectEmail(email.Text);
                         Utils.IsCorrectLogin(login.Text);
                         FirebaseController.instance.initFireBaseAuth();
-                        string s = await FirebaseController.instance.Register(email.Text, password.Text);
+                        string s = await FirebaseController.instance.Register(email.Text, password.Text, login.Text);
                         if (s != string.Empty)
                         {
                             Toast.MakeText(this, "Register success", ToastLength.Short).Show();

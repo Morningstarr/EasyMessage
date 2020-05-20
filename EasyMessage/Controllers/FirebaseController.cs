@@ -49,16 +49,20 @@ namespace EasyMessage
             return token.Token;
         }
 
-        public async Task<string> Register(string eMail, string password)
+        public async Task<string> Register(string eMail, string password, string name)
         {
             IAuthResult user = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(eMail, password);
+            UserProfileChangeRequest.Builder profileUpdates = new UserProfileChangeRequest.Builder();
+            profileUpdates.SetDisplayName(name);
+            UserProfileChangeRequest updates = profileUpdates.Build();
+            await user.User.UpdateProfileAsync(updates);
             var token = await user.User.GetIdTokenAsync(false);
             return token.Token;
         }
 
-        public async void ResetPassword(string eMail)
+        public void ResetPassword(string eMail, IOnCompleteListener c)
         {
-            await FirebaseAuth.Instance.SendPasswordResetEmailAsync(eMail);
+            FirebaseAuth.Instance.SendPasswordResetEmail(eMail).AddOnCompleteListener(c);
         }
 
         public void ResetEmail(string newm, IOnCompleteListener c)
@@ -82,6 +86,27 @@ namespace EasyMessage
         {
             FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
             user.Delete().AddOnCompleteListener(c);
+        }
+
+        public FirebaseUser GetCurrentUser()
+        {
+            return FirebaseAuth.Instance.CurrentUser;
+        } 
+
+        public void ChangeLogin(string text, IOnCompleteListener c)
+        {
+            FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
+            if (user != null)
+            {
+                UserProfileChangeRequest.Builder profileUpdates = new UserProfileChangeRequest.Builder();
+                profileUpdates.SetDisplayName(text);
+                UserProfileChangeRequest updates = profileUpdates.Build();
+                user.UpdateProfile(updates).AddOnCompleteListener(c);
+            }
+            else
+            {
+                throw new Exception("Current user is null");
+            }
         }
     }
 

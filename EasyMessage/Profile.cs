@@ -189,10 +189,13 @@ namespace EasyMessage
 
         public void OnComplete(Task task)
         {
-            Finish();
-            Intent intent = new Intent(this, typeof(SignUp));
-            intent.SetFlags(ActivityFlags.ClearTask);
-            StartActivity(intent);
+            if (task.IsComplete)
+            {
+                Finish();
+                Intent intent = new Intent(this, typeof(SignUp));
+                intent.SetFlags(ActivityFlags.ClearTask);
+                StartActivity(intent);
+            }
         }
     }
 }
