@@ -68,11 +68,6 @@ namespace EasyMessage
             return true;
         }
 
-        public void change_pass()
-        {
-            FirebaseController.instance.ChangePass(data.Text, this);
-        }
-
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             try
@@ -160,6 +155,11 @@ namespace EasyMessage
         private void change_mail()
         {
             FirebaseController.instance.ResetEmail(data.Text, this);
+        }
+
+        public void change_pass()
+        {
+            FirebaseController.instance.ChangePass(data.Text, this);
         }
 
         public void OnComplete(Task task)

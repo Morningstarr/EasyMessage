@@ -46,6 +46,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="445dp"
         android:id="@+id/button2" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar3" 
+        android:layout_centerInParent="true"
+    android:visibility="invisible"/>
 
  
 

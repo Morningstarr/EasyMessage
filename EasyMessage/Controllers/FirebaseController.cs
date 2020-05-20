@@ -72,6 +72,17 @@ namespace EasyMessage
             FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
             user.UpdatePassword(newpass).AddOnCompleteListener(c);
         }
+
+        public void LogOut()
+        {
+            FirebaseAuth.Instance.SignOut();
+        }
+
+        public void DeleteUser(IOnCompleteListener c)
+        {
+            FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
+            user.Delete().AddOnCompleteListener(c);
+        }
     }
 
 }

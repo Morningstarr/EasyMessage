@@ -11,21 +11,29 @@ using Android.Views;
 using Android.Widget;
 using EasyMessage.Entities;
 using EasyMessage.Controllers;
+using Android.Support.V7.App;
+using Android.Gms.Tasks;
+using AlertDialog = Android.App.AlertDialog;
+using Android.Graphics.Drawables;
+using Android.Graphics;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Profile", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
-    public class Profile : Activity
+    [Activity(Label = "Профиль", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
+    public class Profile : AppCompatActivity, IOnCompleteListener 
     {
         private ListView list;
         private TextView username;
         private Button deleteUser;
         private Button changeUser;
+        private ProgressBar pbar;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.profile);
 
+            pbar = FindViewById<ProgressBar>(Resource.Id.progressBar3);
+        
             username = FindViewById<TextView>(Resource.Id.username);
             username.Text = AccountsController.mainAccP.loginP;
 
@@ -37,7 +45,6 @@ namespace EasyMessage
             {
                 item_click(sender, e);
             };
-
 
             deleteUser = FindViewById<Button>(Resource.Id.button1);
             changeUser = FindViewById<Button>(Resource.Id.button2);
@@ -51,13 +58,44 @@ namespace EasyMessage
             {
                 change_user();
             };
+
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.Blue));
         }
 
         private void change_user()
         {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Warning");
+            builder.SetMessage("Вы уверены, что хотите сменить учетную запись?");
+            builder.SetCancelable(true);
+            builder.SetNegativeButton("No", (s, ev) =>
+            {
+
+            });
             try
             {
-               
+                builder.SetPositiveButton("Yes", (s, ev) =>
+                {
+                    AccountsController.mainAccP = null;
+                    AccountsController.instance.CreateTable();
+                    //находить по id только текущего пользователя (тоже самое в EditProfile)
+                    foreach (var acc in AccountsController.instance.deviceAccsP)
+                    {
+                        acc.isMainP = false;
+                        AccountsController.instance.SaveItem(acc);
+                    }
+                    Finish();
+                    Intent intent = new Intent(this, typeof(SignUp));
+                    intent.SetFlags(ActivityFlags.ClearTask);
+                    StartActivity(intent);
+                    FirebaseController.instance.initFireBaseAuth();
+                    FirebaseController.instance.LogOut();
+                });
+                Dialog dialog = builder.Create();
+                dialog.Show();
+                return;
             }
             catch(Exception ex)
             {
@@ -67,9 +105,30 @@ namespace EasyMessage
 
         private void delete_user()
         {
-            try
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Warning");
+            builder.SetMessage("Вы уверены, что хотите удалить учетную запись?");
+            builder.SetCancelable(true);
+            builder.SetNegativeButton("No", (s, ev) =>
             {
 
+            });
+            try
+            {
+                builder.SetPositiveButton("Yes", (s, ev) =>
+                {
+                    pbar.Visibility = ViewStates.Visible;
+                    disableControls();
+                    AccountsController.instance.CreateTable();
+                    AccountsController.instance.DeleteItem(AccountsController.mainAccP.Id);
+                    AccountsController.mainAccP = null;
+                    
+                    FirebaseController.instance.initFireBaseAuth();
+                    FirebaseController.instance.DeleteUser(this);
+                });
+                Dialog dialog = builder.Create();
+                dialog.Show();
+                return;
             }
             catch (Exception ex)
             {
@@ -104,6 +163,21 @@ namespace EasyMessage
             list.Add(ItemTemplate.convertToItem("Нажмите чтобы изменить пароль", AccountsController.mainAccP, 3));
 
             return list;
+        }
+
+        public void disableControls()
+        {
+            list.Enabled = false;
+            deleteUser.Enabled = false;
+            changeUser.Enabled = false;
+        }
+
+        public void OnComplete(Task task)
+        {
+            Finish();
+            Intent intent = new Intent(this, typeof(SignUp));
+            intent.SetFlags(ActivityFlags.ClearTask);
+            StartActivity(intent);
         }
     }
 }
