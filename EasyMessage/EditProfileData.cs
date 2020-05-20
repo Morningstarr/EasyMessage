@@ -17,15 +17,16 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
 using AlertDialog = Android.App.AlertDialog;
+using Android.Gms.Tasks;
 
 namespace EasyMessage
 {
     [Activity(Label = "Имя пользователя")]
-    public class EditProfileData : AppCompatActivity
+    public class EditProfileData : AppCompatActivity, IOnCompleteListener
     {
         private TextView text;
         private EditText data;
-
+        private ProgressBar progress;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -33,6 +34,7 @@ namespace EasyMessage
 
             data = FindViewById<EditText>(Resource.Id.newData);
             text = FindViewById<TextView>(Resource.Id.description);
+            progress = FindViewById<ProgressBar>(Resource.Id.progressBar1);
 
             string name = "id";
             string PName = Intent.GetStringExtra(name);
@@ -41,11 +43,11 @@ namespace EasyMessage
             {
                 case 0:
                     data.Text = AccountsController.mainAccP.loginP;
-                    text.Text = "Выберите имя своей учетной записи, которое будет отображаться в Вашем публичном профиле";
+                    text.Text = "Выберите имя своей учетной записи, которое будет отображаться в Вашем публичном профиле. Изменение логина приведет к выходу из учетной записи!";
                     break;
                 case 1:
                     data.Text = AccountsController.mainAccP.emailP;
-                    text.Text = "Введите доступный Вам электронный адрес. На него придет письмо с подтверждением. Изменение электронного адреса приведет к выходу из учетной записи.";
+                    text.Text = "Введите доступный Вам электронный адрес. На него придет письмо с подтверждением. Изменение электронного адреса приведет к выходу из учетной записи!";
                     break;
                 case 2:
                     data.InputType = Android.Text.InputTypes.TextVariationPassword | Android.Text.InputTypes.ClassText;
@@ -64,6 +66,11 @@ namespace EasyMessage
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.menu, menu);
             return true;
+        }
+
+        public void change_pass()
+        {
+            FirebaseController.instance.ChangePass(data.Text, this);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -93,7 +100,9 @@ namespace EasyMessage
                                     AccountsController.mainAccP.loginP = data.Text;
                                     AccountsController.instance.CreateTable();
                                     AccountsController.instance.SaveItem(AccountsController.mainAccP);
-                                    Finish();
+                                    //progress.Visibility = ViewStates.Visible;
+                                    //turnOnControls(false);
+                                    //change_login();
                                 });
                                 Dialog dialog = builder.Create();
                                 dialog.Show();
@@ -110,8 +119,9 @@ namespace EasyMessage
                                     AccountsController.instance.CreateTable();
                                     AccountsController.instance.SaveItem(AccountsController.mainAccP);
                                     FirebaseController.instance.initFireBaseAuth();
-                                    FirebaseController.instance.ResetEmail(data.Text);
-                                    Finish();
+                                    progress.Visibility = ViewStates.Visible;
+                                    turnOnControls(false);
+                                    change_mail();
                                 });
                                 Dialog dialog = builder.Create();
                                 dialog.Show();
@@ -127,14 +137,14 @@ namespace EasyMessage
                                 AccountsController.instance.CreateTable();
                                 AccountsController.instance.SaveItem(AccountsController.mainAccP);
                                 FirebaseController.instance.initFireBaseAuth();
-                                FirebaseController.instance.ChangePass(data.Text);
-                                Finish();
+                                progress.Visibility = ViewStates.Visible;
+                                turnOnControls(false);
+                                change_pass();
                             });
                             Dialog dialog = builder.Create();
                             dialog.Show();
                             return true;
                         }
-                        Finish();
                         return true;
                     default:
                         return base.OnOptionsItemSelected(item);
@@ -145,6 +155,37 @@ namespace EasyMessage
                 Utils.MessageBox(ex.Message, this);
                 return false;
             }
+        }
+
+        private void change_mail()
+        {
+            FirebaseController.instance.ResetEmail(data.Text, this);
+        }
+
+        public void OnComplete(Task task)
+        {
+            if (task.IsComplete)
+            {
+                Toast.MakeText(this, "Completed", ToastLength.Short);
+                turnOnControls(true);
+                progress.Visibility = ViewStates.Invisible;
+                AccountsController.mainAccP = null;
+                AccountsController.instance.CreateTable();
+                foreach(var acc in AccountsController.instance.deviceAccsP)
+                {
+                    acc.isMainP = false;
+                    AccountsController.instance.SaveItem(acc);
+                }
+                Finish();
+                Intent intent = new Intent(this, typeof(SignUp));
+                intent.SetFlags(ActivityFlags.ClearTask);
+                StartActivity(intent);
+            }
+        }
+
+        private void turnOnControls(bool c)
+        {
+            data.Enabled = c;
         }
     }
 }

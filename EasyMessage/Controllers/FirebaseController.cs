@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Gms.Tasks;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -60,16 +61,16 @@ namespace EasyMessage
             await FirebaseAuth.Instance.SendPasswordResetEmailAsync(eMail);
         }
 
-        public async void ResetEmail(string newm)
+        public void ResetEmail(string newm, IOnCompleteListener c)
         {
             FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
-            await user.UpdateEmailAsync(newm);
+            user.UpdateEmail(newm).AddOnCompleteListener(c);
         }
 
-        public async void ChangePass(string newpass)
+        public void ChangePass(string newpass, IOnCompleteListener c)
         {
             FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
-            await user.UpdatePasswordAsync(newpass);
+            user.UpdatePassword(newpass).AddOnCompleteListener(c);
         }
     }
 

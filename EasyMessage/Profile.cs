@@ -19,6 +19,8 @@ namespace EasyMessage
     {
         private ListView list;
         private TextView username;
+        private Button deleteUser;
+        private Button changeUser;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -35,7 +37,44 @@ namespace EasyMessage
             {
                 item_click(sender, e);
             };
-                // Create your application here
+
+
+            deleteUser = FindViewById<Button>(Resource.Id.button1);
+            changeUser = FindViewById<Button>(Resource.Id.button2);
+
+            deleteUser.Click += delegate
+            {
+                delete_user();
+            };
+
+            changeUser.Click += delegate
+            {
+                change_user();
+            };
+        }
+
+        private void change_user()
+        {
+            try
+            {
+               
+            }
+            catch(Exception ex)
+            {
+                Utils.MessageBox(ex.Message, this);
+            }
+        }
+
+        private void delete_user()
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, this);
+            }
         }
 
         protected override void OnRestart()
@@ -55,15 +94,6 @@ namespace EasyMessage
             Intent intent = new Intent(this, typeof(EditProfileData));
             intent.PutExtra("id", e.Id.ToString());
             StartActivity(intent);
-        }
-
-        private void item_click(object sender, Java.Lang.Object selectedItem)
-        {
-            
-            Intent intent = new Intent(this, typeof(EditProfileData));
-            intent.PutExtra("input", "1");
-            StartActivity(intent);
-
         }
 
         private IList<ItemTemplate> fillList()
