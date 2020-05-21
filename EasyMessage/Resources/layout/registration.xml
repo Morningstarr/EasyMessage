@@ -72,5 +72,19 @@
         android:text="Уже есть учетная запись? Войти!"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_marginTop="510dp"/>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chb1" 
+        android:layout_alignRight="@+id/pass"
+        android:layout_alignTop="@+id/pass"
+        android:layout_marginTop="7dp"/>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chb2" 
+        android:layout_alignRight="@+id/repass"
+        android:layout_alignTop="@+id/repass"
+        android:layout_marginTop="7dp"/>
     
 </RelativeLayout>

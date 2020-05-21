@@ -136,12 +136,19 @@ namespace EasyMessage
                             {
                                 if (oldpass.Text == AccountsController.mainAccP.passwordP)
                                 {
-                                    AccountsController.mainAccP.passwordP = data.Text;
-                                    AccountsController.instance.CreateTable();
-                                    AccountsController.instance.SaveItem(AccountsController.mainAccP);
-                                    progress.Visibility = ViewStates.Visible;
-                                    turnOnControls(false);
-                                    change_pass();
+                                    if (oldpass.Text != data.Text)
+                                    {
+                                        AccountsController.mainAccP.passwordP = data.Text;
+                                        AccountsController.instance.CreateTable();
+                                        AccountsController.instance.SaveItem(AccountsController.mainAccP);
+                                        progress.Visibility = ViewStates.Visible;
+                                        turnOnControls(false);
+                                        change_pass();
+                                    }
+                                    else
+                                    {
+                                        Utils.MessageBox("Новый пароль не должен совпадать со старым!", this);
+                                    }
                                 }
                                 else
                                 {

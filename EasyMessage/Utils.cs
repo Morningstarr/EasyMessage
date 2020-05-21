@@ -8,6 +8,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
 
@@ -74,7 +75,7 @@ namespace EasyMessage
         {
             symbols = new List<char>();
             FillSymbols();
-            if(login.Length > 5)
+            if(login.Length > 5 && login.Length < 13)
             {
                 for (int i = 0; i < symbols.Count; i++) 
                 {
@@ -87,10 +88,23 @@ namespace EasyMessage
             }
             else
             {
-                throw new Exception("Длина логина должна составлять минимум 6 символов!");
+                throw new Exception("Длина логина должна составлять 6-12 символов!");
             }
         }
 
-        
+        public static void passHide(CheckBox c, EditText pss)
+        {
+            if (c.Checked)
+            {
+                pss.InputType = Android.Text.InputTypes.TextVariationPassword;
+                pss.TransformationMethod = new SingleLineTransformationMethod();
+            }
+            else
+            {
+                pss.InputType = Android.Text.InputTypes.TextVariationVisiblePassword;
+                pss.TransformationMethod = new PasswordTransformationMethod();
+            }
+        }
+
     }
 }

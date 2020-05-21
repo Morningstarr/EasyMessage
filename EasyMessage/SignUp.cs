@@ -18,6 +18,7 @@ using EasyMessage.Controllers;
 using EasyMessage.Entities;
 using Android.Graphics.Drawables;
 using Android.Graphics;
+using Android.Text.Method;
 
 namespace EasyMessage
 {
@@ -30,6 +31,7 @@ namespace EasyMessage
         private ProgressBar pbar;
         private TextView fpass;
         private TextView reg;
+        private CheckBox chBox;
 
         public void OnComplete(Android.Gms.Tasks.Task task)
         {
@@ -54,6 +56,8 @@ namespace EasyMessage
             fpass = FindViewById<TextView>(Resource.Id.fpass);
             ok = FindViewById<Button>(Resource.Id.btnOK);
             reg = FindViewById<TextView>(Resource.Id.reg);
+            chBox = FindViewById<CheckBox>(Resource.Id.checkBox1);
+            pss = FindViewById<EditText>(Resource.Id.edtPass);
 
             ok.Click += delegate
             {
@@ -67,11 +71,16 @@ namespace EasyMessage
             {
                 register();
             };
-
+            chBox.CheckedChange += delegate
+            {
+                Utils.passHide(chBox, pss);
+            };
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
         }
+
+        
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
