@@ -19,7 +19,7 @@ using Android.Graphics;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Профиль", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
+    [Activity(Label = "Профиль", Theme = "@style/Theme.MaterialComponents.Light")]
     public class Profile : AppCompatActivity, IOnCompleteListener 
     {
         private ListView list;

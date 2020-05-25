@@ -22,7 +22,7 @@ using Android.Text.Method;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Вход", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
+    [Activity(Label = "Вход", Theme = "@style/Theme.MaterialComponents.Light")]
     public class SignUp : AppCompatActivity, IOnCompleteListener
     {
         private EditText eMail;
@@ -111,7 +111,7 @@ namespace EasyMessage
                 if (s != string.Empty)
                 {
                     Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                    Intent intent = new Intent(this, typeof(MainActivity));
+                    Intent intent = new Intent(this, typeof(MainDetail));
                     AccountsController.instance.CreateTable();
                     AccountsController.instance.GetItems();
                     if (AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text) == null)

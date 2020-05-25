@@ -13,6 +13,7 @@ namespace EasyMessage
     [Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
     public class MainActivity : AppCompatActivity, IOnCompleteListener
     {
+        private Button stmain;
         public void OnComplete(Android.Gms.Tasks.Task task)
         {
             if (task.IsSuccessful)
@@ -40,10 +41,15 @@ namespace EasyMessage
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
+            stmain = FindViewById<Button>(Resource.Id.startmain);
             //ActionBar.SetHomeButtonEnabled(true);
             //ActionBar.SetDisplayHomeAsUpEnabled(true);
 
             var ok = FindViewById<Button>(Resource.Id.btnOK);
+            stmain.Click += delegate
+            {
+                StartActivity(new Android.Content.Intent(this, typeof(MainDetail)));
+            };
             ok.Click += delegate
             {
                 ok_Click();
