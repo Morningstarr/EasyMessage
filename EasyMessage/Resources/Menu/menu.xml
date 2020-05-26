@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:easymessage="http://schemas.android.com/apk/res-auto"
+      tools:Context=".EditProfileData">
+  <item android:id="@+id/okay"
+        android:icon="@drawable/tick"
+        easymessage:showAsAction="always"
+        android:title="Confirm">
+    
+  </item>
+</menu>

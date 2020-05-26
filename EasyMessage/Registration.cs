@@ -18,13 +18,15 @@ namespace EasyMessage
     [Activity(Label = "Registration")]
     public class Registration : Activity
     {
-        EditText email;
-        EditText login;
-        EditText password;
-        EditText repass;
-        Button conf;
-        ImageButton ava;
-        TextView enter;
+        private EditText email;
+        private EditText login;
+        private EditText password;
+        private EditText repass;
+        private Button conf;
+        private ImageButton ava;
+        private TextView enter;
+        private CheckBox chb1;
+        private CheckBox chb2;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -33,6 +35,10 @@ namespace EasyMessage
             enter = FindViewById<TextView>(Resource.Id.enter);
             conf = FindViewById<Button>(Resource.Id.confirm);
             ava = FindViewById<ImageButton>(Resource.Id.avatr);
+            chb1 = FindViewById<CheckBox>(Resource.Id.chb1);
+            chb2 = FindViewById<CheckBox>(Resource.Id.chb2);
+            password = FindViewById<EditText>(Resource.Id.pass);
+            repass = FindViewById<EditText>(Resource.Id.repass);
 
             enter.Click += delegate
             {
@@ -45,6 +51,14 @@ namespace EasyMessage
             conf.Click += delegate
             {
                 confirm_Click();
+            };
+            chb1.CheckedChange += delegate
+            {
+                Utils.passHide(chb1, password);
+            };
+            chb2.CheckedChange += delegate
+            {
+                Utils.passHide(chb2, repass);
             };
             // Create your application here
         }
@@ -83,7 +97,7 @@ namespace EasyMessage
                         Utils.IsCorrectEmail(email.Text);
                         Utils.IsCorrectLogin(login.Text);
                         FirebaseController.instance.initFireBaseAuth();
-                        string s = await FirebaseController.instance.Register(email.Text, password.Text);
+                        string s = await FirebaseController.instance.Register(email.Text, password.Text, login.Text);
                         if (s != string.Empty)
                         {
                             Toast.MakeText(this, "Register success", ToastLength.Short).Show();

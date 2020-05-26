@@ -1,0 +1,58 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="170.0dp"
+        android:layout_height="125.0dp"
+        android:maxWidth="125px"
+        android:maxHeight="125px"
+        android:id="@+id/photo"
+        android:background="@drawable/avatar"
+        android:layout_marginRight="0.0dp"
+        android:layout_marginLeft="15.0dp"
+        android:layout_marginTop="50dp" />
+    <TextView
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="100dp" 
+        android:textColor="@android:color/black"
+    android:textSize="20sp"
+    android:text="Username"
+    android:id="@+id/username"/>
+   <ListView
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:id="@+id/settingslist"
+        android:layout_marginTop="200.0dp">
+    </ListView>
+    <Button
+        android:text="Delete"
+        android:maxWidth="220dp"
+        android:maxHeight="50dp"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="390dp"
+        android:id="@+id/button1" />
+    <Button
+        android:text="Exit"
+        android:maxWidth="220dp"
+        android:maxHeight="50dp"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="445dp"
+        android:id="@+id/button2" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar3" 
+        android:layout_centerInParent="true"
+    android:visibility="invisible"/>
+
+ 
+
+</RelativeLayout>

@@ -65,10 +65,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="EditProfileData.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Controllers\FirebaseController.cs" />
+    <Compile Include="Entities\ItemTemplate.cs" />
     <Compile Include="ForgotPassword.cs" />
+    <Compile Include="ListItemAdapter.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MainPage.cs" />
+    <Compile Include="Profile.cs" />
     <Compile Include="Registration.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -154,6 +159,39 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\forgot_password.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\profile.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\shapes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\list_item.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\edit_profile_data.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Menu\menu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Menu\main_menu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\menu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\main_page.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

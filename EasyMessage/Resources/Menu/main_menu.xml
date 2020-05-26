@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu 
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:showIn="main_detail">
+  <group android:checkableBehavior="single">
+    <item android:id="@+id/nav_dialogs" 
+          android:title="Dialogs"></item>
+    <item android:id="@+id/nav_contacts"
+          android:title="Contacts" 
+          android:textSize="20sp"></item>
+    <item android:id="@+id/nav_settings"
+          android:title="Settings"></item>
+    <item android:id="@+id/nav_profile"
+          android:title="Profile"></item>
+  </group>
+</menu>

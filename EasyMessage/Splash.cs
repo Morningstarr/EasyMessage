@@ -19,7 +19,7 @@ using EasyMessage.Entities;
 
 namespace EasyMessage
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/Theme.AppCompat.Light.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
     public class Splash : AppCompatActivity
     {
         private Animation mEnlargeAnimation;
@@ -59,7 +59,7 @@ namespace EasyMessage
                     }
                     else
                     {
-                        intent = new Intent(this, typeof(MainActivity));
+                        intent = new Intent(this, typeof(MainPage));
                     }
                 }
                 intent.SetFlags(ActivityFlags.NewTask);
