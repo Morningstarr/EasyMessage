@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
       xmlns:easymessage="http://schemas.android.com/apk/res-auto"
-      tools:Context=".MainActivity">
+      tools:Context=".EditProfileData">
   <item android:id="@+id/okay"
         android:icon="@drawable/tick"
         easymessage:showAsAction="always"

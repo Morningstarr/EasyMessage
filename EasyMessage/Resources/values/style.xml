@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<style name="Theme.Custom" parent="Theme.AppCompat.Light.DarkActionBar"><item name="android:colorBackground">#ffb388ff</item><item name="android:windowBackground">?android:attr/colorBackground</item></style>
-</resources>

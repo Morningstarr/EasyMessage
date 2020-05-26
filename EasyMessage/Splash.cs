@@ -59,7 +59,7 @@ namespace EasyMessage
                     }
                     else
                     {
-                        intent = new Intent(this, typeof(MainActivity));
+                        intent = new Intent(this, typeof(MainPage));
                     }
                 }
                 intent.SetFlags(ActivityFlags.NewTask);

@@ -111,7 +111,7 @@ namespace EasyMessage
                 if (s != string.Empty)
                 {
                     Toast.MakeText(this, "Sign in success", ToastLength.Short).Show();
-                    Intent intent = new Intent(this, typeof(MainDetail));
+                    Intent intent = new Intent(this, typeof(MainPage));
                     AccountsController.instance.CreateTable();
                     AccountsController.instance.GetItems();
                     if (AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text) == null)
