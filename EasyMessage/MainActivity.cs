@@ -48,7 +48,7 @@ namespace EasyMessage
             var ok = FindViewById<Button>(Resource.Id.btnOK);
             stmain.Click += delegate
             {
-                StartActivity(new Android.Content.Intent(this, typeof(MainDetail)));
+                StartActivity(new Android.Content.Intent(this, typeof(MainPage)));
             };
             ok.Click += delegate
             {
