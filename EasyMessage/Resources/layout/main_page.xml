@@ -20,11 +20,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/relativeLayout1" >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/abc_action_bar_home_description"
-                android:layout_centerInParent="true"/>
+        <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/dialogsList">
+        </ListView>
     </RelativeLayout>
     <android.support.design.widget.NavigationView
         android:layout_width="240dp"
