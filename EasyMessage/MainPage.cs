@@ -15,7 +15,7 @@ using Android.Widget;
 
 namespace EasyMessage
 {
-    [Activity(Label = "MainPage")]
+    [Activity(Label = "Easy Message")]
     public class MainPage : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private DrawerLayout drawer;
@@ -27,7 +27,8 @@ namespace EasyMessage
             switch (menuItem.ItemId)
             {
                 case Resource.Id.nav_contacts:
-                    Toast.MakeText(this, "123", ToastLength.Short).Show();
+                    //Toast.MakeText(this, "123", ToastLength.Short).Show();
+                    StartActivity(new Intent(this, typeof(Test)));
                     return true;
             }
             return base.OnOptionsItemSelected(menuItem);
