@@ -28,7 +28,7 @@ namespace EasyMessage
             {
                 case Resource.Id.nav_contacts:
                     //Toast.MakeText(this, "123", ToastLength.Short).Show();
-                    StartActivity(new Intent(this, typeof(Test)));
+                    StartActivity(new Intent(this, typeof(ContactsActivity)));
                     return true;
             }
             return base.OnOptionsItemSelected(menuItem);
@@ -38,7 +38,7 @@ namespace EasyMessage
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.main_page);
-            tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar1);
+            tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.tooolbarCommon);
 
             drawer = FindViewById<DrawerLayout>(Resource.Id.drawerLayout1);
 

@@ -3,12 +3,12 @@ using System;
 
 namespace EasyMessage
 {
-    public  class UserValueEventListener : Java.Lang.Object, IValueEventListener
+    public  class UValueEventListener : Java.Lang.Object, IValueEventListener
     {
         EventHandler OnChange;
         string Username;
 
-        public UserValueEventListener(EventHandler OnChange, string Username)
+        public UValueEventListener(EventHandler OnChange, string Username)
         {
             this.OnChange = OnChange;
             this.Username = Username;
@@ -24,7 +24,7 @@ namespace EasyMessage
             //throw new Exception("here.");
             if (OnChange != null && snapshot.HasChild(Username))
             {
-                OnChange.Invoke(this, new UserEventArgs(true));
+                OnChange.Invoke(this, new UEventArgs(true));
 
             }
         }

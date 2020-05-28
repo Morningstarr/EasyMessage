@@ -2,9 +2,9 @@
 
 namespace EasyMessage
 {
-    public class UserEventArgs : EventArgs
+    public class UEventArgs : EventArgs
     {
-        public UserEventArgs(bool value)
+        public UEventArgs(bool value)
         {
             this.value = value;
         }

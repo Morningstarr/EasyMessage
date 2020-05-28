@@ -162,9 +162,9 @@ namespace EasyMessage
                 //DatabaseReference oRoot = FirebaseDatabase.Instance.Reference.Root;
                 //DatabaseReference oUsernamesRef = oRoot.Child("chats");
 
-                /*var userListener = new UserValueEventListener((sender, e) =>
+                /*var userListener = new UValueEventListener((sender, e) =>
                 {
-                    bool result = (e as UserEventArgs).value;
+                    bool result = (e as UEventArgs).value;
                     if (result)
                     {
                         Utils.MessageBox("The username you selected already exists. Please choose a different one.", (Activity)context);
