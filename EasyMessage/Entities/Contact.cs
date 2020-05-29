@@ -32,5 +32,11 @@ namespace EasyMessage.Entities
             get { return dialogName; }
             set { dialogName = value; }
         }
+        private string picturePath;
+        public string picturePathP
+        {
+            get { return picturePath; }
+            set { picturePath = value; }
+        }
     }
 }

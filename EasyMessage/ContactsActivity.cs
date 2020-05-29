@@ -7,12 +7,15 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Button;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using EasyMessage.Adapters;
+using EasyMessage.Entities;
 using Firebase.Database;
 
 namespace EasyMessage
@@ -20,11 +23,13 @@ namespace EasyMessage
     [Activity(Label = "Контакты")]
     public class ContactsActivity : AppCompatActivity, IValueEventListener, NavigationView.IOnNavigationItemSelectedListener
     {
-        private List<Message> messages;
+        private List<Contact> contacts;
+        private ListView list;
         private DrawerLayout drawer;
         private NavigationView navigation;
         private Android.Support.V7.Widget.Toolbar tb;
-
+        private ContactItemAdapter adapter;
+        private MaterialButton search;
         public void OnCancelled(DatabaseError error)
         {
             //throw new NotImplementedException();
@@ -40,6 +45,21 @@ namespace EasyMessage
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.contacts);
+
+            search = FindViewById<MaterialButton>(Resource.Id.searchUser);
+            list = FindViewById<ListView>(Resource.Id.contactList);
+            adapter = new ContactItemAdapter(fillList());
+            list.Adapter = adapter;
+
+            search.Click += delegate
+            {
+                search_click();
+            };
+
+            list.ItemClick += (sender, e) =>
+            {
+                item_click(sender, e);
+            };
 
             tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.tooolbarCommon);
 
@@ -58,6 +78,27 @@ namespace EasyMessage
             abar.SetDisplayShowTitleEnabled(true);
             abar.SetHomeAsUpIndicator(Resource.Drawable.menu);
             abar.SetDisplayHomeAsUpEnabled(true);
+        }
+
+        private void search_click()
+        {
+            StartActivity(new Intent(this, typeof(SearchUser)));
+        }
+
+        private void item_click(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            Contact c = adapter[Convert.ToInt32(e.Id)];
+            Toast.MakeText(this, c.contactNameP, ToastLength.Short).Show();
+        }
+
+        private IList<Contact> fillList()
+        {
+            var list = new List<Contact>();
+            list.Add(new Contact { contactAddressP = "kirill_kovrik@mail.ru", contactNameP = "kirill" });
+            list.Add(new Contact { contactAddressP = "kirill.kop.work@gmail.com", contactNameP = "kolya" });
+            list.Add(new Contact { contactAddressP = "geniuses1studio@gmail.com", contactNameP = "katya" });
+
+            return list;
         }
 
         public bool OnNavigationItemSelected(IMenuItem menuItem)

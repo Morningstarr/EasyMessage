@@ -14,24 +14,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@id/drawerLayout1">
-        <RelativeLayout
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/relativeContacts" >
-            <SearchView
-                android:minWidth="25px"
-                android:minHeight="25px"
-                android:layout_width="wrap_content"
+        android:id="@+id/linearContacts" >
+            <android.support.design.button.MaterialButton
+                android:text="Search user"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/searchView1" />
-
+                android:id="@+id/searchUser" />
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/contactList">
             </ListView>
-        </RelativeLayout>
+        </LinearLayout>
         <android.support.design.widget.NavigationView
         android:layout_width="240dp"
         android:layout_height="match_parent"

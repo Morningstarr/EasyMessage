@@ -63,11 +63,9 @@
         android:layout_centerVertical="true"
     android:visibility="invisible"/>
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/enter"
-        android:layout_marginLeft="40.0dp"
-        android:layout_marginRight="40.0dp"
         android:layout_centerHorizontal="true"
         android:text="Уже есть учетная запись? Войти!"
         android:textAppearance="?android:attr/textAppearanceMedium"

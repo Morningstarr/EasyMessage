@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Gms.Tasks;
+using EasyMessage.Entities;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -63,6 +64,28 @@ namespace EasyMessage
             await user.User.UpdateProfileAsync(updates);
             var token = await user.User.GetIdTokenAsync(false);
             return token.Token;
+        }
+
+        public Contact IsUserRegistered(string email, Activity context)
+        {
+            Contact found = null;
+            if(app == null)
+            {
+                initFireBaseAuth();
+            }
+            try
+            {
+                //IAuthResult user = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(email, "11111111");
+                var t = FirebaseAuth.Instance.FetchProvidersForEmailAsync(email);
+                //t.Result.Get
+                
+            }
+            catch (Firebase.FirebaseException ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+            }
+            //FirebaseAuth.Instance.
+            return found;
         }
 
         public void ResetPassword(string eMail, IOnCompleteListener c)
