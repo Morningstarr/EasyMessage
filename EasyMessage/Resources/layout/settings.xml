@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <include
         layout="@layout/tbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <android.support.v4.widget.DrawerLayout
+     <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/drawerLayout1">
+        android:id="@id/drawerLayout1">
         <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/relativeLayout1" >
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/dialogsList">
-            </ListView>
+        android:id="@+id/relativeSettings" >
+            <TextView
+                android:text="settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
         </RelativeLayout>
         <android.support.design.widget.NavigationView
         android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:id="@+id/navigationMain"
+        android:id="@id/navigationMain"
             android:choiceMode="singleChoice"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:menu="@menu/main_menu"/>  
     </android.support.v4.widget.DrawerLayout>
+    
+
+
 </LinearLayout>

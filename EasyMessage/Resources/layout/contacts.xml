@@ -10,9 +10,38 @@
         layout="@layout/tbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <include
-        layout="@layout/left_drawer"
+     <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:id="@id/drawerLayout1">
+        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/relativeContacts" >
+            <SearchView
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/searchView1" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/contactList">
+            </ListView>
+        </RelativeLayout>
+        <android.support.design.widget.NavigationView
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:id="@id/navigationMain"
+            android:choiceMode="singleChoice"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:menu="@menu/main_menu"/>  
+    </android.support.v4.widget.DrawerLayout>
     
+
+
 </LinearLayout>

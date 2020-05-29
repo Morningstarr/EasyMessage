@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -15,48 +16,17 @@ using Android.Widget;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Easy Message")]
-    public class MainPage : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    [Activity(Label = "Настройки")]
+    public class SettingsActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private DrawerLayout drawer;
-        private NavigationView navigation;
         private Android.Support.V7.Widget.Toolbar tb;
-
-        public bool OnNavigationItemSelected(IMenuItem menuItem)
-        {
-            Intent intent;
-            drawer.CloseDrawer(GravityCompat.Start);
-            switch (menuItem.ItemId)
-            {
-                case Resource.Id.nav_contacts:
-                    intent = new Intent(this, typeof(ContactsActivity));
-                    intent.AddFlags(ActivityFlags.NoAnimation);
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    StartActivity(intent);
-                    return true;
-                case Resource.Id.nav_settings:
-                    intent = new Intent(this, typeof(SettingsActivity));
-                    intent.AddFlags(ActivityFlags.NoAnimation);
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    StartActivity(intent);
-                    return true;
-                case Resource.Id.nav_dialogs:
-                    return true;
-                case Resource.Id.nav_profile:
-                    intent = new Intent(this, typeof(Profile));
-                    intent.AddFlags(ActivityFlags.NoAnimation);
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    StartActivity(intent);
-                    return true;
-
-            }
-            return base.OnOptionsItemSelected(menuItem);
-        }
-
+        private NavigationView navigation;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.main_page);
+            SetContentView(Resource.Layout.settings);
+
             tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.tooolbarCommon);
 
             drawer = FindViewById<DrawerLayout>(Resource.Id.drawerLayout1);
@@ -70,10 +40,41 @@ namespace EasyMessage
             SetSupportActionBar(tb);
             Android.Support.V7.App.ActionBar abar = SupportActionBar;
 
+            
             abar.SetHomeButtonEnabled(true);
             abar.SetDisplayShowTitleEnabled(true);
             abar.SetHomeAsUpIndicator(Resource.Drawable.menu);
             abar.SetDisplayHomeAsUpEnabled(true);
+        }
+
+        public bool OnNavigationItemSelected(IMenuItem menuItem)
+        {
+            Intent intent;
+            drawer.CloseDrawer(GravityCompat.Start);
+            switch (menuItem.ItemId)
+            {
+                case Resource.Id.nav_settings:
+                    return true;
+                case Resource.Id.nav_dialogs:
+                    intent = new Intent(this, typeof(MainPage));
+                    intent.AddFlags(ActivityFlags.NoAnimation);
+                    intent.AddFlags(ActivityFlags.ClearTop);
+                    StartActivity(intent);
+                    return true;
+                case Resource.Id.nav_contacts:
+                    intent = new Intent(this, typeof(ContactsActivity));
+                    intent.AddFlags(ActivityFlags.NoAnimation);
+                    intent.AddFlags(ActivityFlags.ClearTop);
+                    StartActivity(intent);
+                    return true;
+                case Resource.Id.nav_profile:
+                    intent = new Intent(this, typeof(Profile));
+                    intent.AddFlags(ActivityFlags.NoAnimation);
+                    intent.AddFlags(ActivityFlags.ClearTop);
+                    StartActivity(intent);
+                    return true;
+            }
+            return base.OnOptionsItemSelected(menuItem);
         }
 
         public override void OnBackPressed()
@@ -102,12 +103,10 @@ namespace EasyMessage
                     else
                     {
                         drawer.OpenDrawer(GravityCompat.Start);
-                        //navigation.
                     }
                     return true;
             }
             return base.OnOptionsItemSelected(item);
         }
-
     }
 }

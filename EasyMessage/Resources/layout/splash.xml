@@ -10,8 +10,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginRight="145.5dp"
-        android:layout_marginLeft="145.5dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="200.5dp" 
         android:id="@+id/splashImage"
         android:src="@drawable/mail"/>
