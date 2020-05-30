@@ -19,7 +19,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/relativeLayout1" >
+            <Button
+                android:text="Check requests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/check" 
+            android:layout_centerHorizontal="true"
+            />
             <ListView
+               android:layout_marginTop="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/dialogsList">

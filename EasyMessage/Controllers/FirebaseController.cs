@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Gms.Tasks;
+using EasyMessage.Controllers;
 using EasyMessage.Entities;
 using Firebase;
 using Firebase.Auth;
@@ -20,7 +21,7 @@ namespace EasyMessage
     {
         public static FirebaseController instance = new FirebaseController();
 
-        private FirebaseApp app;
+        public FirebaseApp app;
         private FirebaseAuth auth;
         
         //Firebase.Database database = 
@@ -66,26 +67,28 @@ namespace EasyMessage
             return token.Token;
         }
 
-        public Contact IsUserRegistered(string email, Activity context)
+        public async Task<string> SendDialogRequest(string contactAddressP)
         {
-            Contact found = null;
-            if(app == null)
+            string userlogin = contactAddressP.Replace(".", ",");
+            string mylogin = AccountsController.mainAccP.emailP.Replace(".", ",");
+            string dialogName = "Dialog " + userlogin + "--" + mylogin;
+            if (app == null)
             {
                 initFireBaseAuth();
             }
-            try
-            {
-                //IAuthResult user = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(email, "11111111");
-                var t = FirebaseAuth.Instance.FetchProvidersForEmailAsync(email);
-                //t.Result.Get
-                
-            }
-            catch (Firebase.FirebaseException ex)
-            {
-                Utils.MessageBox(ex.Message, context);
-            }
-            //FirebaseAuth.Instance.
-            return found;
+
+            FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(app);
+            DatabaseReference userNode = databaseInstance.GetReference(dialogName);
+            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+            var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
+                new Message(contactAddressP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP + 
+                " хочет добавить вас в список контактов")));
+
+            /*string json = "{'JSON': { \"" + dialogName + "\" : { \"contentP\" : \"Пользователь " + AccountsController.mainAccP.emailP + " " +
+                "хочет добавить вас в список контактов\",  \"receiverP\" : \"" + contactAddressP +"\", \"senderP\" : \"" + 
+                AccountsController.mainAccP.emailP + "\", \"timeP\" : \"" + DateTime.Now.ToString() + "\"}}}";*/
+
+            return dialogName;
         }
 
         public void ResetPassword(string eMail, IOnCompleteListener c)
@@ -165,9 +168,9 @@ namespace EasyMessage
 
                 FirebaseDatabase.Instance.GetReference("chats").AddValueEventListener(context);*/
 
-                //var messages2 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет222")));
+            //var messages2 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет222")));
 
-                var messages3 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет333")));
+            var messages3 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет333")));
 
                 var messages4 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет444")));
 
