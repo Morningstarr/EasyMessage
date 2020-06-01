@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -17,7 +18,8 @@ namespace EasyMessage
     public static class Utils
     {
         private static List<char> symbols;
-        
+        public static List<string> dialogs;
+
         private static void FillSymbols()
         {
             symbols.Add('[');

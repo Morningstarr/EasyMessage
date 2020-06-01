@@ -65,8 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
+    <Compile Include="Adapters\DialogItemAdapter.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
+    <Compile Include="Entities\MyDialog.cs" />
     <Compile Include="SearchUser.cs" />
     <Compile Include="Utilities\UEventArgs.cs" />
     <Compile Include="Utilities\UValueEventListener.cs" />
@@ -242,6 +244,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\search_user.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_item.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

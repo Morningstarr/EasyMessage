@@ -12,6 +12,12 @@ using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using EasyMessage.Controllers;
+using EasyMessage.Adapters;
+using EasyMessage.Entities;
+using Message = EasyMessage.Entities.Message;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace EasyMessage
 {
@@ -21,6 +27,14 @@ namespace EasyMessage
         private DrawerLayout drawer;
         private NavigationView navigation;
         private Android.Support.V7.Widget.Toolbar tb;
+        private Button check;
+        private List<string> newDialogs = new List<string>();
+        private List<Message> messages = new List<Message>();
+        private DialogItemAdapter adapter;
+        private ListView dialogs;
+        private ProgressBar checkProgress;
+        private List<MyDialog> dialogg = new List<MyDialog>();
+        public delegate bool DisplayHandler();
 
         public bool OnNavigationItemSelected(IMenuItem menuItem)
         {
@@ -67,6 +81,9 @@ namespace EasyMessage
             navigation = FindViewById<NavigationView>(Resource.Id.navigationMain);
             navigation.SetNavigationItemSelectedListener(this);
 
+            checkProgress = FindViewById<ProgressBar>(Resource.Id.checkProgress);
+            dialogs = FindViewById<ListView>(Resource.Id.dialogsList);
+
             SetSupportActionBar(tb);
             Android.Support.V7.App.ActionBar abar = SupportActionBar;
 
@@ -74,6 +91,32 @@ namespace EasyMessage
             abar.SetDisplayShowTitleEnabled(true);
             abar.SetHomeAsUpIndicator(Resource.Drawable.menu);
             abar.SetDisplayHomeAsUpEnabled(true);
+
+            check = FindViewById<Button>(Resource.Id.check);
+
+            check.Click += async delegate
+            {
+                Task<List<MyDialog>> sizeTask = FirebaseController.instance.FindDialogs("Dialog " + AccountsController.mainAccP.emailP + "+", this);
+                checkProgress.Visibility = ViewStates.Visible;
+                dialogg = await sizeTask;
+                refresh_dialogs();
+                checkProgress.Visibility = ViewStates.Invisible;
+            };
+        }
+
+        private void refresh_dialogs()
+        {
+            adapter = new DialogItemAdapter(fillList());
+            dialogs.Adapter = adapter;
+        }
+
+        private IList<Message> fillList()
+        {
+            foreach(var p in dialogg)
+            {
+                messages.Add(p.lastMessage);
+            }
+            return messages;
         }
 
         public override void OnBackPressed()
