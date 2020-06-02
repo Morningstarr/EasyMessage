@@ -18,6 +18,7 @@ using EasyMessage.Entities;
 using Message = EasyMessage.Entities.Message;
 using System.Threading.Tasks;
 using System.Threading;
+using AlertDialog = Android.App.AlertDialog;
 
 namespace EasyMessage
 {
@@ -84,6 +85,58 @@ namespace EasyMessage
             checkProgress = FindViewById<ProgressBar>(Resource.Id.checkProgress);
             dialogs = FindViewById<ListView>(Resource.Id.dialogsList);
 
+            dialogs.ItemClick += (sender, e) =>
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetTitle("Предупреждение");
+                builder.SetMessage("Разрешить начать диалог с данным пользователем?");
+                builder.SetCancelable(true);
+                builder.SetNegativeButton("Нет", async (s, ev) =>
+                {
+                    Message c = adapter[Convert.ToInt32(e.Id)];
+                    MyDialog temp = dialogg.Find(x => x.lastMessage == c);
+                    Task<bool> denialTask = FirebaseController.instance.SendDialogDenial(temp.dialogName, c.senderP);
+                    bool answer = await denialTask;
+                    checkProgress.Visibility = ViewStates.Visible;
+                    if (answer)
+                    {
+                        dialogg.Remove(temp);
+                        messages.Remove(c);
+                        refresh_dialogs();
+                        Utils.MessageBox("Успешно!", this);
+                    }
+                    else
+                    {
+                        Utils.MessageBox("Ошибка! Повторите позже.", this);
+                    }
+                    checkProgress.Visibility = ViewStates.Invisible;
+                });
+                builder.SetPositiveButton("Да", async (s, ev) =>
+                {
+                    Message c = adapter[Convert.ToInt32(e.Id)];
+                    MyDialog temp = dialogg.Find(x => x.lastMessage == c);
+                    Task<bool> responseTask = FirebaseController.instance.SendDialogResponse(temp.dialogName, c.senderP);
+                    checkProgress.Visibility = ViewStates.Visible;
+                    bool _answer = await responseTask;
+                    if (_answer) 
+                    {
+                        dialogg.Remove(temp);
+                        messages.Remove(c);
+                        refresh_dialogs();
+                        Utils.MessageBox("Успешно!", this);
+                    }
+                    else
+                    {
+                        Utils.MessageBox("Ошибка! Повторите позже.", this);
+                    }
+                    checkProgress.Visibility = ViewStates.Invisible;
+                    
+                });
+                Dialog dialog = builder.Create();
+                dialog.Show();
+                return;
+            };
+
             SetSupportActionBar(tb);
             Android.Support.V7.App.ActionBar abar = SupportActionBar;
 
@@ -98,9 +151,18 @@ namespace EasyMessage
             {
                 Task<List<MyDialog>> sizeTask = FirebaseController.instance.FindDialogs("Dialog " + AccountsController.mainAccP.emailP + "+", this);
                 checkProgress.Visibility = ViewStates.Visible;
+                check.Enabled = false;
                 dialogg = await sizeTask;
-                refresh_dialogs();
+                if (dialogg != null)
+                {
+                    refresh_dialogs();
+                }
+                else
+                {
+                    Utils.MessageBox("Нет новых запросов!", this);
+                }
                 checkProgress.Visibility = ViewStates.Invisible;
+                check.Enabled = true;
             };
         }
 

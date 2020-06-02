@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Gms.Tasks;
@@ -99,6 +99,16 @@ namespace EasyMessage
                 if(email.Text == AccountsController.mainAccP.emailP)
                 {
                     throw new SystemException("Данный адрес электронной почты совпадает с адресом вашего аккаунта!");
+                }
+                string v1 = (AccountsController.mainAccP.emailP + "+" + email.Text).Replace(".", ",");
+                string v2 = (email.Text + "+" + AccountsController.mainAccP.emailP).Replace(".", ",");
+
+                Task<bool> isExists = FirebaseController.instance.IsDialogExists(v1, v2);
+                bool answer = await isExists;
+
+                if (answer)
+                {
+                    throw new SystemException("У вас уже есть контакт с таким электронным ящиком! Проверьте запросы на диалоги!");
                 }
 
                 if (FirebaseController.instance.app == null)

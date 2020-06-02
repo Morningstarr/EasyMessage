@@ -74,6 +74,8 @@ namespace EasyMessage
             string userlogin = contactAddressP.Replace(".", ",");
             string mylogin = AccountsController.mainAccP.emailP.Replace(".", ",");
             string dialogName = "Dialog " + userlogin + "+" + mylogin;
+            List<MessageFlags> flags = new List<MessageFlags>();
+            flags.Add(MessageFlags.Request);
             if (app == null)
             {
                 initFireBaseAuth();
@@ -84,13 +86,84 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(contactAddressP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP + 
-                " хочет добавить вас в список контактов")));
+                " хочет добавить вас в список контактов", flags)));
 
             /*string json = "{'JSON': { \"" + dialogName + "\" : { \"contentP\" : \"Пользователь " + AccountsController.mainAccP.emailP + " " +
                 "хочет добавить вас в список контактов\",  \"receiverP\" : \"" + contactAddressP +"\", \"senderP\" : \"" + 
                 AccountsController.mainAccP.emailP + "\", \"timeP\" : \"" + DateTime.Now.ToString() + "\"}}}";*/
 
             return dialogName;
+        }
+
+        public async Task<bool> IsDialogExists(string v1, string v2)
+        {
+            if (app == null)
+            {
+                initFireBaseAuth();
+            }
+
+            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
+
+            var p = await client.Child("chats").OnceAsync<object>();
+            var d = p.GetEnumerator();
+            d.MoveNext();
+
+            while (d.Current != null)
+            {
+                if (d.Current.Key.Contains(v1) || d.Current.Key.Contains(v2))
+                {
+                    return true;
+                }
+                d.MoveNext();
+            }
+            return false;
+        }
+
+        public async Task<bool> SendDialogResponse(string dialogName, string receiverAddress)
+        {
+            if (app == null)
+            {
+                initFireBaseAuth();
+            }
+            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+            List<MessageFlags> flags = new List<MessageFlags>();
+            flags.Add(MessageFlags.Response);
+            var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
+                new Message(receiverAddress, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
+                " принял Ваш запрос", flags)));
+
+            if (messages3.Key != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public async Task<bool> SendDialogDenial(string dialogName, string senderP)
+        {
+            if (app == null)
+            {
+                initFireBaseAuth();
+            }
+            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+            List<MessageFlags> flags = new List<MessageFlags>();
+            flags.Add(MessageFlags.Denied);
+            var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
+                new Message(senderP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
+                " отклонил Ваш запрос", flags)));
+
+            if (messages3.Key != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void ResetPassword(string eMail, IOnCompleteListener c)
@@ -175,9 +248,7 @@ namespace EasyMessage
 
                 var p = await client.Child("chats").OnceAsync<object>();
                 var d = p.GetEnumerator();
-                List<string> list = new List<string>();
                 d.MoveNext();
-
 
                 string userlogin = userMail.Replace(".", ",");
                 while (d.Current != null)
@@ -191,6 +262,10 @@ namespace EasyMessage
                     d.MoveNext();
                 }
                 return dict;
+            }
+            catch(Newtonsoft.Json.JsonReaderException exc)
+            {
+                return null;
             }
             catch (Exception ex)
             {

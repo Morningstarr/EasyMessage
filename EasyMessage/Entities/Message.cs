@@ -40,14 +40,16 @@ namespace EasyMessage.Entities
             set { time = value; }
         }*/
 
+        public List<MessageFlags> flags { get; set; }
+
         public Message() { }
-        public Message(string rec, string send, string cont)
+        public Message(string rec, string send, string cont, List<MessageFlags> fl)
         {
             receiverP = rec;
             senderP = send;
             contentP = cont;
             timeP = DateTime.Now.ToString("yyyy-dd-mm HH:mm:ss");
-
+            flags = fl;
         }
 
         public static string convertToJsonString(Message s)
