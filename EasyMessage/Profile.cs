@@ -179,6 +179,11 @@ namespace EasyMessage
                     StartActivity(intent);
                     FirebaseController.instance.initFireBaseAuth();
                     FirebaseController.instance.LogOut();
+                    ContactsController.instance.CreateTable();
+                    foreach (var item in ContactsController.instance.GetItems())
+                    {
+                        ContactsController.instance.DeleteItem(item.Id);
+                    }
                 });
                 Dialog dialog = builder.Create();
                 dialog.Show();
@@ -212,6 +217,11 @@ namespace EasyMessage
                     
                     FirebaseController.instance.initFireBaseAuth();
                     FirebaseController.instance.DeleteUser(this);
+
+                    foreach (var item in ContactsController.instance.GetItems())
+                    {
+                        ContactsController.instance.DeleteItem(item.Id);
+                    }
                 });
                 Dialog dialog = builder.Create();
                 dialog.Show();

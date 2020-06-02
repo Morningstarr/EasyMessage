@@ -42,21 +42,12 @@ namespace EasyMessage
         }
         
 
-        protected override async void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             ContactsController.instance.CreateTable();
             contacts = ContactsController.instance.GetItems().ToList();
-            if (contacts == null || contacts.Count == 0)
-            {
-                Task<List<Contact>> contactsTask = FirebaseController.instance.GetAllContacts(AccountsController.mainAccP.emailP, this);
-                contacts = await contactsTask;
-                foreach(var cont in contacts)
-                {
-                    ContactsController.instance.SaveItem(cont);
-                }
-            }
 
             SetContentView(Resource.Layout.contacts);
 

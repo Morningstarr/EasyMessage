@@ -148,7 +148,8 @@ namespace EasyMessage
             }
         }
 
-        public async void AddContact(string newContact, string accountName)
+
+        public async void AddContact(string newContact, string accountName, int id)
         {
             if (app == null)
             {
@@ -159,7 +160,35 @@ namespace EasyMessage
             string s = accountName.Replace(".", ",");
             userNode.Child(s);
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
-            var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 1, contactAddressP = newContact }));
+            var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = id, contactAddressP = newContact }));
+        }
+
+        public async Task<int> ReturnLastId(string accountName, Activity context)
+        {
+            int lastId = 0;
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string s = accountName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var c = await client.Child(s).OnceAsync<object>();
+                var enumerator = c.GetEnumerator();
+                enumerator.MoveNext();
+                while (enumerator.Current != null)
+                {
+                    //lastId = enumerator.Current.Object.Id;
+                    enumerator.MoveNext();
+                }
+                return lastId;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return lastId;
+            }
         }
 
         public async Task<bool> IsDialogExists(string v1, string v2)

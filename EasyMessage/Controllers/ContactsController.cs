@@ -55,15 +55,15 @@ namespace EasyMessage.Controllers
         }
         public int SaveItem(Contact item)
         {
-            if (item.Id != 0)
-            {
-                connection.Update(item);
-                return item.Id;
-            }
-            else
-            {
+            //if (item.Id != 0)
+            //{
+                //connection.Update(item);
+                //return item.Id;
+            //}
+            //else
+            //{
                 return connection.Insert(item);
-            }
+            //}
         }
     }
 }
