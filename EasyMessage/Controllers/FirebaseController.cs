@@ -95,6 +95,73 @@ namespace EasyMessage
             return dialogName;
         }
 
+        public async void AddContactFolder(string accountName, Activity context)
+        {
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(app);
+                DatabaseReference userNode = databaseInstance.GetReference("contacts");
+                string s = accountName.Replace(".", ",");
+                userNode.Child(s);
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 0, contactAddressP = "initialContact" }));
+            }
+            catch(Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+            }
+        }
+
+        public async Task<List<Contact>> GetAllContacts(string accountName, Activity context)
+        {
+            List<Contact> contactsList = new List<Contact>();
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string s = accountName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var c = await client.Child(s).OnceAsync<Contact>();
+                var enumerator = c.GetEnumerator();
+                enumerator.MoveNext();
+                while(enumerator.Current != null)
+                {
+                    if (enumerator.Current.Object.Id != 0)
+                    {
+                        Contact temp = enumerator.Current.Object;
+                        contactsList.Add(temp);
+                    }
+                    enumerator.MoveNext();
+                }
+                return contactsList;
+            }
+            catch(Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return contactsList;
+            }
+        }
+
+        public async void AddContact(string newContact, string accountName)
+        {
+            if (app == null)
+            {
+                initFireBaseAuth();
+            }
+            FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(app);
+            DatabaseReference userNode = databaseInstance.GetReference("contacts");
+            string s = accountName.Replace(".", ",");
+            userNode.Child(s);
+            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+            var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 1, contactAddressP = newContact }));
+        }
+
         public async Task<bool> IsDialogExists(string v1, string v2)
         {
             if (app == null)

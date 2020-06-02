@@ -67,6 +67,7 @@
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="Entities\MyDialog.cs" />
     <Compile Include="MessageFlags.cs" />

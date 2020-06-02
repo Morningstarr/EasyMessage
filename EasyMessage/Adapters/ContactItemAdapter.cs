@@ -52,7 +52,7 @@ namespace EasyMessage.Adapters
 			var pic = view.FindViewById<ImageView>(Resource.Id.contactImage);
 
 			mail.Text = _items[position].contactAddressP;
-			name.Text = _items[position].contactNameP;
+			name.Text = _items[position]?.contactNameP;
 			pic.SetBackgroundResource(Convert.ToInt32(_items[position].picturePathP));
 
 			return view;

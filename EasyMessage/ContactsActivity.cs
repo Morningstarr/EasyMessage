@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -15,6 +15,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EasyMessage.Adapters;
+using EasyMessage.Controllers;
 using EasyMessage.Entities;
 using Firebase.Database;
 
@@ -41,9 +42,22 @@ namespace EasyMessage
         }
         
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            ContactsController.instance.CreateTable();
+            contacts = ContactsController.instance.GetItems().ToList();
+            if (contacts == null || contacts.Count == 0)
+            {
+                Task<List<Contact>> contactsTask = FirebaseController.instance.GetAllContacts(AccountsController.mainAccP.emailP, this);
+                contacts = await contactsTask;
+                foreach(var cont in contacts)
+                {
+                    ContactsController.instance.SaveItem(cont);
+                }
+            }
+
             SetContentView(Resource.Layout.contacts);
 
             search = FindViewById<MaterialButton>(Resource.Id.searchUser);
@@ -78,6 +92,9 @@ namespace EasyMessage
             abar.SetDisplayShowTitleEnabled(true);
             abar.SetHomeAsUpIndicator(Resource.Drawable.menu);
             abar.SetDisplayHomeAsUpEnabled(true);
+
+            
+            
         }
 
         private void search_click()
@@ -93,12 +110,12 @@ namespace EasyMessage
 
         private IList<Contact> fillList()
         {
-            var list = new List<Contact>();
+            /*var list = new List<Contact>();
             list.Add(new Contact { contactAddressP = "kirill_kovrik@mail.ru", contactNameP = "kirill" });
             list.Add(new Contact { contactAddressP = "kirill.kop.work@gmail.com", contactNameP = "kolya" });
-            list.Add(new Contact { contactAddressP = "geniuses1studio@gmail.com", contactNameP = "katya" });
+            list.Add(new Contact { contactAddressP = "geniuses1studio@gmail.com", contactNameP = "katya" });*/
 
-            return list;
+            return contacts;
         }
 
         public bool OnNavigationItemSelected(IMenuItem menuItem)

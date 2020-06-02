@@ -19,6 +19,7 @@ using EasyMessage.Entities;
 using Android.Graphics.Drawables;
 using Android.Graphics;
 using Android.Text.Method;
+using System.Threading.Tasks;
 
 namespace EasyMessage
 {
@@ -48,7 +49,7 @@ namespace EasyMessage
             }
         }
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.sign_up);
@@ -78,6 +79,9 @@ namespace EasyMessage
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
+
+            
+            //FirebaseController.instance.AddContact("kirill.kop.work@gmail.com", "kirill_kovrik@mail.ru");
         }
 
         
@@ -122,6 +126,12 @@ namespace EasyMessage
                     p.isMainP = true;
                     AccountsController.instance.SaveItem(p);
                     AccountsController.mainAccP = p;
+                    Task<List<Contact>> contactsTask = FirebaseController.instance.GetAllContacts(AccountsController.mainAccP.emailP, this);
+                    List<Contact> contacts = await contactsTask;
+                    foreach (var cont in contacts)
+                    {
+                        ContactsController.instance.SaveItem(cont);
+                    }
                     Finish();
                     intent.SetFlags(ActivityFlags.ClearTask);
                     StartActivity(intent);

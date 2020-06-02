@@ -9,11 +9,15 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using SQLite;
 
 namespace EasyMessage.Entities
 {
+    [Table("Contacts")]
     public class Contact
     {
+        [PrimaryKey, AutoIncrement, Column("_id")]
+        public int Id { get; set; }
         private string contactName;
         public string contactNameP
         {

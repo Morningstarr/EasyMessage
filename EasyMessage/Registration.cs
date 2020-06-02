@@ -100,12 +100,11 @@ namespace EasyMessage
                         string s = await FirebaseController.instance.Register(email.Text, password.Text, login.Text);
                         if (s != string.Empty)
                         {
-                            Toast.MakeText(this, "Register success", ToastLength.Short).Show();
-
+                            FirebaseController.instance.AddContactFolder(AccountsController.mainAccP.emailP, this);
                             //AccountsController.instance.deviceAccsP.Add(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
                             AccountsController.instance.CreateTable();
                             AccountsController.instance.SaveItem(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
-
+                            Toast.MakeText(this, "Register success", ToastLength.Short).Show();
                             Intent intent = new Intent(this, typeof(SignUp));
                             intent.SetFlags(ActivityFlags.NewTask);
                             StartActivity(intent);
