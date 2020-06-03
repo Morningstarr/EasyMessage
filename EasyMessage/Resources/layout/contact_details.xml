@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_gallery"
+        android:id="@+id/cImage"
+        android:minWidth="120dp"
+        android:minHeight="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="150dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" 
+        android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+        android:text="Contact name:"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:paddingLeft="10dp"
+            android:text="111"
+            android:id="@+id/cName"/>
+            <Button
+                android:text="Change"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/changeLogin"
+                android:layout_marginLeft="180dp"
+            />
+
+            </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp"
+        android:text="Contact email:"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:paddingLeft="10dp"
+        android:text="111"
+        android:id="@+id/cMail"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:text="save changes"
+            android:layout_centerHorizontal="true"
+            android:width="200dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:text="delete contact"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:width="200dp"/>
+        <Button
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+        android:text="go to dialog"
+        android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:width="200dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

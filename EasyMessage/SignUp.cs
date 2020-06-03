@@ -130,7 +130,7 @@ namespace EasyMessage
                     List<Contact> contacts = await contactsTask;
                     foreach (var cont in contacts)
                     {
-                        ContactsController.instance.SaveItem(cont);
+                        ContactsController.instance.SaveItem(cont, false);
                     }
                     Finish();
                     intent.SetFlags(ActivityFlags.ClearTask);

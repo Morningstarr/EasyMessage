@@ -66,9 +66,11 @@
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="ContactDetails.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
+    <Compile Include="EditContactData.cs" />
     <Compile Include="Entities\MyDialog.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="SearchUser.cs" />
@@ -251,6 +253,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\dialog_item.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\contact_details.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\edit_contact_data.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

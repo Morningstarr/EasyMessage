@@ -18,6 +18,7 @@ using EasyMessage.Adapters;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
 using Firebase.Database;
+using Newtonsoft.Json;
 
 namespace EasyMessage
 {
@@ -83,9 +84,18 @@ namespace EasyMessage
             abar.SetDisplayShowTitleEnabled(true);
             abar.SetHomeAsUpIndicator(Resource.Drawable.menu);
             abar.SetDisplayHomeAsUpEnabled(true);
+        }
 
-            
-            
+        protected override void OnRestart()
+        {
+            base.OnResume();
+
+            list = FindViewById<ListView>(Resource.Id.contactList);
+            var temp = contacts.Where(x => x.Id == ContactsController.currContP.Id).ToList()[0];
+            contacts.Remove(temp);
+            contacts.Add(ContactsController.currContP);
+            adapter = new ContactItemAdapter(fillList());
+            list.Adapter = adapter;
         }
 
         private void search_click()
@@ -96,16 +106,15 @@ namespace EasyMessage
         private void item_click(object sender, AdapterView.ItemClickEventArgs e)
         {
             Contact c = adapter[Convert.ToInt32(e.Id)];
-            Toast.MakeText(this, c.contactNameP, ToastLength.Short).Show();
+            ContactsController.currContP = c;
+            Intent i = new Intent(this, typeof(ContactDetails));
+            //i.PutExtra("contact", JsonConvert.SerializeObject(c));
+            i.SetFlags(ActivityFlags.NoAnimation);
+            StartActivity(i);
         }
 
         private IList<Contact> fillList()
         {
-            /*var list = new List<Contact>();
-            list.Add(new Contact { contactAddressP = "kirill_kovrik@mail.ru", contactNameP = "kirill" });
-            list.Add(new Contact { contactAddressP = "kirill.kop.work@gmail.com", contactNameP = "kolya" });
-            list.Add(new Contact { contactAddressP = "geniuses1studio@gmail.com", contactNameP = "katya" });*/
-
             return contacts;
         }
 

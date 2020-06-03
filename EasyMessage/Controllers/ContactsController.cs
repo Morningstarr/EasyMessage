@@ -20,12 +20,12 @@ namespace EasyMessage.Controllers
         public static ContactsController instance = new ContactsController();
         SQLiteConnection connection;
 
-        //private static C mainAcc;
-        /*public static Con mainAccP
+        private static Contact currCont;
+        public static Contact currContP
         {
-            get { return mainAcc; }
-            set { mainAcc = value; }
-        }*/
+            get { return currCont; }
+            set { currCont = value; }
+        }
         private List<Contact> contactList = new List<Contact>();
         public List<Contact> contactListP
         {
@@ -53,17 +53,23 @@ namespace EasyMessage.Controllers
         {
             return connection.Delete<Contact>(id);
         }
+        public int SaveItem(Contact item, bool t)
+        {
+            
+            return connection.Insert(item);
+
+        }
         public int SaveItem(Contact item)
         {
-            //if (item.Id != 0)
-            //{
-                //connection.Update(item);
-                //return item.Id;
-            //}
-            //else
-            //{
+            if (item.Id != 0)
+            {
+                connection.Update(item);
+                return item.Id;
+            }
+            else
+            {
                 return connection.Insert(item);
-            //}
+            }
         }
     }
 }
