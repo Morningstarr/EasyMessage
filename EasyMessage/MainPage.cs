@@ -29,6 +29,7 @@ namespace EasyMessage
         private NavigationView navigation;
         private Android.Support.V7.Widget.Toolbar tb;
         private Button check;
+        private Button dialogButton;
         private List<string> newDialogs = new List<string>();
         private List<Message> messages = new List<Message>();
         private DialogItemAdapter adapter;
@@ -84,6 +85,14 @@ namespace EasyMessage
 
             checkProgress = FindViewById<ProgressBar>(Resource.Id.checkProgress);
             dialogs = FindViewById<ListView>(Resource.Id.dialogsList);
+            dialogButton = FindViewById<Button>(Resource.Id.dialogButton);
+
+            dialogButton.Click += delegate
+            {
+                Intent i = new Intent(this, typeof(DialogActivity));
+                i.SetFlags(ActivityFlags.NoAnimation);
+                StartActivity(i);
+            };
 
             dialogs.ItemClick += (sender, e) =>
             {

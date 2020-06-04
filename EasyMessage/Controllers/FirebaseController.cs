@@ -225,7 +225,6 @@ namespace EasyMessage
             }
         }
 
-
         public async void AddContact(string newContact, string accountName, int id)
         {
             if (app == null)

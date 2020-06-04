@@ -128,6 +128,7 @@ namespace EasyMessage
                     AccountsController.mainAccP = p;
                     Task<List<Contact>> contactsTask = FirebaseController.instance.GetAllContacts(AccountsController.mainAccP.emailP, this);
                     List<Contact> contacts = await contactsTask;
+                    ContactsController.instance.CreateTable();
                     foreach (var cont in contacts)
                     {
                         ContactsController.instance.SaveItem(cont, false);

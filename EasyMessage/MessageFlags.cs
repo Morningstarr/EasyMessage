@@ -14,10 +14,10 @@ namespace EasyMessage
 {
     public enum MessageFlags
     {
-        Encoded,
-        NotEncoded,
-        Request,
-        Response,
-        Denied
+        Encoded = 5,
+        NotEncoded = 1,
+        Request = 2,
+        Response = 3,
+        Denied = 4
     }
 }
