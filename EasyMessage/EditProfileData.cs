@@ -21,7 +21,7 @@ using Android.Gms.Tasks;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Изменение данных")]
+    [Activity(Label = "Изменение данных", Theme = "@style/Theme.MaterialComponents.Light.DarkActionBar")]
     public class EditProfileData : AppCompatActivity, IOnCompleteListener
     {
         private TextView text;

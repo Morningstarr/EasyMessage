@@ -64,27 +64,37 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\ContactItemAdapter.cs" />
+    <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="ContactDetails.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
-    <Compile Include="Controllers\UserEventArgs.cs" />
-    <Compile Include="Controllers\UserValueEventListener.cs" />
+    <Compile Include="EditContactData.cs" />
+    <Compile Include="Entities\MyDialog.cs" />
+    <Compile Include="MessageFlags.cs" />
+    <Compile Include="SearchUser.cs" />
+    <Compile Include="Utilities\UEventArgs.cs" />
+    <Compile Include="Utilities\UValueEventListener.cs" />
     <Compile Include="EditProfileData.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Controllers\FirebaseController.cs" />
+    <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\ItemTemplate.cs" />
     <Compile Include="Entities\Message.cs" />
     <Compile Include="ForgotPassword.cs" />
-    <Compile Include="ListItemAdapter.cs" />
+    <Compile Include="Adapters\ListItemAdapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainPage.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="Registration.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsActivity.cs" />
     <Compile Include="SignUp.cs" />
     <Compile Include="Splash.cs" />
-    <Compile Include="Test.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="ContactsActivity.cs" />
+    <Compile Include="Utilities\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -199,15 +209,60 @@
     <AndroidResource Include="Resources\Menu\main_menu.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\menu.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\main_page.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\test_message.xml">
+    <AndroidResource Include="Resources\layout\contacts.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\tbar.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\left_drawer.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\content.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\settings.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\menu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\contact_item.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\search_user.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_item.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\contact_details.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\edit_contact_data.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

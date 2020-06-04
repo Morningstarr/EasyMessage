@@ -1,6 +1,5 @@
 <resources>
-  <style name="MyTheme" parent="@style/Theme.MaterialComponents.Light.DarkActionBar">
-    <item name="colorPrimary">#2196f3</item>
-    <item name="android:windowActionBar">false</item>
-  </style>
+  <style name="AppTheme.AppBarOverlay" parent="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+
+  <style name="AppTheme.PopupOverlay" parent="@style/ThemeOverlay.MaterialComponents.Light" />
 </resources>
