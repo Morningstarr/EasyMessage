@@ -6,6 +6,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/deleteProgress"
+            android:visibility="invisible"/>
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,6 +26,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginTop="150dp">
+        
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,26 +74,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="50dp">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-        android:text="save changes"
-            android:layout_centerHorizontal="true"
-            android:width="200dp"/>
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
         android:text="delete contact"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
-            android:width="200dp"/>
+            android:width="200dp"
+            android:id="@+id/deleteContact"/>
         <Button
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
         android:text="go to dialog"
         android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:width="200dp"/>
+            android:layout_marginTop="50dp"
+            android:width="200dp"
+            android:id="@+id/openDialog"/>
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

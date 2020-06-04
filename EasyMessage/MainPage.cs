@@ -161,13 +161,13 @@ namespace EasyMessage
                 checkProgress.Visibility = ViewStates.Visible;
                 check.Enabled = false;
                 dialogg = await sizeTask;
-                if (dialogg != null)
+                if (dialogg == null || dialogg.Count == 0)
                 {
-                    refresh_dialogs();
+                    Utils.MessageBox("Нет новых запросов!", this);  
                 }
                 else
                 {
-                    Utils.MessageBox("Нет новых запросов!", this);
+                    refresh_dialogs();
                 }
                 checkProgress.Visibility = ViewStates.Invisible;
                 check.Enabled = true;

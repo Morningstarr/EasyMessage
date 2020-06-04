@@ -116,6 +116,43 @@ namespace EasyMessage
             }
         }
 
+        public async Task<bool> DeleteContact(string accountName, string contactEmail, Activity context)
+        {
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string userlogin = accountName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var p = await client.Child(userlogin).OnceAsync<Contact>();
+                var d = p.GetEnumerator();
+                d.MoveNext();
+
+                while (d.Current != null)
+                {
+                    if (d.Current.Object.contactAddressP == contactEmail)
+                    {
+                        client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/" + userlogin + "/");
+                        await client.Child(d.Current.Key).DeleteAsync();
+                        return true;
+                    }
+                    d.MoveNext();
+                }
+                return false;
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return false;
+            }
+        }
+
         public async Task<bool> ChangeContactName(string accountName, string newName, string contactEmail, Activity context)
         {
             try

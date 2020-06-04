@@ -89,11 +89,18 @@ namespace EasyMessage
         protected override void OnRestart()
         {
             base.OnResume();
-
+            
             list = FindViewById<ListView>(Resource.Id.contactList);
             var temp = contacts.Where(x => x.Id == ContactsController.currContP.Id).ToList()[0];
             contacts.Remove(temp);
-            contacts.Add(ContactsController.currContP);
+            if (ContactsController.currContP.deletedP == false)
+            {
+                contacts.Add(ContactsController.currContP);
+            }
+            else
+            {
+                ContactsController.currContP = null;
+            }
             adapter = new ContactItemAdapter(fillList());
             list.Adapter = adapter;
         }

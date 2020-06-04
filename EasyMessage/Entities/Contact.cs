@@ -42,5 +42,11 @@ namespace EasyMessage.Entities
             get { return picturePath; }
             set { picturePath = value; }
         }
+        private bool deleted;
+        public bool deletedP
+        {
+            get { return deleted; }
+            set { deleted = value; }
+        }
     }
 }
