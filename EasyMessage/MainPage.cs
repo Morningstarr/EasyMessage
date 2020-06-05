@@ -19,24 +19,29 @@ using Message = EasyMessage.Entities.Message;
 using System.Threading.Tasks;
 using System.Threading;
 using AlertDialog = Android.App.AlertDialog;
+using Firebase.Database;
+using Android.Graphics.Drawables;
+using Android.Graphics;
 
 namespace EasyMessage
 {
     [Activity(Label = "Easy Message")]
-    public class MainPage : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    public class MainPage : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener, IValueEventListener
     {
         private DrawerLayout drawer;
         private NavigationView navigation;
         private Android.Support.V7.Widget.Toolbar tb;
         private Button check;
-        private Button dialogButton;
         private List<string> newDialogs = new List<string>();
         private List<Message> messages = new List<Message>();
         private DialogItemAdapter adapter;
+        private OldDialogItemAdapter adapterOld;
         private ListView dialogs;
         private ProgressBar checkProgress;
         private List<MyDialog> dialogg = new List<MyDialog>();
+        private List<MyDialog> oldDialogs = new List<MyDialog>();
         public delegate bool DisplayHandler();
+        private ListView oldDialogsList;
 
         public bool OnNavigationItemSelected(IMenuItem menuItem)
         {
@@ -64,12 +69,11 @@ namespace EasyMessage
                     intent.AddFlags(ActivityFlags.ClearTop);
                     StartActivity(intent);
                     return true;
-
             }
             return base.OnOptionsItemSelected(menuItem);
         }
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.main_page);
@@ -85,12 +89,22 @@ namespace EasyMessage
 
             checkProgress = FindViewById<ProgressBar>(Resource.Id.checkProgress);
             dialogs = FindViewById<ListView>(Resource.Id.dialogsList);
-            dialogButton = FindViewById<Button>(Resource.Id.dialogButton);
+            oldDialogsList = FindViewById<ListView>(Resource.Id.oldDialogsList);
 
-            dialogButton.Click += delegate
+            //Task<List<MyDialog>> oldTask = FirebaseController.instance.FindDialogs(AccountsController.mainAccP.emailP, this);
+            await fillOld();
+            adapterOld = new OldDialogItemAdapter(oldDialogs);
+            oldDialogsList.Adapter = adapterOld;
+
+            oldDialogsList.ItemClick += (sender, e) =>
             {
                 Intent i = new Intent(this, typeof(DialogActivity));
                 i.SetFlags(ActivityFlags.NoAnimation);
+                MyDialog temp = adapterOld[Convert.ToInt32(e.Id)];
+                DialogsController.currDialP = temp;
+                i.PutExtra("dialogName", temp.dialogName);
+                i.PutExtra("receiver", 
+                    temp.lastMessage.receiverP == AccountsController.mainAccP.emailP ? temp.lastMessage.senderP : temp.lastMessage.receiverP);
                 StartActivity(i);
             };
 
@@ -183,6 +197,39 @@ namespace EasyMessage
             };
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (DialogsController.currDialP != null)
+            {
+                MyDialog m = oldDialogs.Find(x => x.dialogName == DialogsController.currDialP.dialogName);
+                int i = oldDialogs.IndexOf(m);
+                oldDialogs[i].lastMessage = DialogsController.currDialP.lastMessage;
+                adapterOld = new OldDialogItemAdapter(oldDialogs);
+                oldDialogsList.Adapter = adapterOld;
+                DialogsController.currDialP = null;
+            }
+        }
+
+        private async Task<bool> fillOld()
+        {
+            Task<List<MyDialog>> oldTask = FirebaseController.instance.FindOldDialogs(AccountsController.mainAccP.emailP, this);
+            oldDialogs = await oldTask;
+
+            if (FirebaseController.instance.app == null) 
+            {
+                FirebaseController.instance.initFireBaseAuth();
+            }
+            FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
+            var userNode = databaseInstance.GetReference("chats");
+            foreach (var dialog in oldDialogs)
+            {
+                DatabaseReference u = userNode.Child(dialog.dialogName);
+                u.AddValueEventListener(this);
+            }
+            return true;
+        }
+
         private void refresh_dialogs()
         {
             adapter = new DialogItemAdapter(fillList());
@@ -231,5 +278,58 @@ namespace EasyMessage
             return base.OnOptionsItemSelected(item);
         }
 
+        public void OnCancelled(DatabaseError error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnDataChange(DataSnapshot snapshot)
+        {
+            IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
+            List<DataSnapshot> t = items.ToList();
+            var a = t.Last().Children.ToEnumerable<DataSnapshot>().ToList();
+            var flag = a[1].Child("0").Value;
+            List<MessageFlags> fls = new List<MessageFlags>();
+            fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
+            Message m = new Message
+            {
+                contentP = a[0].Value.ToString(),
+                flags = fls,
+                receiverP = a[2].Value.ToString(),
+                senderP = a[3].Value.ToString(),
+                timeP = a[4].Value.ToString()
+            };
+
+            MyDialog md = oldDialogs.Find(x => x.lastMessage.contentP == m.contentP && x.lastMessage.timeP == m.timeP);
+            if (md == null)
+            {
+                string sender = m.senderP.Replace(".", ",");
+                string receiver = m.receiverP.Replace(".", ",");
+                string s1 = "Dialog " + sender + "+" + receiver;
+                string s2 = "Dialog " + receiver + "+" + sender;
+                int temp = oldDialogs.FindIndex(x => x.dialogName == s1);
+                if (temp < 0)
+                {
+                    temp = oldDialogs.FindIndex(x => x.dialogName == s2);
+                    if(temp < 0)
+                    {
+                        
+                    }
+                    else
+                    {
+                        oldDialogs[temp].lastMessage = m;
+                        adapterOld = new OldDialogItemAdapter(oldDialogs, true);
+                        oldDialogsList.Adapter = adapterOld;
+                    }
+                }
+                else
+                {
+                    oldDialogs[temp].lastMessage = m;
+                    adapterOld = new OldDialogItemAdapter(oldDialogs, true);
+                    oldDialogsList.Adapter = adapterOld;
+                }
+            }
+            
+        }
     }
 }

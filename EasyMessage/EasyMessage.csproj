@@ -66,10 +66,12 @@
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="Adapters\OldDialogItemAdapter.cs" />
     <Compile Include="Adapters\RecyclerViewAdapter.cs" />
     <Compile Include="ContactDetails.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
+    <Compile Include="Controllers\DialogsController.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="DialogActivity.cs" />
     <Compile Include="EditContactData.cs" />

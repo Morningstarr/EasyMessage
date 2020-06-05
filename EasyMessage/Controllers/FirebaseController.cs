@@ -387,6 +387,44 @@ namespace EasyMessage
             }
         }
 
+        public async Task<List<MyDialog>> FindOldDialogs(string userMail, Activity context)
+        {
+            try
+            {
+                List<MyDialog> dict = new List<MyDialog>();
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
+
+                var p = await client.Child("chats").OnceAsync<object>();
+                var d = p.GetEnumerator();
+                d.MoveNext();
+
+                string userlogin = userMail.Replace(".", ",");
+                while (d.Current != null)
+                {
+                    if (d.Current.Key.Contains(userlogin))
+                    {
+                        string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().LastIndexOf("{"));
+                        var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
+                        if (t.flags[0] != MessageFlags.Denied && t.flags[0] != MessageFlags.Request)
+                        {
+                            dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+                        }
+                    }
+                    d.MoveNext();
+                }
+                return dict;
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return null;
+            }
+        }
+
         public async Task<List<MyDialog>> FindDialogs(string userMail, Activity context)
         {
             #region userListener
@@ -430,6 +468,7 @@ namespace EasyMessage
                         string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
                         var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
                         dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+
                     }
                     d.MoveNext();
                 }

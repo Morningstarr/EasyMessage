@@ -1,4 +1,3 @@
-
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,44 +8,44 @@
     <include
         layout="@layout/tbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+    android:id="@id/tb"/>
     <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/drawerLayout1">
-        <RelativeLayout
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/relativeLayout1" >
+            <Button
+                android:text="Check requests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/check"
+                android:layout_centerHorizontal="true"
+                app:layout_constraintTop_toBottomOf="@+id/tb" 
+            />
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialogsList">
+            </ListView>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/oldDialogsList" />
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/checkProgress" 
             android:layout_centerInParent="true"
-            android:visibility="invisible"/>
-            <Button
-                android:text="Check requests"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/check" 
-            android:layout_centerHorizontal="true"
-            />
-            <Button
-                android:text="Dialog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/dialogButton"
-                android:layout_marginTop="50dp"
-            android:layout_centerHorizontal="true"/>
-
-            <ListView
-               android:layout_marginTop="100dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/dialogsList">
-            </ListView>
-        </RelativeLayout>
+            android:visibility="invisible"
+            android:layout_marginTop="155dp"
+            android:layout_marginLeft="155dp"
+            android:layout_marginRight="150dp"/>
+        </LinearLayout>
         <android.support.design.widget.NavigationView
         android:layout_width="240dp"
         android:layout_height="match_parent"

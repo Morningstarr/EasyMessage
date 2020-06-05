@@ -30,10 +30,21 @@ namespace EasyMessage
         private Button send;
         private EditText messageContent;
         private RecyclerViewAdapter adapter;
+        private string dialog;
+        private string receiver;
+        private Message t;
         protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.dialog);
+
+            dialog = Intent.GetStringExtra("dialogName");
+            receiver = Intent.GetStringExtra("receiver");
+            SupportActionBar.SetHomeButtonEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
+            SupportActionBar.Title = receiver;
+
             if (FirebaseController.instance.app == null)
             {
                 FirebaseController.instance.initFireBaseAuth();
@@ -44,13 +55,17 @@ namespace EasyMessage
             recyclerList = FindViewById<RecyclerView>(Resource.Id.reyclerview_message_list);
             recyclerList.SetLayoutManager(layoutManager);
             //recyclerList.HasFixedSize = true;
+
+
             await fill_list();
             adapter = new RecyclerViewAdapter(messageList);
             recyclerList.SetAdapter(adapter);
+            recyclerList.ScrollToPosition(messageList.Count() - 1);
 
             FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
             var userNode = databaseInstance.GetReference("chats");
-            DatabaseReference u = userNode.Child("Dialog kirill_kovrik@mail,ru+kirill,kop,work@gmail,com");
+
+            DatabaseReference u = userNode.Child(dialog);
             u.AddValueEventListener(this);
 
             messageContent = FindViewById<EditText>(Resource.Id.edittext_chatbox);
@@ -60,15 +75,15 @@ namespace EasyMessage
 
             send.Click += async delegate
             {
-                Message t = new Message
+                t = new Message
                 {
                     contentP = messageContent.Text,
                     senderP = AccountsController.mainAccP.emailP,
                     flags = flags,
-                    receiverP = "kirill.kop.work@gmail.com",
+                    receiverP = receiver,
                     timeP = DateTime.Now.ToString()
                 };
-                Task<bool> sendTask = MessagingController.instance.SendMessage(t, "Dialog kirill_kovrik@mail,ru+kirill,kop,work@gmail,com", this);
+                Task<bool> sendTask = MessagingController.instance.SendMessage(t, dialog, this);
                 bool sent = await sendTask;
                 if (sent)
                 {
@@ -76,7 +91,9 @@ namespace EasyMessage
                     //messageList.Add(t);
                     //adapter = new RecyclerViewAdapter(messageList);
                     //recyclerList.SetAdapter(adapter);
-                    send.Text = "";
+                    messageContent.Text = "";
+                    //recyclerList.SmoothScrollToPosition(messageList.Count() - 1);
+                    recyclerList.ScrollToPosition(messageList.Count() - 1);
                 }
                 else
                 {
@@ -85,15 +102,13 @@ namespace EasyMessage
                 
             };
 
-            SupportActionBar.SetHomeButtonEnabled(true);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
+            
             // Create your application here
         }
 
         private async Task<bool> fill_list()
         {
-            Task<List<Message>> getMessagesTask = MessagingController.instance.GetAllMessages("Dialog kirill_kovrik@mail,ru+kirill,kop,work@gmail,com", this);
+            Task<List<Message>> getMessagesTask = MessagingController.instance.GetAllMessages(dialog, this);
             messageList = await getMessagesTask;
             return true;
         }
@@ -103,6 +118,12 @@ namespace EasyMessage
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    if (t != null)
+                    {
+                        //DialogsController.instance.CreateTable();
+                        //DialogsController.instance.SaveItem(new MyDialog { dialogName = dialog, lastMessage = t });
+                        DialogsController.currDialP.lastMessage = t;
+                    }
                     Finish();
                     return true;
                 default:
@@ -133,8 +154,10 @@ namespace EasyMessage
                     messageList = new List<Message>();
                 }
                 messageList.Add(m);
+                DialogsController.currDialP.lastMessage = m;
                 adapter = new RecyclerViewAdapter(messageList);
                 recyclerList.SetAdapter(adapter);
+                recyclerList.ScrollToPosition(messageList.Count() - 1);
             }
         }
 
