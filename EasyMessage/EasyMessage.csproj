@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Adapters\OldDialogItemAdapter.cs" />
     <Compile Include="Adapters\RecyclerViewAdapter.cs" />
     <Compile Include="ContactDetails.cs" />
@@ -294,6 +295,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\rounded_rectange_white.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Menu\main_page_menu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

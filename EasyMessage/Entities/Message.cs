@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using EasyMessage.Utilities;
+using SQLite;
 
 namespace EasyMessage.Entities
 {
@@ -18,6 +19,9 @@ namespace EasyMessage.Entities
     {
         //public string receiver;
         //[Json ]
+        [PrimaryKey, AutoIncrement, Column("_id")]
+        public int Id { get; set; }
+        public string dialogName { get; set; }
         public string receiverP { get; set; }
 
         //public string sender;
@@ -35,13 +39,16 @@ namespace EasyMessage.Entities
         }*/
         //public string time;
         public string timeP { get; set; }
+        public int flagsP { get; set; }
+        public int accessP { get; set; }
         /*public string timeP
         {
             get { return time; }
             set { time = value; }
         }*/
-
+        [Ignore]
         public List<MessageFlags> flags { get; set; }
+        [Ignore]
         public List<AccessFlags> access { get; set; }
 
         public Message() { }
@@ -50,7 +57,7 @@ namespace EasyMessage.Entities
             receiverP = rec;
             senderP = send;
             contentP = cont;
-            timeP = DateTime.Now.ToString("yyyy-dd-mm HH:mm:ss");
+            timeP = DateTime.Now.ToString();
             flags = fl;
             access = ac;
         }

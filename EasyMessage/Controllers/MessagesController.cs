@@ -10,59 +10,58 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using EasyMessage.Entities;
 using SQLite;
 using Message = EasyMessage.Entities.Message;
 
-namespace EasyMessage.Controllers
+namespace EasyMessage.Adapters
 {
-    public class DialogsController
+    public class MessagesController
     {
-        public static DialogsController instance = new DialogsController();
+        public static MessagesController instance = new MessagesController();
         SQLiteConnection connection;
 
-        private static MyDialog currDial;
-        public static MyDialog currDialP
+        private static Message currMess;
+        public static Message currMessP
         {
-            get { return currDial; }
-            set { currDial = value; }
+            get { return currMess; }
+            set { currMess = value; }
         }
-        private List<MyDialog> dialogsList = new List<MyDialog>();
-        public List<MyDialog> dialogsListP
+        private List<Message> messagesList = new List<Message>();
+        public List<Message> messagesListP
         {
-            get { return dialogsList; }
-            set { dialogsList = value; }
+            get { return messagesList; }
+            set { messagesList = value; }
         }
 
         public void CreateTable()
         {
             string dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "ormdemo.db3");
             connection = new SQLiteConnection(dbPath);
-            connection.CreateTable<MyDialog>();
+            connection.CreateTable<Message>();
         }
 
-        public IEnumerable<MyDialog> GetItems()
+        public IEnumerable<Message> GetItems()
         {
-            dialogsList = connection.Table<MyDialog>().ToList();
-            return dialogsList;
+            messagesList = connection.Table<Message>().ToList();
+            return messagesList;
         }
-        public MyDialog GetItem(int id)
+        public Message GetItem(int id)
         {
-            return connection.Get<MyDialog>(id);
+            return connection.Get<Message>(id);
         }
         public int DeleteItem(int id)
         {
-            return connection.Delete<MyDialog>(id);
+            return connection.Delete<Message>(id);
         }
-        public int SaveItem(MyDialog item, bool t)
+        public int SaveItem(Message item, bool t)
         {
 
             return connection.Insert(item);
 
         }
-        public int SaveItem(MyDialog item)
+        public int SaveItem(Message item)
         {
-            dialogsList = connection.Table<MyDialog>().ToList();
+            messagesList = connection.Table<Message>().ToList();
             if (item.Id != 0)
             {
                 connection.Update(item);
@@ -70,7 +69,7 @@ namespace EasyMessage.Controllers
             }
             else
             {
-                if (dialogsList.Find(x => x.dialogName == item.dialogName) == null)
+                if (messagesList.Find(x => x.dialogName == item.dialogName && x.contentP == item.contentP && x.timeP == item.timeP) == null)
                 {
                     return connection.Insert(item);
                 }

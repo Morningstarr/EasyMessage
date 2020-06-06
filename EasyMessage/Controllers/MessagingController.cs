@@ -14,6 +14,7 @@ using Firebase.Database;
 using Newtonsoft.Json;
 using EasyMessage.Entities;
 using Message = EasyMessage.Entities.Message;
+//using FirebaseQuery = Firebase.Database.Query;
 
 namespace EasyMessage.Controllers
 {
@@ -23,6 +24,34 @@ namespace EasyMessage.Controllers
         public FirebaseClient client = null;
         //private FirebaseDatabase database;
         //public 
+
+        public async Task<List<Message>> ReturnLastMessages(string dialogName, Activity context)
+        {
+            List<Message> results = new List<Message>();
+            if (FirebaseController.instance.app == null)
+            {
+                FirebaseController.instance.initFireBaseAuth();
+            }
+            try
+            {
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+                var p = await client.Child(dialogName).OnceAsync<Message>();
+                var enumerator = p.GetEnumerator();
+                enumerator.MoveNext();
+                while (enumerator.Current != null)
+                {
+                    Message temp = enumerator.Current.Object;
+                    results.Add(temp);
+                    enumerator.MoveNext();
+                }
+                return results;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return results;
+            }
+        }
 
         public async Task<bool> UpdateFlag(string key, string dialogName, Activity context)
         {

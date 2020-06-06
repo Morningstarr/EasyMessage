@@ -34,7 +34,6 @@ namespace EasyMessage
         private NavigationView navigation;
         private Android.Support.V7.Widget.Toolbar tb;
         private Button check;
-        private List<string> newDialogs = new List<string>();
         private List<Message> messages = new List<Message>();
         private DialogItemAdapter adapter;
         private OldDialogItemAdapter adapterOld;
@@ -44,6 +43,15 @@ namespace EasyMessage
         private List<MyDialog> oldDialogs = new List<MyDialog>();
         public delegate bool DisplayHandler();
         private ListView oldDialogsList;
+        ConnectivityManager connectivityManager;
+        NetworkInfo networkInfo;
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.main_page_menu, menu);
+            return true;
+        }
 
         public bool OnNavigationItemSelected(IMenuItem menuItem)
         {
@@ -80,8 +88,11 @@ namespace EasyMessage
             base.OnCreate(savedInstanceState);
             try
             {
-                ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
-                NetworkInfo networkInfo = null; 
+                connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
+                networkInfo = null;
+
+                DialogsController.instance.CreateTable();
+                oldDialogs = DialogsController.instance.GetItems().ToList();
 
                 SetContentView(Resource.Layout.main_page);
                 tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.tooolbarCommon);
@@ -210,21 +221,19 @@ namespace EasyMessage
                     return;
                 };
 
-                networkInfo = connectivityManager.ActiveNetworkInfo;
-                if (networkInfo != null && networkInfo.IsConnected == true)
+                checkProgress.Visibility = ViewStates.Visible;
+                await fillOld();
+                if (oldDialogs != null)
                 {
-                    await fillOld();
-                    if (oldDialogs != null)
-                    {
-                        adapterOld = new OldDialogItemAdapter(oldDialogs);
-                    }
-                    else
-                    {
-                        oldDialogs = new List<MyDialog>();
-                        adapterOld = new OldDialogItemAdapter(oldDialogs);
-                    }
-                    oldDialogsList.Adapter = adapterOld;
+                    adapterOld = new OldDialogItemAdapter(oldDialogs);
                 }
+                else
+                {
+                    oldDialogs = new List<MyDialog>();
+                    adapterOld = new OldDialogItemAdapter(oldDialogs);
+                }
+                oldDialogsList.Adapter = adapterOld;
+                checkProgress.Visibility = ViewStates.Invisible;
 
                 oldDialogsList.ItemClick += (sender, e) =>
                 {
@@ -234,7 +243,7 @@ namespace EasyMessage
                     DialogsController.currDialP = temp;
                     i.PutExtra("dialogName", temp.dialogName);
                     i.PutExtra("receiver",
-                        temp.lastMessage.receiverP == AccountsController.mainAccP.emailP ? temp.lastMessage.senderP : temp.lastMessage.receiverP);
+                        temp.receiverP == AccountsController.mainAccP.emailP ? temp.senderP : temp.receiverP); //изменил (убрал .lastMessage) возможно поэтому что-то сломалось
                     i.PutExtra("flag", 1);
                     StartActivity(i);
                 };
@@ -261,27 +270,85 @@ namespace EasyMessage
 
         private async Task<bool> fillOld()
         {
-            try
+            networkInfo = connectivityManager.ActiveNetworkInfo;
+            if (networkInfo != null && networkInfo.IsConnected == true)
             {
-                Task<List<MyDialog>> oldTask = FirebaseController.instance.FindOldDialogs(AccountsController.mainAccP.emailP, this);
-                oldDialogs = await oldTask;
+                try
+                {
+                    Task<List<MyDialog>> oldTask = FirebaseController.instance.FindOldDialogs(AccountsController.mainAccP.emailP, this);
+                    oldDialogs = await oldTask;
 
-                if (FirebaseController.instance.app == null)
-                {
-                    FirebaseController.instance.initFireBaseAuth();
+                    if (oldDialogs != null)
+                    {
+                        DialogsController.instance.CreateTable();
+                        foreach (var d in oldDialogs)
+                        {
+                            d.FillFields();
+                            DialogsController.instance.SaveItem(d);
+                        }
+
+                        var newDialos = oldDialogs.FindAll(x => Convert.ToInt32(x.lastMessage.flags[0]) == 3);
+                        if (newDialos != null)
+                        {
+                            ContactsController.instance.CreateTable();
+                            foreach (var d in newDialos)
+                            {
+                                if (d.lastMessage.receiverP != AccountsController.mainAccP.emailP)
+                                {
+                                    if (ContactsController.instance.FindContact(d.lastMessage.receiverP) == null)
+                                    {
+                                        ContactsController.instance.SaveItem(new Contact
+                                        {
+                                            contactAddressP = d.lastMessage.receiverP,
+                                            contactNameP = "user name",
+                                            deletedP = false,
+                                            dialogNameP = d.dialogName
+                                        });
+                                    }
+                                }
+                                else
+                                {
+                                    if (d.lastMessage.senderP != AccountsController.mainAccP.emailP)
+                                    {
+                                        if (ContactsController.instance.FindContact(d.lastMessage.senderP) == null)
+                                        {
+                                            ContactsController.instance.SaveItem(new Contact
+                                            {
+                                                contactAddressP = d.lastMessage.senderP,
+                                                contactNameP = "user name",
+                                                deletedP = false,
+                                                dialogNameP = d.dialogName
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    if (FirebaseController.instance.app == null)
+                    {
+                        FirebaseController.instance.initFireBaseAuth();
+                    }
+                    FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
+                    var userNode = databaseInstance.GetReference("chats");
+                    foreach (var dialog in oldDialogs)
+                    {
+                        DatabaseReference u = userNode.Child(dialog.dialogName);
+                        u.AddValueEventListener(this);
+                    }
+                    return true;
                 }
-                FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
-                var userNode = databaseInstance.GetReference("chats");
-                foreach (var dialog in oldDialogs)
+                catch (Exception ex)
                 {
-                    DatabaseReference u = userNode.Child(dialog.dialogName);
-                    u.AddValueEventListener(this);
+                    Utils.MessageBox("Сетевая ошибка! Проверьте подключение к интернету и повторите запрос.", this);
+                    return false;
                 }
-                return true;
             }
-            catch(Exception ex)
+            else
             {
-                Utils.MessageBox("Сетевая ошибка! Проверьте подключение к интернету и повторите запрос.", this);
+                Utils.MessageBox("Обновление невозможно. Проверьте подключение к интернету и повторите запрос.", this);
                 return false;
             }
         }
@@ -329,6 +396,11 @@ namespace EasyMessage
                         drawer.OpenDrawer(GravityCompat.Start);
                         //navigation.
                     }
+                    return true;
+                case 2131230894:
+                    checkProgress.Visibility = ViewStates.Visible;
+                    fillOld();
+                    checkProgress.Visibility = ViewStates.Invisible;
                     return true;
             }
             return base.OnOptionsItemSelected(item);

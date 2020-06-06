@@ -7,6 +7,7 @@ using Android.App;
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Net;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
@@ -35,79 +36,94 @@ namespace EasyMessage
         private string receiver;
         private Message t;
         private int flag = 0;
+        ConnectivityManager connectivityManager;
+        NetworkInfo networkInfo;
         protected async override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.dialog);
-
-            dialog = Intent.GetStringExtra("dialogName");
-            receiver = Intent.GetStringExtra("receiver");
-            flag = Intent.GetIntExtra("flag", 0);
-            SupportActionBar.SetHomeButtonEnabled(true);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
-            SupportActionBar.Title = receiver;
-
-            if (FirebaseController.instance.app == null)
+            try
             {
-                FirebaseController.instance.initFireBaseAuth();
-            }
-            //var r = FirebaseDatabase.Instance.GetReference("Dialog kirill_kovrik@mail,ru+kirill,kop,work@gmail,com");
-            //.AddValueEventListener(this);
-            var layoutManager = new LinearLayoutManager(this) { Orientation = LinearLayoutManager.Vertical };
-            recyclerList = FindViewById<RecyclerView>(Resource.Id.reyclerview_message_list);
-            recyclerList.SetLayoutManager(layoutManager);
-            //recyclerList.HasFixedSize = true;
+                base.OnCreate(savedInstanceState);
+                SetContentView(Resource.Layout.dialog);
 
+                connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
+                networkInfo = null;
 
-            await fill_list();
-            adapter = new RecyclerViewAdapter(messageList);
-            recyclerList.SetAdapter(adapter);
-            recyclerList.ScrollToPosition(messageList.Count() - 1);
+                dialog = Intent.GetStringExtra("dialogName");
+                receiver = Intent.GetStringExtra("receiver");
+                flag = Intent.GetIntExtra("flag", 0);
+                SupportActionBar.SetHomeButtonEnabled(true);
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
+                SupportActionBar.Title = receiver;
 
-            FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
-            var userNode = databaseInstance.GetReference("chats");
-
-            DatabaseReference u = userNode.Child(dialog);
-            u.AddValueEventListener(this);
-
-            messageContent = FindViewById<EditText>(Resource.Id.edittext_chatbox);
-            send = FindViewById<Button>(Resource.Id.send);
-            List<MessageFlags> flags = new List<MessageFlags>();
-            flags.Add(MessageFlags.NotEncoded);
-
-            List<AccessFlags> acess = new List<AccessFlags>();
-            acess.Add(AccessFlags.NotRead);
-
-            send.Click += async delegate
-            {
-                t = new Message
+                if (FirebaseController.instance.app == null)
                 {
-                    contentP = messageContent.Text,
-                    senderP = AccountsController.mainAccP.emailP,
-                    flags = flags,
-                    access = acess,
-                    receiverP = receiver,
-                    timeP = DateTime.Now.ToString()
+                    FirebaseController.instance.initFireBaseAuth();
+                }
+                //var r = FirebaseDatabase.Instance.GetReference("Dialog kirill_kovrik@mail,ru+kirill,kop,work@gmail,com");
+                //.AddValueEventListener(this);
+                var layoutManager = new LinearLayoutManager(this) { Orientation = LinearLayoutManager.Vertical };
+                recyclerList = FindViewById<RecyclerView>(Resource.Id.reyclerview_message_list);
+                recyclerList.SetLayoutManager(layoutManager);
+                //recyclerList.HasFixedSize = true;
+
+
+                bool result = await fill_list();
+                if (!result)
+                {
+                    messageList = new List<Message>();
+                }
+                adapter = new RecyclerViewAdapter(messageList);
+                recyclerList.SetAdapter(adapter);
+                recyclerList.ScrollToPosition(messageList.Count() - 1);
+
+                networkInfo = connectivityManager.ActiveNetworkInfo;
+                if (networkInfo != null && networkInfo.IsConnected == true)
+                {
+                    FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
+                    var userNode = databaseInstance.GetReference("chats");
+                    DatabaseReference u = userNode.Child(dialog);
+                    u.AddValueEventListener(this);
+                }
+
+
+                messageContent = FindViewById<EditText>(Resource.Id.edittext_chatbox);
+                send = FindViewById<Button>(Resource.Id.send);
+                List<MessageFlags> flags = new List<MessageFlags>();
+                flags.Add(MessageFlags.NotEncoded);
+
+                List<AccessFlags> acess = new List<AccessFlags>();
+                acess.Add(AccessFlags.NotRead);
+
+                send.Click += async delegate
+                {
+                    t = new Message
+                    {
+                        contentP = messageContent.Text,
+                        senderP = AccountsController.mainAccP.emailP,
+                        flags = flags,
+                        access = acess,
+                        receiverP = receiver,
+                        timeP = DateTime.Now.ToString()
+                    };
+                    Task<bool> sendTask = MessagingController.instance.SendMessage(t, dialog, this);
+                    bool sent = await sendTask;
+                    if (sent)
+                    {
+                        messageContent.Text = "";
+                        recyclerList.ScrollToPosition(messageList.Count() - 1);
+                    }
+                    else
+                    {
+                        Utils.MessageBox("error", this);
+                    }
+
                 };
-                Task<bool> sendTask = MessagingController.instance.SendMessage(t, dialog, this);
-                bool sent = await sendTask;
-                if (sent)
-                {
-                    //Utils.MessageBox("ok", this);
-                    //messageList.Add(t);
-                    //adapter = new RecyclerViewAdapter(messageList);
-                    //recyclerList.SetAdapter(adapter);
-                    messageContent.Text = "";
-                    //recyclerList.SmoothScrollToPosition(messageList.Count() - 1);
-                    recyclerList.ScrollToPosition(messageList.Count() - 1);
-                }
-                else
-                {
-                    Utils.MessageBox("error", this);
-                }
-                
-            };
+            }
+            catch(Exception ex)
+            {
+                Utils.MessageBox("Произошла сетевая ошибка! Проверьте подключение к интернету и повторите позже.", this);
+            }
 
             
             // Create your application here
@@ -115,16 +131,25 @@ namespace EasyMessage
 
         private async Task<bool> fill_list()
         {
-            Task<List<Message>> getMessagesTask = MessagingController.instance.GetAllMessages(dialog, this);
-            messageList = await getMessagesTask;
-            foreach(var mes in messageList)
+            networkInfo = connectivityManager.ActiveNetworkInfo;
+            if (networkInfo != null && networkInfo.IsConnected == true)
             {
-                if(mes.senderP != AccountsController.mainAccP.emailP && mes.access != null)
+                Task<List<Message>> getMessagesTask = MessagingController.instance.GetAllMessages(dialog, this);
+                messageList = await getMessagesTask;
+                foreach (var mes in messageList)
                 {
-                    mes.access[0] = AccessFlags.Read;
+                    if (mes.senderP != AccountsController.mainAccP.emailP && mes.access != null)
+                    {
+                        mes.access[0] = AccessFlags.Read;
+                    }
                 }
+                return true;
             }
-            return true;
+            else
+            {
+                //Utils.MessageBox
+                return false;
+            }
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

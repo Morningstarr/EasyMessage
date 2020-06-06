@@ -33,6 +33,12 @@ namespace EasyMessage.Controllers
             set { contactList = value; }
         }
 
+        public Contact FindContact(string email)
+        {
+            contactList = connection.Table<Contact>().ToList();
+            return contactList.Find(x => x.contactAddressP == email);
+        }
+
         public void CreateTable()
         {
             string dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "ormdemo.db3");

@@ -56,7 +56,7 @@ namespace EasyMessage.Adapters
 		{
 			var view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.dialog_item, parent, false);
 
-			if (isNew || (_items[position].lastMessage.access != null && _items[position].lastMessage.access[0] == Utilities.AccessFlags.NotRead))
+			if (isNew || (_items[position].accessFlag != 0 && _items[position].accessFlag == 2))
 			{
 				view.SetBackgroundColor(Color.ParseColor("#0cd8f4")); 
 			}
@@ -65,8 +65,8 @@ namespace EasyMessage.Adapters
 			var lastMess = view.FindViewById<TextView>(Resource.Id.mess);
 			//var pic = view.FindViewById<ImageView>(Resource.Id.contactImage);
 
-			contact.Text = _items[position].lastMessage.senderP == AccountsController.mainAccP.emailP ? _items[position].lastMessage.receiverP : _items[position].lastMessage.senderP;
-			lastMess.Text = _items[position].lastMessage.contentP;
+			contact.Text = _items[position].senderP == AccountsController.mainAccP.emailP ? _items[position].receiverP : _items[position].senderP;
+			lastMess.Text = _items[position].contentP;
 			//pic.SetBackgroundResource(Convert.ToInt32(_items[position].picturePathP));
 
 			return view;
