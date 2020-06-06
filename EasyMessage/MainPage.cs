@@ -23,6 +23,7 @@ using Firebase.Database;
 using Android.Graphics.Drawables;
 using Android.Graphics;
 using Android.Net;
+using EasyMessage.Utilities;
 
 namespace EasyMessage
 {
@@ -234,6 +235,7 @@ namespace EasyMessage
                     i.PutExtra("dialogName", temp.dialogName);
                     i.PutExtra("receiver",
                         temp.lastMessage.receiverP == AccountsController.mainAccP.emailP ? temp.lastMessage.senderP : temp.lastMessage.receiverP);
+                    i.PutExtra("flag", 1);
                     StartActivity(i);
                 };
             }
@@ -344,16 +346,23 @@ namespace EasyMessage
                 IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
                 List<DataSnapshot> t = items.ToList();
                 var a = t.Last().Children.ToEnumerable<DataSnapshot>().ToList();
-                var flag = a[1].Child("0").Value;
+
+                var access = a[0].Child("0").Value;
+                List<AccessFlags> acs = new List<AccessFlags>();
+                acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
+
+                var flag = a[2].Child("0").Value;
                 List<MessageFlags> fls = new List<MessageFlags>();
                 fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
+
                 Message m = new Message
                 {
-                    contentP = a[0].Value.ToString(),
+                    contentP = a[1].Value.ToString(),
                     flags = fls,
-                    receiverP = a[2].Value.ToString(),
-                    senderP = a[3].Value.ToString(),
-                    timeP = a[4].Value.ToString()
+                    access = acs,
+                    receiverP = a[3].Value.ToString(),
+                    senderP = a[4].Value.ToString(),
+                    timeP = a[5].Value.ToString()
                 };
 
                 MyDialog md = oldDialogs.Find(x => x.lastMessage.contentP == m.contentP && x.lastMessage.timeP == m.timeP);

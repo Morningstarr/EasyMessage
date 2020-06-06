@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using EasyMessage.Utilities;
 
 namespace EasyMessage.Entities
 {
@@ -41,15 +42,17 @@ namespace EasyMessage.Entities
         }*/
 
         public List<MessageFlags> flags { get; set; }
+        public List<AccessFlags> access { get; set; }
 
         public Message() { }
-        public Message(string rec, string send, string cont, List<MessageFlags> fl)
+        public Message(string rec, string send, string cont, List<MessageFlags> fl, List<AccessFlags> ac)
         {
             receiverP = rec;
             senderP = send;
             contentP = cont;
             timeP = DateTime.Now.ToString("yyyy-dd-mm HH:mm:ss");
             flags = fl;
+            access = ac;
         }
 
         public static string convertToJsonString(Message s)

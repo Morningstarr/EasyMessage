@@ -9,6 +9,7 @@ using Android.App;
 using Android.Gms.Tasks;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
+using EasyMessage.Utilities;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -76,6 +77,8 @@ namespace EasyMessage
             string dialogName = "Dialog " + userlogin + "+" + mylogin;
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Request);
+            List<AccessFlags> acess = new List<AccessFlags>();
+            acess.Add(AccessFlags.None);
             if (app == null)
             {
                 initFireBaseAuth();
@@ -86,7 +89,7 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(contactAddressP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP + 
-                " хочет добавить вас в список контактов", flags)));
+                " хочет добавить вас в список контактов", flags, acess)));
 
             /*string json = "{'JSON': { \"" + dialogName + "\" : { \"contentP\" : \"Пользователь " + AccountsController.mainAccP.emailP + " " +
                 "хочет добавить вас в список контактов\",  \"receiverP\" : \"" + contactAddressP +"\", \"senderP\" : \"" + 
@@ -300,9 +303,11 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Response);
+            List<AccessFlags> acess = new List<AccessFlags>();
+            acess.Add(AccessFlags.None);
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(receiverAddress, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
-                " принял Ваш запрос", flags)));
+                " принял Ваш запрос", flags, acess)));
 
             if (messages3.Key != null)
             {
@@ -324,9 +329,11 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Denied);
+            List<AccessFlags> acess = new List<AccessFlags>();
+            acess.Add(AccessFlags.None);
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(senderP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
-                " отклонил Ваш запрос", flags)));
+                " отклонил Ваш запрос", flags, acess)));
 
             if (messages3.Key != null)
             {

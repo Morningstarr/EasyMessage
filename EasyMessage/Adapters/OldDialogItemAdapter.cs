@@ -56,7 +56,7 @@ namespace EasyMessage.Adapters
 		{
 			var view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.dialog_item, parent, false);
 
-			if (isNew || _items[position].lastMessage.senderP != AccountsController.mainAccP.emailP)
+			if (isNew || (_items[position].lastMessage.access != null && _items[position].lastMessage.access[0] == Utilities.AccessFlags.NotRead))
 			{
 				view.SetBackgroundColor(Color.ParseColor("#0cd8f4")); 
 			}

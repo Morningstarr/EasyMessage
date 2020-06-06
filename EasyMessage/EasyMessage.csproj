@@ -78,6 +78,7 @@
     <Compile Include="Entities\MyDialog.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="SearchUser.cs" />
+    <Compile Include="Utilities\AccessFlags.cs" />
     <Compile Include="Utilities\UEventArgs.cs" />
     <Compile Include="Utilities\UValueEventListener.cs" />
     <Compile Include="EditProfileData.cs" />

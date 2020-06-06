@@ -24,6 +24,32 @@ namespace EasyMessage.Controllers
         //private FirebaseDatabase database;
         //public 
 
+        public async Task<bool> UpdateFlag(string key, string dialogName, Activity context)
+        {
+            if (FirebaseController.instance.app == null)
+            {
+                FirebaseController.instance.initFireBaseAuth();
+            }
+            try
+            {
+                //client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/" + dialogName + "/");
+                FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(FirebaseController.instance.app);
+                var userNode = databaseInstance.GetReference("chats");
+                var dialogNode = userNode.Child(dialogName);
+                await dialogNode.Child(key).Child("access").Child("0").SetValueAsync(1);
+                return true;
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return false;
+            }
+        }
+
         public async Task<bool> SendMessage(Message m, string dialogName, Activity context)
         {
             if (FirebaseController.instance.app == null)
@@ -64,7 +90,6 @@ namespace EasyMessage.Controllers
             }
             try
             {
-                
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
                 var p = await client.Child(dialogName).OnceAsync<Message>();
                 var enumerator = p.GetEnumerator();
