@@ -27,6 +27,13 @@
                 android:layout_centerHorizontal="true"
                 app:layout_constraintTop_toBottomOf="@+id/tb" 
             />
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkProgress"
+                android:visibility="invisible"
+                android:indeterminateOnly="true"/>
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,15 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/oldDialogsList" />
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/checkProgress" 
-            android:layout_centerInParent="true"
-            android:visibility="invisible"
-            android:layout_marginTop="155dp"
-            android:layout_marginLeft="155dp"
-            android:layout_marginRight="150dp"/>
         </LinearLayout>
         <android.support.design.widget.NavigationView
         android:layout_width="240dp"

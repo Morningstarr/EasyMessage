@@ -420,7 +420,7 @@ namespace EasyMessage
             }
             catch (Exception ex)
             {
-                Utils.MessageBox(ex.Message, context);
+                Utils.MessageBox("Произошла ошибка! Повторите запрос позже.", context);
                 return null;
             }
         }
@@ -453,26 +453,45 @@ namespace EasyMessage
             #endregion
             try
             {
+                if(app == null)
+                {
+                    initFireBaseAuth();
+                }
                 List<MyDialog> dict = new List<MyDialog>();
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
-
-                var p = await client.Child("chats").OnceAsync<object>();
-                var d = p.GetEnumerator();
-                d.MoveNext();
-
-                string userlogin = userMail.Replace(".", ",");
-                while (d.Current != null)
+                IReadOnlyCollection<FirebaseObject<object>> p = null;
+                try
                 {
-                    if (d.Current.Key.Contains(userlogin))
-                    {
-                        string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
-                        var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
-                        dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
-
-                    }
-                    d.MoveNext();
+                    p = await client.Child("chats").OnceAsync<object>();
                 }
-                return dict;
+                catch (Exception exx)
+                {
+                    Utils.MessageBox(exx.Message, context);
+                    return null;
+                }
+                if (p != null)
+                {
+                    var d = p.GetEnumerator();
+                    d.MoveNext();
+
+                    string userlogin = userMail.Replace(".", ",");
+                    while (d.Current != null)
+                    {
+                        if (d.Current.Key.Contains(userlogin))
+                        {
+                            string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
+                            var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
+                            dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+
+                        }
+                        d.MoveNext();
+                    }
+                    return dict;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch(Newtonsoft.Json.JsonReaderException exc)
             {
@@ -480,7 +499,7 @@ namespace EasyMessage
             }
             catch (Exception ex)
             {
-                Utils.MessageBox(ex.Message, context);
+                Utils.MessageBox("Произошла ошибка! Повторите запрос позже.", context);
                 return null;
             }
         }
