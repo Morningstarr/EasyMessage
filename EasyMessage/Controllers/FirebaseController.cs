@@ -45,7 +45,7 @@ namespace EasyMessage
 
             auth = FirebaseAuth.GetInstance(app);
 
-            if(auth == null)
+            if (auth == null)
             {
                 throw new Exception("Authentication Error!");
             }

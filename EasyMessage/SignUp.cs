@@ -100,16 +100,16 @@ namespace EasyMessage
 
         public async void ok_Click()
         {
+            
+            eMail = FindViewById<EditText>(Resource.Id.edtMail);
+            pss = FindViewById<EditText>(Resource.Id.edtPass);
+            pbar = FindViewById<ProgressBar>(Resource.Id.progressBar2);
+                
+            pbar.Visibility = ViewStates.Visible;
+
+            edit_contols(false);
             try
             {
-                eMail = FindViewById<EditText>(Resource.Id.edtMail);
-                pss = FindViewById<EditText>(Resource.Id.edtPass);
-                pbar = FindViewById<ProgressBar>(Resource.Id.progressBar2);
-                
-                pbar.Visibility = ViewStates.Visible;
-
-                edit_contols(false);
-
                 FirebaseController.instance.initFireBaseAuth();
                 string s = await FirebaseController.instance.LoginUser(eMail.Text, pss.Text);
                 if (s != string.Empty)
@@ -137,8 +137,20 @@ namespace EasyMessage
                     intent.SetFlags(ActivityFlags.ClearTask);
                     StartActivity(intent);
                 }
+                else
+                {
+                    throw new SystemException("Ошибка аутентификации, проверьте подключение к интернету!");
+                }
             }
-            catch(Exception ex)
+            catch (FirebaseAuthException)
+            {
+                Utils.MessageBox("Ошибка аутентификации, проверьте введенные данные!", this);
+            }
+            catch (FirebaseException)
+            {
+                Utils.MessageBox("Ошибка аутентификации, проверьте подключение к интернету!", this);
+            }
+            catch (Exception ex)
             {
                 Utils.MessageBox(ex.Message, this);
                 edit_contols(true);

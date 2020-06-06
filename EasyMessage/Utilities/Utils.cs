@@ -50,7 +50,7 @@ namespace EasyMessage
         {
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(c);
-            builder.SetTitle("Предупреждение");
+            builder.SetTitle("Уведомление");
             builder.SetMessage(MyMessage);
             builder.SetCancelable(false);
             builder.SetPositiveButton("OK", delegate { });
