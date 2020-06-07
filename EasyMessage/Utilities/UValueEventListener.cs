@@ -40,31 +40,34 @@ namespace EasyMessage
                 List<MessageFlags> fls = new List<MessageFlags>();
                 fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
 
-                var access = t[0].Child("0").Value;
-                List<AccessFlags> acs = new List<AccessFlags>();
-                acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
-                Message temp = new Message
+                if (fls[0] != MessageFlags.Key)
                 {
-                    contentP = t[1].Value.ToString(),
-                    flags = fls,
-                    receiverP = t[3].Value.ToString(),
-                    senderP = t[4].Value.ToString(),
-                    timeP = t[5].Value.ToString(),
-                    access = acs,
-                    dialogName = dialogName
-                };
-                MessagesController.instance.CreateTable();
-                if(MessagesController.instance.FindItem(temp) == null)
-                {
-                    var mess = MessagesController.instance.GetItems().ToList();
-                    if (mess.Count < 50)
+                    var access = t[0].Child("0").Value;
+                    List<AccessFlags> acs = new List<AccessFlags>();
+                    acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
+                    Message temp = new Message
                     {
-                        MessagesController.instance.SaveItem(temp, true);
-                    }
-                    else
+                        contentP = t[1].Value.ToString(),
+                        flags = fls,
+                        receiverP = t[3].Value.ToString(),
+                        senderP = t[4].Value.ToString(),
+                        timeP = t[5].Value.ToString(),
+                        access = acs,
+                        dialogName = dialogName
+                    };
+                    MessagesController.instance.CreateTable();
+                    if (MessagesController.instance.FindItem(temp) == null)
                     {
-                        MessagesController.instance.DeleteItem(mess[0].Id);
-                        MessagesController.instance.SaveItem(temp, true);
+                        var mess = MessagesController.instance.GetItems().ToList();
+                        if (mess.Count < 50)
+                        {
+                            MessagesController.instance.SaveItem(temp, true);
+                        }
+                        else
+                        {
+                            MessagesController.instance.DeleteItem(mess[0].Id);
+                            MessagesController.instance.SaveItem(temp, true);
+                        }
                     }
                 }
             }

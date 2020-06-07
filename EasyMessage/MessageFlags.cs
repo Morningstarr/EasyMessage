@@ -18,6 +18,7 @@ namespace EasyMessage
         NotEncoded = 1,
         Request = 2,
         Response = 3,
-        Denied = 4
+        Denied = 4,
+        Key = 6
     }
 }

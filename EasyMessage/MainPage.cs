@@ -291,20 +291,43 @@ namespace EasyMessage
                         {
                             d.FillFields();
                             DialogsController.instance.SaveItem(d);
+                            /*if(d.lastMessage.flags[0] == MessageFlags.Key &&
+                                d.lastMessage.senderP != AccountsController.mainAccP.emailP)
+                            {
+                                ContactsController.instance.CreateTable();
+                                //ContactsController.instance.SaveItem();
+                                //await MessagingController.instance.SendMessage()
+                            }*/
                         }
 
-                        var newDialos = oldDialogs.FindAll(x => Convert.ToInt32(x.lastMessage.flags[0]) == 3);
+                        var newDialos = oldDialogs.FindAll(x => Convert.ToInt32(x.lastMessage.flags[0]) == 6);
                         if (newDialos != null)
                         {
                             ContactsController.instance.CreateTable();
                             foreach (var d in newDialos)
                             {
+                                List<AccessFlags> acs = new List<AccessFlags>();
+                                acs.Add(AccessFlags.None);
+                                List<MessageFlags> flgs = new List<MessageFlags>();
+                                flgs.Add(MessageFlags.Key);
+
+                                Message m = new Message
+                                {
+                                    contentP = AccountsController.mainAccP.openKeyRsaP,
+                                    senderP = AccountsController.mainAccP.emailP,
+                                    receiverP = d.receiverP == AccountsController.mainAccP.emailP ? d.senderP : d.receiverP,
+                                    flags = flgs,
+                                    access = acs,
+                                    timeP = DateTime.Now.ToString()
+                                };
                                 if (d.lastMessage.receiverP != AccountsController.mainAccP.emailP)
                                 {
                                     if (ContactsController.instance.FindContact(d.lastMessage.receiverP) == null)
                                     {
+                                        await MessagingController.instance.SendMessage(m, d.dialogName, this);
                                         ContactsController.instance.SaveItem(new Contact
                                         {
+                                            contactRsaOpenKeyP = d.lastMessage.contentP,
                                             contactAddressP = d.lastMessage.receiverP,
                                             contactNameP = "user name",
                                             deletedP = false,
@@ -318,8 +341,10 @@ namespace EasyMessage
                                     {
                                         if (ContactsController.instance.FindContact(d.lastMessage.senderP) == null)
                                         {
+                                            await MessagingController.instance.SendMessage(m, d.dialogName, this);
                                             ContactsController.instance.SaveItem(new Contact
                                             {
+                                                contactRsaOpenKeyP = d.lastMessage.contentP,
                                                 contactAddressP = d.lastMessage.senderP,
                                                 contactNameP = "user name",
                                                 deletedP = false,

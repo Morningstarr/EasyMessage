@@ -20,6 +20,7 @@ using Android.Graphics.Drawables;
 using Android.Graphics;
 using Android.Text.Method;
 using System.Threading.Tasks;
+using EasyMessage.Encryption;
 
 namespace EasyMessage
 {
@@ -120,7 +121,10 @@ namespace EasyMessage
                     AccountsController.instance.GetItems();
                     if (AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text) == null)
                     {
-                        AccountsController.instance.deviceAccsP.Add(new Account { emailP = eMail.Text, passwordP = pss.Text, loginP = FirebaseController.instance.GetCurrentUser().DisplayName });
+                        var keys = CryptoProvider.GenerateRSAKeys();
+                        AccountsController.instance.deviceAccsP.Add(new Account { emailP = eMail.Text, passwordP = pss.Text, 
+                            loginP = FirebaseController.instance.GetCurrentUser().DisplayName, openKeyRsaP = keys[0],
+                        privateKeyRsaP = keys[1] });
                     }
                     var p = AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text);
                     p.isMainP = true;

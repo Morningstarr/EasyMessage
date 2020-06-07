@@ -308,6 +308,10 @@ namespace EasyMessage
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(receiverAddress, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
                 " принял Ваш запрос", flags, acess)));
+            flags = new List<MessageFlags>();
+            flags.Add(MessageFlags.Key);
+            var messages4 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
+                new Message(receiverAddress, AccountsController.mainAccP.emailP, AccountsController.mainAccP.openKeyRsaP, flags, acess)));
 
             if (messages3.Key != null)
             {

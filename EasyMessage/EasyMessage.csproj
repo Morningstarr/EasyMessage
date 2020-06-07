@@ -76,6 +76,8 @@
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="DialogActivity.cs" />
     <Compile Include="EditContactData.cs" />
+    <Compile Include="Encryption\CryptoController.cs" />
+    <Compile Include="Encryption\CryptoProvider.cs" />
     <Compile Include="Entities\MyDialog.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="SearchUser.cs" />

@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using EasyMessage.Controllers;
+using EasyMessage.Encryption;
 using EasyMessage.Entities;
 using Firebase;
 using Firebase.Auth;
@@ -102,7 +103,9 @@ namespace EasyMessage
                         {
                             FirebaseController.instance.AddContactFolder(AccountsController.mainAccP.emailP, this);
                             AccountsController.instance.CreateTable();
-                            AccountsController.instance.SaveItem(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
+                            var keys = CryptoProvider.GenerateRSAKeys();
+                            AccountsController.instance.SaveItem(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text, 
+                                openKeyRsaP  = keys[0], privateKeyRsaP = keys[1] });
                             Toast.MakeText(this, "Register success", ToastLength.Short).Show();
                             Intent intent = new Intent(this, typeof(SignUp));
                             intent.SetFlags(ActivityFlags.NewTask);
