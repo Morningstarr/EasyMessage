@@ -56,10 +56,44 @@ namespace EasyMessage.Controllers
         }
         public int SaveItem(MyDialog item, bool t)
         {
-
             return connection.Insert(item);
-
         }
+        public int UpdateItem(string dialogName)
+        {
+            dialogsList = connection.Table<MyDialog>().ToList();
+            MyDialog temp = dialogsList.Find(x => x.dialogName == dialogName);
+            if(temp != null)
+            {
+                temp.accessFlag = 1;
+                if(temp.lastMessage != null)
+                {
+                    var acs = new List<Utilities.AccessFlags>();
+                    acs.Add(Utilities.AccessFlags.Read);
+                    temp.lastMessage.access = acs;
+                }
+                return connection.Update(temp);
+            }
+            return 0;
+        }
+
+        public int UpdateItem(string dialogName, Message c)
+        {
+            dialogsList = connection.Table<MyDialog>().ToList();
+            MyDialog temp = dialogsList.Find(x => x.dialogName == dialogName);
+            if (temp != null)
+            {
+                temp.lastMessage = c;
+                temp.contentP = c.contentP;
+                temp.receiverP = c.receiverP;
+                temp.senderP = c.senderP;
+                temp.timeP = c.timeP;
+                temp.messageFlag = Convert.ToInt32(c.flags[0]);
+                temp.accessFlag = 1;
+                return connection.Update(temp);
+            }
+            return 0;
+        }
+        
         public int SaveItem(MyDialog item)
         {
             dialogsList = connection.Table<MyDialog>().ToList();

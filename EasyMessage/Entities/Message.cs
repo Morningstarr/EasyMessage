@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using EasyMessage.Utilities;
+using Newtonsoft.Json;
 using SQLite;
 
 namespace EasyMessage.Entities
@@ -20,7 +21,9 @@ namespace EasyMessage.Entities
         //public string receiver;
         //[Json ]
         [PrimaryKey, AutoIncrement, Column("_id")]
+        [JsonIgnore]
         public int Id { get; set; }
+        [JsonIgnore]
         public string dialogName { get; set; }
         public string receiverP { get; set; }
 
@@ -39,7 +42,9 @@ namespace EasyMessage.Entities
         }*/
         //public string time;
         public string timeP { get; set; }
+        [JsonIgnore]
         public int flagsP { get; set; }
+        [JsonIgnore]
         public int accessP { get; set; }
         /*public string timeP
         {

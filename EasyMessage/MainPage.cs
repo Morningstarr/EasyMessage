@@ -258,14 +258,14 @@ namespace EasyMessage
         {
             base.OnResume();
             if (DialogsController.currDialP != null)
-            {
-                MyDialog m = oldDialogs.Find(x => x.dialogName == DialogsController.currDialP.dialogName);
-                int i = oldDialogs.IndexOf(m);
-                oldDialogs[i].lastMessage = DialogsController.currDialP.lastMessage;
+            { 
+                DialogsController.instance.CreateTable();
+                oldDialogs = DialogsController.instance.GetItems().ToList();
                 adapterOld = new OldDialogItemAdapter(oldDialogs);
                 oldDialogsList.Adapter = adapterOld;
                 DialogsController.currDialP = null;
             }
+
         }
 
         private async Task<bool> fillOld()
@@ -437,7 +437,7 @@ namespace EasyMessage
                     timeP = a[5].Value.ToString()
                 };
 
-                MyDialog md = oldDialogs.Find(x => x.lastMessage.contentP == m.contentP && x.lastMessage.timeP == m.timeP);
+                MyDialog md = oldDialogs.Find(x => x.contentP == m.contentP && x.timeP == m.timeP);
                 if (md == null)
                 {
                     string sender = m.senderP.Replace(".", ",");
@@ -455,6 +455,16 @@ namespace EasyMessage
                         else
                         {
                             oldDialogs[temp].lastMessage = m;
+                            oldDialogs[temp].accessFlag = Convert.ToInt32(m.access[0]);
+                            oldDialogs[temp].contentP = m.contentP;
+                            oldDialogs[temp].messageFlag = Convert.ToInt32(m.flags[0]);
+                            oldDialogs[temp].receiverP = m.receiverP;
+                            oldDialogs[temp].senderP = m.senderP;
+                            oldDialogs[temp].timeP = m.timeP;
+
+                            DialogsController.instance.CreateTable();
+                            DialogsController.instance.UpdateItem(oldDialogs[temp].dialogName, oldDialogs[temp].lastMessage);
+
                             adapterOld = new OldDialogItemAdapter(oldDialogs, true);
                             oldDialogsList.Adapter = adapterOld;
                         }
@@ -462,6 +472,16 @@ namespace EasyMessage
                     else
                     {
                         oldDialogs[temp].lastMessage = m;
+                        oldDialogs[temp].accessFlag = Convert.ToInt32(m.access[0]);
+                        oldDialogs[temp].contentP = m.contentP;
+                        oldDialogs[temp].messageFlag = Convert.ToInt32(m.flags[0]);
+                        oldDialogs[temp].receiverP = m.receiverP;
+                        oldDialogs[temp].senderP = m.senderP;
+                        oldDialogs[temp].timeP = m.timeP;
+
+                        DialogsController.instance.CreateTable();
+                        DialogsController.instance.UpdateItem(oldDialogs[temp].dialogName, oldDialogs[temp].lastMessage);
+
                         adapterOld = new OldDialogItemAdapter(oldDialogs, true);
                         oldDialogsList.Adapter = adapterOld;
                     }

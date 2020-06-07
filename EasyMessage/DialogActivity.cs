@@ -28,13 +28,14 @@ namespace EasyMessage
     public class DialogActivity : AppCompatActivity, IValueEventListener
     {
         private List<Message> messageList;
+        private ProgressBar loadProgress;
         private RecyclerView recyclerList;
         private Button send;
         private EditText messageContent;
         private RecyclerViewAdapter adapter;
         private string dialog;
         private string receiver;
-        private Message t;
+        private Message lastMessage;
         private int flag = 0;
         ConnectivityManager connectivityManager;
         NetworkInfo networkInfo;
@@ -45,6 +46,10 @@ namespace EasyMessage
                 base.OnCreate(savedInstanceState);
                 SetContentView(Resource.Layout.dialog);
 
+                loadProgress = FindViewById<ProgressBar>(Resource.Id.loadMessProgress);
+                messageContent = FindViewById<EditText>(Resource.Id.edittext_chatbox);
+                send = FindViewById<Button>(Resource.Id.send);
+
                 connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
                 networkInfo = null;
 
@@ -54,26 +59,31 @@ namespace EasyMessage
                 SupportActionBar.SetHomeButtonEnabled(true);
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                 SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
-                SupportActionBar.Title = receiver;
+                SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
 
                 if (FirebaseController.instance.app == null)
                 {
                     FirebaseController.instance.initFireBaseAuth();
                 }
-                //var r = FirebaseDatabase.Instance.GetReference("Dialog kirill_kovrik@mail,ru+kirill,kop,work@gmail,com");
-                //.AddValueEventListener(this);
                 var layoutManager = new LinearLayoutManager(this) { Orientation = LinearLayoutManager.Vertical };
                 recyclerList = FindViewById<RecyclerView>(Resource.Id.reyclerview_message_list);
                 recyclerList.SetLayoutManager(layoutManager);
-                //recyclerList.HasFixedSize = true;
 
+                MessagingController.instance.ReturnLastMessages(dialog, this);
 
+                MessagesController.instance.CreateTable();
+                messageList = MessagesController.instance.GetItems().ToList().FindAll(x=>x.dialogName == dialog);
+
+                loadProgress.Visibility = ViewStates.Visible;
                 bool result = await fill_list();
-                if (!result)
-                {
-                    messageList = new List<Message>();
-                }
+                loadProgress.Visibility = ViewStates.Invisible;
                 adapter = new RecyclerViewAdapter(messageList);
+
+                /*DialogsController.instance.CreateTable();
+                var d = DialogsController.instance.GetItems().ToList().Find(x => x.dialogName == dialog);
+                d.lastMessage = messageList.Last();
+                DialogsController.instance.SaveItem(d);*/
+
                 recyclerList.SetAdapter(adapter);
                 recyclerList.ScrollToPosition(messageList.Count() - 1);
 
@@ -86,36 +96,35 @@ namespace EasyMessage
                     u.AddValueEventListener(this);
                 }
 
-
-                messageContent = FindViewById<EditText>(Resource.Id.edittext_chatbox);
-                send = FindViewById<Button>(Resource.Id.send);
-                List<MessageFlags> flags = new List<MessageFlags>();
-                flags.Add(MessageFlags.NotEncoded);
-
-                List<AccessFlags> acess = new List<AccessFlags>();
-                acess.Add(AccessFlags.NotRead);
-
                 send.Click += async delegate
                 {
-                    t = new Message
+                    if (messageContent.Text != "" && messageContent.Text != " ")
                     {
-                        contentP = messageContent.Text,
-                        senderP = AccountsController.mainAccP.emailP,
-                        flags = flags,
-                        access = acess,
-                        receiverP = receiver,
-                        timeP = DateTime.Now.ToString()
-                    };
-                    Task<bool> sendTask = MessagingController.instance.SendMessage(t, dialog, this);
-                    bool sent = await sendTask;
-                    if (sent)
-                    {
-                        messageContent.Text = "";
-                        recyclerList.ScrollToPosition(messageList.Count() - 1);
-                    }
-                    else
-                    {
-                        Utils.MessageBox("error", this);
+                        List<MessageFlags> flags = new List<MessageFlags>();
+                        flags.Add(MessageFlags.NotEncoded);
+
+                        List<AccessFlags> acess = new List<AccessFlags>();
+                        acess.Add(AccessFlags.NotRead);
+                        lastMessage = new Message
+                        {
+                            contentP = messageContent.Text,
+                            senderP = AccountsController.mainAccP.emailP,
+                            flags = flags,
+                            access = acess,
+                            receiverP = receiver,
+                            timeP = DateTime.Now.ToString()
+                        };
+                        Task<bool> sendTask = MessagingController.instance.SendMessage(lastMessage, dialog, this);
+                        bool sent = await sendTask;
+                        if (sent)
+                        {
+                            messageContent.Text = "";
+                            recyclerList.ScrollToPosition(messageList.Count() - 1);
+                        }
+                        else
+                        {
+                            Utils.MessageBox("error", this);
+                        }
                     }
 
                 };
@@ -134,6 +143,7 @@ namespace EasyMessage
             networkInfo = connectivityManager.ActiveNetworkInfo;
             if (networkInfo != null && networkInfo.IsConnected == true)
             {
+                loadProgress.Visibility = ViewStates.Visible;
                 Task<List<Message>> getMessagesTask = MessagingController.instance.GetAllMessages(dialog, this);
                 messageList = await getMessagesTask;
                 foreach (var mes in messageList)
@@ -143,11 +153,11 @@ namespace EasyMessage
                         mes.access[0] = AccessFlags.Read;
                     }
                 }
+                loadProgress.Visibility = ViewStates.Invisible;
                 return true;
             }
             else
             {
-                //Utils.MessageBox
                 return false;
             }
         }
@@ -157,18 +167,18 @@ namespace EasyMessage
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    if (t != null)
-                    {
-                        //DialogsController.instance.CreateTable();
-                        //DialogsController.instance.SaveItem(new MyDialog { dialogName = dialog, lastMessage = t });
-                        DialogsController.currDialP.lastMessage = t;
-                    }
                     flag = -1;
                     Finish();
                     return true;
                 default:
                     return true;
             }
+        }
+
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+            flag = -1;
         }
 
         public void OnCancelled(DatabaseError error)
@@ -178,76 +188,98 @@ namespace EasyMessage
 
         public async void OnDataChange(DataSnapshot snapshot)
         {
-            IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
-            List<DataSnapshot> t = items.ToList();
-
-            if (flag == 0)
+            try
             {
-                var a = t.Last().Children.ToEnumerable<DataSnapshot>().ToList();
-                var flag = a[2].Child("0").Value;
-                List<MessageFlags> fls = new List<MessageFlags>();
-                fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
+                IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
+                List<DataSnapshot> t = items.ToList();
 
-                var access = a[0].Child("0").Value;
-                List<AccessFlags> acs = new List<AccessFlags>();
-                acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
-
-                if (a[4].Value.ToString() != AccountsController.mainAccP.emailP && Convert.ToInt32(access.ToString()) == 2)
+                if (flag == 0)
                 {
-                    await MessagingController.instance.UpdateFlag(t.Last().Key, dialog, this);
-                }
+                    var a = t.Last().Children.ToEnumerable<DataSnapshot>().ToList();
+                    var flag = a[2].Child("0").Value;
+                    List<MessageFlags> fls = new List<MessageFlags>();
+                    fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
 
-                Message m = new Message
-                {
-                    contentP = a[1].Value.ToString(),
-                    flags = fls,
-                    receiverP = a[3].Value.ToString(),
-                    senderP = a[4].Value.ToString(),
-                    timeP = a[5].Value.ToString(),
-                    access = acs
-                };
+                    var access = a[0].Child("0").Value;
+                    List<AccessFlags> acs = new List<AccessFlags>();
+                    acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
 
-                if (messageList.Find(x => x.timeP == m.timeP && x.contentP == m.contentP) == null)
-                {
-                    if (messageList == null)
+                    if (a[4].Value.ToString() != AccountsController.mainAccP.emailP && Convert.ToInt32(access.ToString()) == 2)
                     {
-                        messageList = new List<Message>();
+                        await MessagingController.instance.UpdateFlag(t.Last().Key, dialog, this);
+                        DialogsController.instance.CreateTable();
+                        DialogsController.instance.UpdateItem(dialog);
+                        DialogsController.currDialP = new MyDialog();
                     }
-                    messageList.Add(m);
-                    DialogsController.currDialP.lastMessage = m;
-                    adapter = new RecyclerViewAdapter(messageList);
-                    recyclerList.SetAdapter(adapter);
-                    recyclerList.ScrollToPosition(messageList.Count() - 1);
+
+                    Message m = new Message
+                    {
+                        contentP = a[1].Value.ToString(),
+                        flags = fls,
+                        receiverP = a[3].Value.ToString(),
+                        senderP = a[4].Value.ToString(),
+                        timeP = a[5].Value.ToString(),
+                        access = acs
+                    };
+
+                    if (messageList.Find(x => x.timeP == m.timeP && x.contentP == m.contentP) == null)
+                    {
+                        if (messageList == null)
+                        {
+                            messageList = new List<Message>();
+                        }
+                        messageList.Add(m);
+                        DialogsController.currDialP = new MyDialog();
+                        /*DialogsController.currDialP = new MyDialog
+                        {
+                            dialogName = dialog,
+                            lastMessage = m,
+                            contentP = m.contentP,
+                            senderP = m.senderP,
+                            receiverP = m.receiverP,
+                            timeP = m.timeP,
+                            accessFlag = Convert.ToInt32(m.access[0]),
+                            messageFlag = Convert.ToInt32(m.flags[0])
+                        };*/
+
+                        adapter = new RecyclerViewAdapter(messageList);
+                        recyclerList.SetAdapter(adapter);
+                        recyclerList.ScrollToPosition(messageList.Count() - 1);
+                    }
+                }
+                else
+                {
+                    if (flag == 1)
+                    {
+                        List<DataSnapshot> results = new List<DataSnapshot>();
+                        List<DataSnapshot> temp = t.FindAll(x => x.Children.ToEnumerable<DataSnapshot>().ToList().Count > 5);
+                        foreach (var i in temp)
+                        {
+                            var a = i.Children.ToEnumerable<DataSnapshot>().ToList();
+                            if (a.Find(x => x.Key == "senderP"
+                                && x.Value.ToString() != AccountsController.mainAccP.emailP) != null &&
+                                a.Find(x => x.Key == "access" && Convert.ToInt32(x.Child("0").Value.ToString()) == 2) != null)
+                            {
+                                results.Add(i);
+                            }
+                        }
+                        foreach (var k in results)
+                        {
+                            //flag = -1;
+                            await MessagingController.instance.UpdateFlag(k.Key, dialog, this);
+                            DialogsController.instance.CreateTable();
+                            DialogsController.instance.UpdateItem(dialog);
+                            DialogsController.currDialP = new MyDialog();
+                        }
+                        flag = 0;
+                    }
                 }
             }
-            else
+            catch(Exception ex)
             {
-                if (flag == 1)
-                {
-                    List<DataSnapshot> results = new List<DataSnapshot>();
-                    List<DataSnapshot> temp = t.FindAll(x => x.Children.ToEnumerable<DataSnapshot>().ToList().Count > 5);
-                    foreach(var i in temp)
-                    {
-                        var a = i.Children.ToEnumerable<DataSnapshot>().ToList();
-                        if (a.Find(x => x.Key == "senderP"
-                            && x.Value.ToString() != AccountsController.mainAccP.emailP) != null &&
-                            a.Find(x=> x.Key == "access" && Convert.ToInt32(x.Child("0").Value.ToString()) == 2) != null)
-                        {
-                            results.Add(i);
-                        }
-                    }
-                    foreach (var k in results)
-                    {
-                        await MessagingController.instance.UpdateFlag(k.Key, dialog, this);
-                    }
-                    flag = 0;
-                }
+                Utils.MessageBox(ex.Message, this);
             }
         }
 
-        /*private void LoadNewMessages()
-        {
-            throw new NotImplementedException();
-        }*/
     }
 }

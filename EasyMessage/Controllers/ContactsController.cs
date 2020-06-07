@@ -77,5 +77,12 @@ namespace EasyMessage.Controllers
                 return connection.Insert(item);
             }
         }
+
+        public string ReturnContactName(string receiver)
+        {
+            CreateTable();
+            contactList = connection.Table<Contact>().ToList();
+            return contactList.Find(x => x.contactAddressP == receiver).contactNameP;
+        }
     }
 }

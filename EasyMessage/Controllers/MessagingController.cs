@@ -25,7 +25,7 @@ namespace EasyMessage.Controllers
         //private FirebaseDatabase database;
         //public 
 
-        public async Task<List<Message>> ReturnLastMessages(string dialogName, Activity context)
+        public void ReturnLastMessages(string dialogName, Activity context)
         {
             List<Message> results = new List<Message>();
             if (FirebaseController.instance.app == null)
@@ -34,22 +34,21 @@ namespace EasyMessage.Controllers
             }
             try
             {
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
-                var p = await client.Child(dialogName).OnceAsync<Message>();
-                var enumerator = p.GetEnumerator();
-                enumerator.MoveNext();
-                while (enumerator.Current != null)
+                var referenceChats = FirebaseDatabase.Instance.GetReference("chats");
+                Query query = referenceChats.Child(dialogName);
+                var userListener = new UValueEventListener((sender, e) =>
                 {
-                    Message temp = enumerator.Current.Object;
-                    results.Add(temp);
-                    enumerator.MoveNext();
-                }
-                return results;
+                    bool result = (e as UEventArgs).value;
+                    if (result)
+                    {
+
+                    }
+                }, context, dialogName);
+                query.AddChildEventListener(userListener);
             }
             catch (Exception ex)
             {
                 Utils.MessageBox(ex.Message, context);
-                return results;
             }
         }
 

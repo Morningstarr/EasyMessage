@@ -4,19 +4,25 @@ using System.Linq;
 using EasyMessage.Entities;
 using Java.Util;
 using System.Collections.Generic;
+using Android.App;
+using EasyMessage.Utilities;
+using EasyMessage.Adapters;
 
 namespace EasyMessage
 {
-    public  class UValueEventListener : Java.Lang.Object, IValueEventListener
+    public  class UValueEventListener : Java.Lang.Object, IChildEventListener
     {
         EventHandler OnChange;
-        string Username;
+        string dialogName;
+        Activity context;
         List<string> names = new List<string>();
 
-        public UValueEventListener(EventHandler OnChange, string Username)
+        public UValueEventListener(EventHandler OnChange, Activity _context, string _dialogName)
         {
             this.OnChange = OnChange;
-            this.Username = Username;
+            //this.Username = Username;
+            context = _context;
+            dialogName = _dialogName;
         }
 
         public void OnCancelled(DatabaseError error)
@@ -24,40 +30,73 @@ namespace EasyMessage
             //
         }
 
+        public void OnChildAdded(DataSnapshot snapshot, string previousChildName)
+        {
+            IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
+            List<DataSnapshot> t = items.ToList();
+            if(t.Count > 5)
+            {
+                var flag = t[2].Child("0").Value;
+                List<MessageFlags> fls = new List<MessageFlags>();
+                fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
+
+                var access = t[0].Child("0").Value;
+                List<AccessFlags> acs = new List<AccessFlags>();
+                acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
+                Message temp = new Message
+                {
+                    contentP = t[1].Value.ToString(),
+                    flags = fls,
+                    receiverP = t[3].Value.ToString(),
+                    senderP = t[4].Value.ToString(),
+                    timeP = t[5].Value.ToString(),
+                    access = acs,
+                    dialogName = dialogName
+                };
+                MessagesController.instance.CreateTable();
+                if(MessagesController.instance.FindItem(temp) == null)
+                {
+                    var mess = MessagesController.instance.GetItems().ToList();
+                    if (mess.Count < 50)
+                    {
+                        MessagesController.instance.SaveItem(temp, true);
+                    }
+                    else
+                    {
+                        MessagesController.instance.DeleteItem(mess[0].Id);
+                        MessagesController.instance.SaveItem(temp, true);
+                    }
+                }
+            }
+        }
+
+        public void OnChildChanged(DataSnapshot snapshot, string previousChildName)
+        {
+            //Utils.MessageBox("childChanged", context);
+            //throw new NotImplementedException();
+        }
+
+        public void OnChildMoved(DataSnapshot snapshot, string previousChildName)
+        {
+            //.MessageBox("childMoved", context);
+            //throw new NotImplementedException();
+        }
+
+        public void OnChildRemoved(DataSnapshot snapshot)
+        {
+            //Utils.MessageBox("childRemoved", context);
+            //throw new NotImplementedException();
+        }
+
         public void OnDataChange(DataSnapshot snapshot)
         {
-            string u = Username.Replace(".", ",");
             if (OnChange != null)
             {
                 IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
                 List<DataSnapshot> t = items.ToList();
 
-                foreach (var item in t)
-                {
-                    if (item.Key.Contains(u) && item.ChildrenCount == 1)
-                    {
-                        //IEnumerable<DataSnapshot> items2 = item.Children.ToEnumerable<DataSnapshot>();
-                        //List<DataSnapshot> t2 = items2.ToList();
-
-                        if (item.Children.ToEnumerable<DataSnapshot>().ToList()[0].Child("contentP").GetValue(true).ToString().Contains("хочет добавить вас"))
-                        {
-                            IAsyncResult a = OnChange.BeginInvoke(this, new UEventArgs(true, item.Key), new AsyncCallback(AsyncCompleted), item.Key);
-                            
-                            //OnChange.EndInvoke(a);
-                        }
-                    }
-                }
             }
 
-        }
-
-        private void AsyncCompleted(IAsyncResult ar)
-        {
-            if(Utils.dialogs == null)
-            {
-                Utils.dialogs = new List<string>();
-            }
-            Utils.dialogs.Add((string)ar.AsyncState);
         }
 
     }
