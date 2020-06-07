@@ -88,7 +88,7 @@ namespace EasyMessage.Controllers
                 temp.senderP = c.senderP;
                 temp.timeP = c.timeP;
                 temp.messageFlag = Convert.ToInt32(c.flags[0]);
-                temp.accessFlag = 1;
+                temp.accessFlag = Convert.ToInt32(c.access[0]);
                 return connection.Update(temp);
             }
             return 0;
@@ -97,22 +97,15 @@ namespace EasyMessage.Controllers
         public int SaveItem(MyDialog item)
         {
             dialogsList = connection.Table<MyDialog>().ToList();
-            if (item.Id != 0)
+            if (dialogsList.Find(x => x.dialogName == item.dialogName) == null)
             {
-                connection.Update(item);
-                return item.Id;
+                return connection.Insert(item);
             }
             else
             {
-                if (dialogsList.Find(x => x.dialogName == item.dialogName) == null)
-                {
-                    return connection.Insert(item);
-                }
-                else
-                {
-                    return 0;
-                }
+                return UpdateItem(item.dialogName, item.lastMessage);
             }
+
         }
     }
 }

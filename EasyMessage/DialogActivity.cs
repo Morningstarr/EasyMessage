@@ -79,11 +79,6 @@ namespace EasyMessage
                 loadProgress.Visibility = ViewStates.Invisible;
                 adapter = new RecyclerViewAdapter(messageList);
 
-                /*DialogsController.instance.CreateTable();
-                var d = DialogsController.instance.GetItems().ToList().Find(x => x.dialogName == dialog);
-                d.lastMessage = messageList.Last();
-                DialogsController.instance.SaveItem(d);*/
-
                 recyclerList.SetAdapter(adapter);
                 recyclerList.ScrollToPosition(messageList.Count() - 1);
 

@@ -225,10 +225,14 @@ namespace EasyMessage
                 await fillOld();
                 if (oldDialogs != null)
                 {
+                    /**/
+                    oldDialogs = oldDialogs.OrderByDescending(x => x.accessFlag).ToList().OrderByDescending(x=>Convert.ToDateTime(x.timeP)).ToList();
                     adapterOld = new OldDialogItemAdapter(oldDialogs);
                 }
                 else
                 {
+                    /**/
+                    oldDialogs = oldDialogs.OrderByDescending(x => x.accessFlag).ToList().OrderByDescending(x => Convert.ToDateTime(x.timeP)).ToList();
                     oldDialogs = new List<MyDialog>();
                     adapterOld = new OldDialogItemAdapter(oldDialogs);
                 }
@@ -261,6 +265,8 @@ namespace EasyMessage
             { 
                 DialogsController.instance.CreateTable();
                 oldDialogs = DialogsController.instance.GetItems().ToList();
+                /**/
+                oldDialogs = oldDialogs.OrderByDescending(x => x.accessFlag).ToList().OrderByDescending(x => Convert.ToDateTime(x.timeP)).ToList();
                 adapterOld = new OldDialogItemAdapter(oldDialogs);
                 oldDialogsList.Adapter = adapterOld;
                 DialogsController.currDialP = null;
@@ -408,7 +414,7 @@ namespace EasyMessage
 
         public void OnCancelled(DatabaseError error)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void OnDataChange(DataSnapshot snapshot)
@@ -465,6 +471,8 @@ namespace EasyMessage
                             DialogsController.instance.CreateTable();
                             DialogsController.instance.UpdateItem(oldDialogs[temp].dialogName, oldDialogs[temp].lastMessage);
 
+                            /**/
+                            oldDialogs = oldDialogs.OrderByDescending(x => x.accessFlag).ToList().OrderByDescending(x => Convert.ToDateTime(x.timeP)).ToList();
                             adapterOld = new OldDialogItemAdapter(oldDialogs, true);
                             oldDialogsList.Adapter = adapterOld;
                         }
@@ -482,6 +490,8 @@ namespace EasyMessage
                         DialogsController.instance.CreateTable();
                         DialogsController.instance.UpdateItem(oldDialogs[temp].dialogName, oldDialogs[temp].lastMessage);
 
+                        /**/
+                        oldDialogs = oldDialogs.OrderByDescending(x => x.accessFlag).ToList().OrderByDescending(x => Convert.ToDateTime(x.timeP)).ToList();
                         adapterOld = new OldDialogItemAdapter(oldDialogs, true);
                         oldDialogsList.Adapter = adapterOld;
                     }

@@ -59,6 +59,7 @@ namespace EasyMessage.Adapters
 			if (_items[position].accessFlag != 0 && _items[position].accessFlag == 2 && _items[position].senderP != AccountsController.mainAccP.emailP)
 			{
 				view.SetBackgroundColor(Color.ParseColor("#0cd8f4")); 
+				//view.
 			}
 
 			var contact = view.FindViewById<TextView>(Resource.Id.collocutor);

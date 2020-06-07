@@ -50,7 +50,6 @@ namespace EasyMessage.Entities
         public MyDialog FillFields(/*string _dialogName*/)
         {
             accessFlag = Convert.ToInt32(lastMessage.access[0]);
-            //dialogName = _dialogName;
             lastMessage = lastMessage;
             senderP = lastMessage.senderP;
             receiverP = lastMessage.receiverP;
