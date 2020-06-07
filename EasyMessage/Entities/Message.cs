@@ -9,6 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using EasyMessage.Utilities;
+using Newtonsoft.Json;
+using SQLite;
 
 namespace EasyMessage.Entities
 {
@@ -17,6 +20,11 @@ namespace EasyMessage.Entities
     {
         //public string receiver;
         //[Json ]
+        [PrimaryKey, AutoIncrement, Column("_id")]
+        [JsonIgnore]
+        public int Id { get; set; }
+        [JsonIgnore]
+        public string dialogName { get; set; }
         public string receiverP { get; set; }
 
         //public string sender;
@@ -34,22 +42,29 @@ namespace EasyMessage.Entities
         }*/
         //public string time;
         public string timeP { get; set; }
+        [JsonIgnore]
+        public int flagsP { get; set; }
+        [JsonIgnore]
+        public int accessP { get; set; }
         /*public string timeP
         {
             get { return time; }
             set { time = value; }
         }*/
-
+        [Ignore]
         public List<MessageFlags> flags { get; set; }
+        [Ignore]
+        public List<AccessFlags> access { get; set; }
 
         public Message() { }
-        public Message(string rec, string send, string cont, List<MessageFlags> fl)
+        public Message(string rec, string send, string cont, List<MessageFlags> fl, List<AccessFlags> ac)
         {
             receiverP = rec;
             senderP = send;
             contentP = cont;
-            timeP = DateTime.Now.ToString("yyyy-dd-mm HH:mm:ss");
+            timeP = DateTime.Now.ToString();
             flags = fl;
+            access = ac;
         }
 
         public static string convertToJsonString(Message s)

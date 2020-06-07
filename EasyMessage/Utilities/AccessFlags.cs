@@ -10,14 +10,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace EasyMessage
+namespace EasyMessage.Utilities
 {
-    public enum MessageFlags
+    public enum AccessFlags
     {
-        Encoded = 5,
-        NotEncoded = 1,
-        Request = 2,
-        Response = 3,
-        Denied = 4
+        None = 0,
+        Read = 1,
+        NotRead = 2
     }
 }

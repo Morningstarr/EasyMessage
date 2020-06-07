@@ -9,6 +9,7 @@ using Android.App;
 using Android.Gms.Tasks;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
+using EasyMessage.Utilities;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -45,7 +46,7 @@ namespace EasyMessage
 
             auth = FirebaseAuth.GetInstance(app);
 
-            if(auth == null)
+            if (auth == null)
             {
                 throw new Exception("Authentication Error!");
             }
@@ -76,6 +77,8 @@ namespace EasyMessage
             string dialogName = "Dialog " + userlogin + "+" + mylogin;
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Request);
+            List<AccessFlags> acess = new List<AccessFlags>();
+            acess.Add(AccessFlags.None);
             if (app == null)
             {
                 initFireBaseAuth();
@@ -86,7 +89,7 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(contactAddressP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP + 
-                " хочет добавить вас в список контактов", flags)));
+                " хочет добавить вас в список контактов", flags, acess)));
 
             /*string json = "{'JSON': { \"" + dialogName + "\" : { \"contentP\" : \"Пользователь " + AccountsController.mainAccP.emailP + " " +
                 "хочет добавить вас в список контактов\",  \"receiverP\" : \"" + contactAddressP +"\", \"senderP\" : \"" + 
@@ -225,7 +228,6 @@ namespace EasyMessage
             }
         }
 
-
         public async void AddContact(string newContact, string accountName, int id)
         {
             if (app == null)
@@ -301,9 +303,11 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Response);
+            List<AccessFlags> acess = new List<AccessFlags>();
+            acess.Add(AccessFlags.None);
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(receiverAddress, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
-                " принял Ваш запрос", flags)));
+                " принял Ваш запрос", flags, acess)));
 
             if (messages3.Key != null)
             {
@@ -325,9 +329,11 @@ namespace EasyMessage
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Denied);
+            List<AccessFlags> acess = new List<AccessFlags>();
+            acess.Add(AccessFlags.None);
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(senderP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
-                " отклонил Ваш запрос", flags)));
+                " отклонил Ваш запрос", flags, acess)));
 
             if (messages3.Key != null)
             {
@@ -388,6 +394,44 @@ namespace EasyMessage
             }
         }
 
+        public async Task<List<MyDialog>> FindOldDialogs(string userMail, Activity context)
+        {
+            try
+            {
+                List<MyDialog> dict = new List<MyDialog>();
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
+
+                var p = await client.Child("chats").OnceAsync<object>();
+                var d = p.GetEnumerator();
+                d.MoveNext();
+
+                string userlogin = userMail.Replace(".", ",");
+                while (d.Current != null)
+                {
+                    if (d.Current.Key.Contains(userlogin))
+                    {
+                        string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().LastIndexOf("{"));
+                        var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
+                        if (t.flags[0] != MessageFlags.Denied && t.flags[0] != MessageFlags.Request)
+                        {
+                            dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+                        }
+                    }
+                    d.MoveNext();
+                }
+                return dict;
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox("Произошла ошибка! Повторите запрос позже.", context);
+                return null;
+            }
+        }
+
         public async Task<List<MyDialog>> FindDialogs(string userMail, Activity context)
         {
             #region userListener
@@ -416,25 +460,45 @@ namespace EasyMessage
             #endregion
             try
             {
+                if(app == null)
+                {
+                    initFireBaseAuth();
+                }
                 List<MyDialog> dict = new List<MyDialog>();
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
-
-                var p = await client.Child("chats").OnceAsync<object>();
-                var d = p.GetEnumerator();
-                d.MoveNext();
-
-                string userlogin = userMail.Replace(".", ",");
-                while (d.Current != null)
+                IReadOnlyCollection<FirebaseObject<object>> p = null;
+                try
                 {
-                    if (d.Current.Key.Contains(userlogin))
-                    {
-                        string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
-                        var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
-                        dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
-                    }
-                    d.MoveNext();
+                    p = await client.Child("chats").OnceAsync<object>();
                 }
-                return dict;
+                catch (Exception exx)
+                {
+                    Utils.MessageBox(exx.Message, context);
+                    return null;
+                }
+                if (p != null)
+                {
+                    var d = p.GetEnumerator();
+                    d.MoveNext();
+
+                    string userlogin = userMail.Replace(".", ",");
+                    while (d.Current != null)
+                    {
+                        if (d.Current.Key.Contains(userlogin))
+                        {
+                            string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
+                            var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
+                            dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+
+                        }
+                        d.MoveNext();
+                    }
+                    return dict;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch(Newtonsoft.Json.JsonReaderException exc)
             {
@@ -442,7 +506,7 @@ namespace EasyMessage
             }
             catch (Exception ex)
             {
-                Utils.MessageBox(ex.Message, context);
+                Utils.MessageBox("Произошла ошибка! Повторите запрос позже.", context);
                 return null;
             }
         }

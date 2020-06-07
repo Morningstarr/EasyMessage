@@ -66,14 +66,20 @@
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Adapters\OldDialogItemAdapter.cs" />
+    <Compile Include="Adapters\RecyclerViewAdapter.cs" />
     <Compile Include="ContactDetails.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
+    <Compile Include="Controllers\DialogsController.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
+    <Compile Include="DialogActivity.cs" />
     <Compile Include="EditContactData.cs" />
     <Compile Include="Entities\MyDialog.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="SearchUser.cs" />
+    <Compile Include="Utilities\AccessFlags.cs" />
     <Compile Include="Utilities\UEventArgs.cs" />
     <Compile Include="Utilities\UValueEventListener.cs" />
     <Compile Include="EditProfileData.cs" />
@@ -139,6 +145,9 @@
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.7.335</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Constraint.Layout">
+      <Version>1.1.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.Core.Utils" Version="28.0.0.3" />
@@ -265,6 +274,33 @@
     <AndroidResource Include="Resources\layout\edit_contact_data.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\rounded_rectangle_blue.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\sent_message.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\received_message.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\rounded_rectange_white.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Menu\main_page_menu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

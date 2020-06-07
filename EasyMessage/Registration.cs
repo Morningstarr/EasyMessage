@@ -12,6 +12,8 @@ using Android.Views;
 using Android.Widget;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
+using Firebase;
+using Firebase.Auth;
 
 namespace EasyMessage
 {
@@ -66,14 +68,12 @@ namespace EasyMessage
         private void sign_in()
         {
             Intent intent = new Intent(this, typeof(SignUp));
-            //intent.SetFlags(ActivityFlags.NewTask);
             StartActivity(intent);
-            //Finish();
         }
 
         private void choose_avatar()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private async void confirm_Click()
@@ -101,7 +101,6 @@ namespace EasyMessage
                         if (s != string.Empty)
                         {
                             FirebaseController.instance.AddContactFolder(AccountsController.mainAccP.emailP, this);
-                            //AccountsController.instance.deviceAccsP.Add(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
                             AccountsController.instance.CreateTable();
                             AccountsController.instance.SaveItem(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text });
                             Toast.MakeText(this, "Register success", ToastLength.Short).Show();
@@ -109,6 +108,10 @@ namespace EasyMessage
                             intent.SetFlags(ActivityFlags.NewTask);
                             StartActivity(intent);
                             Finish();
+                        }
+                        else
+                        {
+                            throw new Exception("Ошибка регистрации, проверьте подключение к интернету!");
                         }
                     }
                     else
@@ -121,13 +124,22 @@ namespace EasyMessage
                     throw new Exception("Длина пароля должна быть больше 8 символов!");
                 }
             }
-            catch(Exception ex)
+            catch (FirebaseAuthUserCollisionException)
+            {
+                Utils.MessageBox("Пользователь с таким электронным адресом уже зарегистрирован!", this);
+            }
+            catch (FirebaseException exc)
+            {
+                Utils.MessageBox("Ошибка, проверьте подключение к интернету!", this);
+            }
+            catch (Exception ex)
             {
                 Utils.MessageBox(ex.Message, this);
                 pb.Visibility = ViewStates.Invisible;
                 edit_controls(true);
             }
             edit_controls(true);
+            pb.Visibility = ViewStates.Invisible;
         }
 
         public void edit_controls(bool c)
