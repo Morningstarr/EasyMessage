@@ -95,30 +95,40 @@ namespace EasyMessage
                 {
                     if (messageContent.Text != "" && messageContent.Text != " ")
                     {
-                        List<MessageFlags> flags = new List<MessageFlags>();
-                        flags.Add(MessageFlags.NotEncoded);
+                        networkInfo = connectivityManager.ActiveNetworkInfo;
+                        if (networkInfo != null && networkInfo.IsConnected == true)
+                        {
+                            loadProgress.Visibility = ViewStates.Visible;
+                            List<MessageFlags> flags = new List<MessageFlags>();
+                            flags.Add(MessageFlags.NotEncoded);
 
-                        List<AccessFlags> acess = new List<AccessFlags>();
-                        acess.Add(AccessFlags.NotRead);
-                        lastMessage = new Message
-                        {
-                            contentP = messageContent.Text,
-                            senderP = AccountsController.mainAccP.emailP,
-                            flags = flags,
-                            access = acess,
-                            receiverP = receiver,
-                            timeP = DateTime.Now.ToString()
-                        };
-                        Task<bool> sendTask = MessagingController.instance.SendMessage(lastMessage, dialog, this);
-                        bool sent = await sendTask;
-                        if (sent)
-                        {
-                            messageContent.Text = "";
-                            recyclerList.ScrollToPosition(messageList.Count() - 1);
+                            List<AccessFlags> acess = new List<AccessFlags>();
+                            acess.Add(AccessFlags.NotRead);
+                            lastMessage = new Message
+                            {
+                                contentP = messageContent.Text,
+                                senderP = AccountsController.mainAccP.emailP,
+                                flags = flags,
+                                access = acess,
+                                receiverP = receiver,
+                                timeP = DateTime.Now.ToString()
+                            };
+                            Task<bool> sendTask = MessagingController.instance.SendMessage(lastMessage, dialog, this);
+                            bool sent = await sendTask;
+                            if (sent)
+                            {
+                                messageContent.Text = "";
+                                recyclerList.ScrollToPosition(messageList.Count() - 1);
+                            }
+                            else
+                            {
+                                Utils.MessageBox("error", this);
+                            }
+                            loadProgress.Visibility = ViewStates.Invisible;
                         }
                         else
                         {
-                            Utils.MessageBox("error", this);
+                            Utils.MessageBox("Ошибка! Проверьте интернет-соединение.", this);
                         }
                     }
 
