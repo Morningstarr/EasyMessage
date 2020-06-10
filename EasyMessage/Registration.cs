@@ -63,7 +63,6 @@ namespace EasyMessage
             {
                 Utils.passHide(chb2, repass);
             };
-            // Create your application here
         }
 
         private void sign_in()
@@ -74,7 +73,7 @@ namespace EasyMessage
 
         private void choose_avatar()
         {
-            //throw new NotImplementedException();
+
         }
 
         private async void confirm_Click()
@@ -101,9 +100,9 @@ namespace EasyMessage
                         string s = await FirebaseController.instance.Register(email.Text, password.Text, login.Text);
                         if (s != string.Empty)
                         {
-                            FirebaseController.instance.AddContactFolder(AccountsController.mainAccP.emailP, this);
-                            AccountsController.instance.CreateTable();
                             var keys = CryptoProvider.GenerateRSAKeys();
+                            FirebaseController.instance.AddContactFolder(email.Text, this, keys[0], keys[1]);
+                            AccountsController.instance.CreateTable();
                             AccountsController.instance.SaveItem(new Account { emailP = email.Text, loginP = login.Text, passwordP = password.Text, 
                                 openKeyRsaP  = keys[0], privateKeyRsaP = keys[1] });
                             Toast.MakeText(this, "Register success", ToastLength.Short).Show();

@@ -46,11 +46,10 @@ namespace EasyMessage
             {
                 Utils.MessageBox(task.Exception.Message, this);
                 Toast.MakeText(this, "Failed", ToastLength.Short).Show();
-                //Finish();
             }
         }
 
-        protected override async void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.sign_up);
@@ -80,12 +79,7 @@ namespace EasyMessage
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
-
-            
-            //FirebaseController.instance.AddContact("kirill.kop.work@gmail.com", "kirill_kovrik@mail.ru");
         }
-
-        
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
@@ -119,17 +113,28 @@ namespace EasyMessage
                     Intent intent = new Intent(this, typeof(MainPage));
                     AccountsController.instance.CreateTable();
                     AccountsController.instance.GetItems();
+                    Account newAcc = null;
+                    var keys = await FirebaseController.instance.GetKeys(eMail.Text, this);
+                    var items = AccountsController.instance.GetItems();
                     if (AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text) == null)
                     {
-                        var keys = CryptoProvider.GenerateRSAKeys();
-                        AccountsController.instance.deviceAccsP.Add(new Account { emailP = eMail.Text, passwordP = pss.Text, 
-                            loginP = FirebaseController.instance.GetCurrentUser().DisplayName, openKeyRsaP = keys[0],
-                        privateKeyRsaP = keys[1] });
+                        newAcc = new Account
+                        {
+                            emailP = eMail.Text,
+                            passwordP = pss.Text,
+                            loginP = FirebaseController.instance.GetCurrentUser().DisplayName,
+                            openKeyRsaP = keys[0],
+                            privateKeyRsaP = keys[1]
+                        };
+                        AccountsController.instance.deviceAccsP.Add(newAcc);
                     }
-                    var p = AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text);
-                    p.isMainP = true;
-                    AccountsController.instance.SaveItem(p);
-                    AccountsController.mainAccP = p;
+                    if (newAcc == null)
+                    {
+                        newAcc = AccountsController.instance.deviceAccsP.Find(x => x.emailP == eMail.Text);
+                    }
+                    newAcc.isMainP = true;
+                    AccountsController.instance.SaveItem(newAcc);
+                    AccountsController.mainAccP = newAcc;
                     Task<List<Contact>> contactsTask = FirebaseController.instance.GetAllContacts(AccountsController.mainAccP.emailP, this);
                     List<Contact> contacts = await contactsTask;
                     ContactsController.instance.CreateTable();

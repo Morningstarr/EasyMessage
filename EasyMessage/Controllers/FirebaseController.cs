@@ -98,7 +98,40 @@ namespace EasyMessage
             return dialogName;
         }
 
-        public async void AddContactFolder(string accountName, Activity context)
+        public async Task<List<string>> GetKeys(string userName, Activity context)
+        {
+            List<string> keys = new List<string>();
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string s = userName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var c = await client.Child(s).OnceAsync<Contact>();
+                var enumerator = c.GetEnumerator();
+                enumerator.MoveNext();
+                if (enumerator.Current != null)
+                {
+                    Contact temp = enumerator.Current.Object;
+                    keys.Add(temp.contactRsaOpenKeyP);
+                    keys.Add(temp.contactAddressP);
+                }
+                else
+                {
+                    throw new Exception("Ошибка получения данных");
+                }
+                return keys;
+            }
+            catch(Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return keys;
+            }
+        }
+
+        public async void AddContactFolder(string accountName, Activity context, string open, string priv)
         {
             try
             {
@@ -111,7 +144,9 @@ namespace EasyMessage
                 string s = accountName.Replace(".", ",");
                 userNode.Child(s);
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
-                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 0, contactAddressP = "initialContact", contactNameP = "initialContact" }));
+                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 0, 
+                    contactAddressP = priv, contactNameP = "initialContact", contactRsaOpenKeyP =  open
+                }));
             }
             catch(Exception ex)
             {

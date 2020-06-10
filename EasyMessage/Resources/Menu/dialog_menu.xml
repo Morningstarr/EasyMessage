@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:easymessage="http://schemas.android.com/apk/res-auto"
+      tools:Context=".EditProfileData">
+  <item android:id="@+id/encrypt"
+        android:checkable="true"
+        android:checked="false"
+        easymessage:showAsAction="never"
+        android:title="Encrypt messages">
+
+  </item>
+</menu>

@@ -14,6 +14,7 @@ using Firebase.Database;
 using Newtonsoft.Json;
 using EasyMessage.Entities;
 using Message = EasyMessage.Entities.Message;
+using EasyMessage.Encryption;
 //using FirebaseQuery = Firebase.Database.Query;
 
 namespace EasyMessage.Controllers
@@ -159,7 +160,23 @@ namespace EasyMessage.Controllers
                     Message temp = enumerator.Current.Object;
                     if (temp.flags[0] != MessageFlags.Key)
                     {
-                        messageList.Add(temp);
+                        if (temp.flags[0] != MessageFlags.Encoded)
+                        {
+                            messageList.Add(temp);
+                        }
+                        else
+                        {
+                            if (temp.senderP != AccountsController.mainAccP.emailP)
+                            {
+                                CryptoProvider c = new CryptoProvider();
+                                temp.contentP = c.Decrypt(temp.contentP, AccountsController.mainAccP.privateKeyRsaP);
+                                messageList.Add(temp);
+                            }
+                            else
+                            {
+                                messageList.Add(temp);
+                            }
+                        }
                     }
                     enumerator.MoveNext();
                 }

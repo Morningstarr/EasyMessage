@@ -27,23 +27,80 @@ namespace EasyMessage.Encryption
 
         public byte[] initKey_p { get; set; }
 
-        public string Encrypt(string dat, string userKey)
+        public static void Encrupt(string dat, string userKey, string k, CryptoProvider cc)
         {
+            TripleDESCryptoServiceProvider tDes = new TripleDESCryptoServiceProvider();
             byte[] data;
             byte[] encryptedKey;
 
-            try
-            {
-                CryptoController.rsa = new RSACryptoServiceProvider();
-                CryptoController.rsa.FromXmlString(userKey);
-                encryptedKey = RSAEncrypt(tDes.Key, CryptoController.rsa.ExportParameters(false), false);
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message);
-                return "";
-            }
+            var crypto = new RSACryptoServiceProvider();
+            crypto.FromXmlString(userKey);
+            encryptedKey = crypto.Encrypt(tDes.Key, false);  
 
+            byte[] LenK = new byte[4];
+            byte[] LenIV = new byte[4];
+
+            int lKey = encryptedKey.Length;
+            LenK = BitConverter.GetBytes(lKey);
+            int lIV = tDes.IV.Length;
+            LenIV = BitConverter.GetBytes(lIV);
+            data = cc.TextToMemory(dat, tDes.Key, tDes.IV);
+
+            byte[] alld = new byte[8 + encryptedKey.Length + tDes.IV.Length + data.Length];
+            Array.Copy(LenK, 0, alld, 0, LenK.Length);
+            Array.Copy(LenIV, 0, alld, LenK.Length, LenIV.Length);
+            Array.Copy(encryptedKey, 0, alld, LenK.Length + LenIV.Length, encryptedKey.Length);
+            Array.Copy(tDes.IV, 0, alld, LenK.Length + LenIV.Length + encryptedKey.Length, tDes.IV.Length);
+            Array.Copy(data, 0, alld, LenK.Length + LenIV.Length + encryptedKey.Length + tDes.IV.Length, data.Length);
+
+            string s = Convert.ToBase64String(alld);
+
+            byte[] initdata = Convert.FromBase64String(s);
+
+            byte[] key;
+            byte[] keylenb = new byte[4];
+            int keylen;
+            int vectlen;
+            byte[] initvec;
+            byte[] vectlenb = new byte[4];
+            byte[] dt;
+
+            MemoryStream ms = new MemoryStream(initdata);
+
+            ms.Read(keylenb, 0, 4);
+            keylen = BitConverter.ToInt32(keylenb, 0);
+            ms.Read(vectlenb, 0, 4);
+            vectlen = BitConverter.ToInt32(vectlenb, 0);
+            key = new byte[keylen];
+            ms.Read(key, 0, keylen);
+            initvec = new byte[vectlen];
+            ms.Read(initvec, 0, vectlen);
+            data = new byte[ms.Length - (8 + keylen + vectlen)];
+            ms.Read(data, 0, (int)ms.Length - (8 + keylen + vectlen));
+
+            byte[] decryptedKey;
+
+            var decrypt = new RSACryptoServiceProvider();
+            decrypt.FromXmlString(k);
+            //decryptedKey = RSADecrypt(key, CryptoController.rsa.ExportParameters(true), false);
+            decryptedKey = decrypt.Decrypt(key, false);
+           
+            string initText_p = cc.TextFromMemory(data, decryptedKey, initvec);
+            //return initText_p;c
+        }
+
+        public string Encrypt(string dat, string userKey)
+        {
+            //UnicodeEncoding ByteConverter = new UnicodeEncoding();
+
+            byte[] data;
+            byte[] encryptedKey;
+
+
+            var crypto = new RSACryptoServiceProvider();
+            crypto.FromXmlString(userKey);
+            encryptedKey = crypto.Encrypt(tDes.Key, false);
+            
             byte[] LenK = new byte[4];
             byte[] LenIV = new byte[4];
 
@@ -61,9 +118,9 @@ namespace EasyMessage.Encryption
             Array.Copy(data, 0, alld, LenK.Length + LenIV.Length + encryptedKey.Length + tDes.IV.Length, data.Length);
 
 
-            finalText_p = Convert.ToBase64String(alld);
+            return Convert.ToBase64String(alld)/* ByteConverter.GetString(alld)*/;
 
-            return finalText_p;
+             //finalText_p;
         }
 
         private byte[] TextToMemory(string Data, byte[] Key, byte[] IV)
@@ -95,23 +152,11 @@ namespace EasyMessage.Encryption
             }
         }
 
-        public string Decrypt(string dat)
+        public string Decrypt(string dat, string k)
         {
-            try
-            {
-                if (CryptoController.rsa == null)
-                {
-                    CryptoController.rsa = new RSACryptoServiceProvider();
-                }
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message);
-                return "";
-            }
-            //CryptoController.rsa.FromXmlString(CryptoController.currentAcc.privateKey_p); приватный ключ текущего аккаунта
+            //UnicodeEncoding ByteConverter = new UnicodeEncoding();
 
-            byte[] initdata = Convert.FromBase64String(dat);
+            byte[] initdata = Convert.FromBase64String(dat) /*ByteConverter.GetBytes(dat)*/;
 
             byte[] key;
             byte[] keylenb = new byte[4];
@@ -138,7 +183,10 @@ namespace EasyMessage.Encryption
 
             try
             {
-                decryptedKey = RSADecrypt(key, CryptoController.rsa.ExportParameters(true), false);
+                var decrypt = new RSACryptoServiceProvider();
+                decrypt.FromXmlString(k);
+                //decryptedKey = RSADecrypt(key, CryptoController.rsa.ExportParameters(true), false);
+                decryptedKey = decrypt.Decrypt(key, false);
             }
             catch (Exception exc)
             {
@@ -166,20 +214,20 @@ namespace EasyMessage.Encryption
 
                 return Encoding.UTF8.GetString(fromEncrypt);
             }
-            catch (CryptographicException)
+            catch (CryptographicException ex)
             {
-                //MessageBox.Show("Error!");
+                //Utils.MessageBox("E);
                 return null;
             }
         }
 
-        public static byte[] RSAEncrypt(byte[] DataToEncrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
+        public static byte[] RSAEncrypt(byte[] DataToEncrypt/*, RSAParameters RSAKeyInfo, bool DoOAEPPadding*/)
         {
             try
             {
                 byte[] encryptedData;
-                CryptoController.rsa.ImportParameters(RSAKeyInfo);
-                encryptedData = CryptoController.rsa.Encrypt(DataToEncrypt, DoOAEPPadding);
+                //CryptoController.rsa.ImportParameters(RSAKeyInfo);
+                encryptedData = CryptoController.rsa.Encrypt(DataToEncrypt, false);
                 return encryptedData;
             }
             catch (CryptographicException)
@@ -206,6 +254,23 @@ namespace EasyMessage.Encryption
             }
         }
 
+        public static byte[] RSADecrypt(byte[] DataToDecrypt, string key)
+        {
+            try
+            {
+                byte[] decryptedData;
+                var rsaPrivate = new RSACryptoServiceProvider();
+                rsaPrivate.FromXmlString(key);
+                decryptedData = rsaPrivate.Decrypt(DataToDecrypt, false);
+                return decryptedData;
+            }
+            catch (CryptographicException)
+            {
+                //MessageBox.Show("Ошибка при дешифровании ключа!");
+                return null;
+            }
+        }
+
         public static List<string> GenerateRSAKeys()
         {
             RSACryptoServiceProvider rSACrypto = new RSACryptoServiceProvider();
@@ -217,6 +282,20 @@ namespace EasyMessage.Encryption
             return keys;
         }
 
+        public static void EncryptDecrypt(string data, string publicKey, string privateKey)
+        {
+            byte[] dat = Encoding.UTF8.GetBytes(data);
+            var publ = new RSACryptoServiceProvider();
+            publ.FromXmlString(publicKey);
+
+            var encrypted = publ.Encrypt(dat, false);
+
+            var priv = new RSACryptoServiceProvider();
+            priv.FromXmlString(privateKey);
+
+            var decrypted = priv.Decrypt(encrypted, false);
+            string resultdata = Encoding.UTF8.GetString(decrypted);
+        }
 
         #region sign-verify
         /*public string Sign(string dat)

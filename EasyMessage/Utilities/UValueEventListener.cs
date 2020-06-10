@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using Android.App;
 using EasyMessage.Utilities;
 using EasyMessage.Adapters;
+using EasyMessage.Encryption;
+using EasyMessage.Controllers;
 
 namespace EasyMessage
 {
@@ -47,7 +49,7 @@ namespace EasyMessage
                     acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
                     Message temp = new Message
                     {
-                        contentP = t[1].Value.ToString(),
+                        /*contentP = t[1].Value.ToString(),*/
                         flags = fls,
                         receiverP = t[3].Value.ToString(),
                         senderP = t[4].Value.ToString(),
@@ -55,6 +57,22 @@ namespace EasyMessage
                         access = acs,
                         dialogName = dialogName
                     };
+                    if (fls[0] == MessageFlags.Encoded)
+                    {
+                        if (t[4].Value.ToString() != AccountsController.mainAccP.emailP)
+                        {
+                            CryptoProvider c = new CryptoProvider();
+                            temp.contentP = c.Decrypt(t[1].Value.ToString(), AccountsController.mainAccP.privateKeyRsaP);
+                        }
+                        else
+                        {
+                            //todo сообщение, которое я отправлял как отобразить
+                        }
+                    }
+                    else
+                    {
+                        temp.contentP = t[1].Value.ToString();
+                    }
                     MessagesController.instance.CreateTable();
                     if (MessagesController.instance.FindItem(temp) == null)
                     {

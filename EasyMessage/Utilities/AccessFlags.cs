@@ -16,6 +16,7 @@ namespace EasyMessage.Utilities
     {
         None = 0,
         Read = 1,
-        NotRead = 2
+        NotRead = 2,
+        Special = 3
     }
 }
