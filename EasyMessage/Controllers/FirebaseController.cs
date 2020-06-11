@@ -263,7 +263,7 @@ namespace EasyMessage
             }
         }
 
-        public async void AddContact(string newContact, string accountName, int id)
+        public async void AddContact(string newContact, string accountName, int id, string dialogName)
         {
             if (app == null)
             {
@@ -274,8 +274,82 @@ namespace EasyMessage
             string s = accountName.Replace(".", ",");
             userNode.Child(s);
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
-            var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = id, contactAddressP = newContact, contactNameP = "user name" }));
+            //var existing = await client.Child(s).OnceAsync<Contact>();
+            //var enumerator = existing.GetEnumerator();
+            //enumerator.MoveNext();
+            //while (enumerator.Current != null)
+            //{
+            //    if(enumerator.Current.Object.contactAddressP == newContact)
+            //    {
+            //        await client.Child(s).PutAsync(JsonConvert.SerializeObject(new Contact
+            //        {
+            //            Id = id,
+            //            contactAddressP = newContact,
+            //            contactNameP = "user name",
+            //            contactRsaOpenKeyP = "no key",
+            //            dialogNameP = dialogName
+            //        }));
+            //    }
+            //}
+            //else
+            //{
+                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact
+                {
+                    Id = id,
+                    contactAddressP = newContact,
+                    contactNameP = "user name",
+                    contactRsaOpenKeyP = "no key",
+                    dialogNameP = dialogName
+                }));
+                
+            //}
         }
+
+        public async Task<bool> InsertKey(string accountName, string contactEmail, string key, Activity context)
+        {
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string s = accountName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var p = await client.Child(s).OnceAsync<Contact>();
+                //var p = await client.Child(contactEmail).OnceAsync<Contact>();
+                var d = p.GetEnumerator();
+                d.MoveNext();
+
+                while (d.Current != null)
+                {
+                    if (d.Current.Object.contactAddressP == contactEmail)
+                    {
+                        client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/" + s + "/");
+                        await client.Child(d.Current.Key).PutAsync(JsonConvert.SerializeObject(new Contact
+                        {
+                            contactAddressP = d.Current.Object.contactAddressP,
+                            Id = d.Current.Object.Id,
+                            contactNameP = d.Current.Object.contactNameP,
+                            dialogNameP = d.Current.Object.dialogNameP,
+                            contactRsaOpenKeyP = key
+                        }));
+                        return true;
+                    }
+                    d.MoveNext();
+                }
+                return false;
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return false;
+            }
+        }
+
 
         public async Task<int> ReturnLastId(string accountName, Activity context)
         {

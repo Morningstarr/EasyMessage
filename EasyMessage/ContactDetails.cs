@@ -62,7 +62,18 @@ namespace EasyMessage
                 StartActivity(i);
             };
 
-
+            openDialog.Click += delegate
+            {
+                Intent i = new Intent(this, typeof(DialogActivity));
+                i.SetFlags(ActivityFlags.NoAnimation);
+                MyDialog temp = DialogsController.instance.FindDialog(ContactsController.currContP.dialogNameP);
+                DialogsController.currDialP = temp;
+                i.PutExtra("dialogName", temp.dialogName);
+                i.PutExtra("receiver",
+                    temp.receiverP == AccountsController.mainAccP.emailP ? temp.senderP : temp.receiverP); //изменил (убрал .lastMessage) возможно поэтому что-то сломалось
+                i.PutExtra("flag", 1);
+                StartActivity(i);
+            };
 
             cName.Text = c.contactNameP;
             cMail.Text = c.contactAddressP;

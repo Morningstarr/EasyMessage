@@ -208,10 +208,10 @@ namespace EasyMessage
                             ContactsController.instance.SaveItem(new Contact { contactAddressP = c.senderP, dialogNameP = temp.dialogName, contactNameP = "user name" }, false);
                             Task<int> firstIdtask = FirebaseController.instance.ReturnLastId(AccountsController.mainAccP.emailP, this);
                             int firstId = await firstIdtask;
-                            FirebaseController.instance.AddContact(c.senderP, AccountsController.mainAccP.emailP, firstId + 1);
+                            FirebaseController.instance.AddContact(c.senderP, AccountsController.mainAccP.emailP, firstId + 1, temp.dialogName);
                             Task<int> secondIdtask = FirebaseController.instance.ReturnLastId(c.senderP, this);
                             int secondId = await secondIdtask;
-                            FirebaseController.instance.AddContact(AccountsController.mainAccP.emailP, c.senderP, secondId + 1);
+                            FirebaseController.instance.AddContact(AccountsController.mainAccP.emailP, c.senderP, secondId + 1, temp.dialogName);
                             Utils.MessageBox("Успешно!", this);
                         }
                         else
@@ -356,29 +356,7 @@ namespace EasyMessage
                         acs.Add(AccessFlags.Special);
                         m.access = acs;
                         await MessagingController.instance.SendMessage(m, d.dialogName, this);
-                        /*Contact contact = ContactsController.instance.FindContact(d.lastMessage.receiverP);
-                        if (contact == null)
-                        {
-                            ContactsController.instance.SaveItem(new Contact
-                            {
-                                contactRsaOpenKeyP = d.lastMessage.contentP,
-                                contactAddressP = d.lastMessage.senderP,
-                                contactNameP = "user name",
-                                deletedP = false,
-                                dialogNameP = d.dialogName
-                            });
-                        }
-                        else
-                        {
-                            if (contact.contactRsaOpenKeyP == null)
-                            {
-                                contact.contactRsaOpenKeyP = d.lastMessage.contentP;
-                                ContactsController.instance.SaveItem(contact);
-                            }
-                        }*/
                     }
-                    //else
-                    //{
                     Contact contact = ContactsController.instance.FindContact(d.lastMessage.senderP);
                     if (contact == null)
                     {
@@ -399,6 +377,9 @@ namespace EasyMessage
                             ContactsController.instance.SaveItem(contact);
                         }
                     }
+                    //будет выполняться постоянно пока в переписке нет писем??
+                    await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, d.lastMessage.senderP, d.lastMessage.contentP,
+                            this);
                     //}
                 }
 

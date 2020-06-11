@@ -93,7 +93,14 @@ namespace EasyMessage.Controllers
             }
             return 0;
         }
-        
+
+        public MyDialog FindDialog(string dialogNameP)
+        {
+            CreateTable();
+            dialogsList = GetItems().ToList();
+            return dialogsList.Find(x => x.dialogName == dialogNameP);
+        }
+
         public int SaveItem(MyDialog item)
         {
             dialogsList = connection.Table<MyDialog>().ToList();

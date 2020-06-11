@@ -48,17 +48,25 @@ namespace EasyMessage
             okbutton.Click += async delegate
             {
                 progress.Visibility = ViewStates.Visible;
-                Task<bool> taskChange = FirebaseController.instance.ChangeContactName(AccountsController.mainAccP.emailP, 
-                    newName.Text, ContactsController.currContP.contactAddressP, this);
-                flag = await taskChange;
-                ContactsController.instance.CreateTable();
-                Contact cont = ContactsController.instance.GetItem(ContactsController.currContP.Id);
-                cont.contactNameP = newName.Text;
-                ContactsController.instance.SaveItem(cont);
-                ContactsController.currContP = cont;
-                Utils.MessageBox("Успешно!", this);
+                if (newName.Text.Length < 13 && newName.Text != "" && newName.Text != " ")
+                {
+                    Task<bool> taskChange = FirebaseController.instance.ChangeContactName(AccountsController.mainAccP.emailP,
+                        newName.Text, ContactsController.currContP.contactAddressP, this);
+                    flag = await taskChange;
+                    ContactsController.instance.CreateTable();
+                    Contact cont = ContactsController.instance.GetItem(ContactsController.currContP.Id);
+                    cont.contactNameP = newName.Text;
+                    ContactsController.instance.SaveItem(cont);
+                    ContactsController.currContP = cont;
+                    Utils.MessageBox("Успешно!", this);
+                    progress.Visibility = ViewStates.Invisible;
+                    Finish();
+                }
+                else
+                {
+                    Utils.MessageBox("Длина имени контакта не должна превышать 12 символов!", this);
+                }
                 progress.Visibility = ViewStates.Invisible;
-                Finish();
             };
 
             newName.Text = ContactsController.currContP.contactNameP;
@@ -69,5 +77,16 @@ namespace EasyMessage
             // Create your application here
         }
 
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    Finish();
+                    return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
+            }
+        }
     }
 }
