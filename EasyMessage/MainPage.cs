@@ -89,9 +89,13 @@ namespace EasyMessage
             base.OnCreate(savedInstanceState);
             try
             {
-                CryptoProvider c = new CryptoProvider();
-                CryptoProvider.Encrupt("privet", AccountsController.mainAccP.openKeyRsaP,
-                    AccountsController.mainAccP.privateKeyRsaP, c);
+                //TextView name = FindViewById<TextView>(Resource.Id.nav_bar_name);
+                //name.Text = AccountsController.mainAccP.loginP;
+                //TextView ml = FindViewById<TextView>(Resource.Id.nav_bar_addr);
+                //ml.Text = AccountsController.mainAccP.emailP;
+                //CryptoProvider c = new CryptoProvider();
+                //CryptoProvider.Encrupt("privet", AccountsController.mainAccP.openKeyRsaP,
+                    //AccountsController.mainAccP.privateKeyRsaP, c);
 
                 connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
                 networkInfo = null;

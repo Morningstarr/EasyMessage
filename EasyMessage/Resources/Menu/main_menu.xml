@@ -5,13 +5,17 @@
   tools:showIn="main_detail">
   <group android:checkableBehavior="single">
     <item android:id="@+id/nav_dialogs" 
+          android:icon="@drawable/dialogs"
           android:title="Dialogs"></item>
     <item android:id="@+id/nav_contacts"
+          android:icon="@drawable/contacts"
           android:title="Contacts" 
-          android:textSize="20sp"></item>
+          android:textSize="26sp"></item>
     <item android:id="@+id/nav_settings"
+          android:icon="@drawable/settings"
           android:title="Settings"></item>
     <item android:id="@+id/nav_profile"
+          android:icon="@drawable/user"
           android:title="Profile"></item>
   </group>
 </menu>
