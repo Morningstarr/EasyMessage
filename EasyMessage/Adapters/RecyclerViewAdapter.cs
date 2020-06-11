@@ -63,11 +63,26 @@ namespace EasyMessage.Adapters
             {
                 case VIEW_TYPE_MESSAGE_SENT:
                     ((SentMessageHolder)holder).Time.Text = Convert.ToDateTime(message.timeP).ToUniversalTime().TimeOfDay.ToString();
-                    ((SentMessageHolder)holder).Content.Text = message.contentP;
+                    if (message.flags[0] == MessageFlags.Encoded)
+                    {
+                        MessagesController.instance.CreateTable();
+                        ((SentMessageHolder)holder).Content.Text = MessagesController.instance.FindItemI(message).decodedP;
+                    }
+                    else
+                    {
+                        ((SentMessageHolder)holder).Content.Text = message.contentP;
+                    }
                     break;
                 case VIEW_TYPE_MESSAGE_RECEIVED:
                     ((ReceivedMessageHolder)holder).Time.Text = Convert.ToDateTime(message.timeP).ToUniversalTime().TimeOfDay.ToString();
-                    ((ReceivedMessageHolder)holder).Content.Text = message.contentP;
+                    if (message.flags[0] == MessageFlags.Key)
+                    {
+                        ((ReceivedMessageHolder)holder).Content.Text = "*содержимое скрыто*";
+                    }
+                    else
+                    {
+                         ((ReceivedMessageHolder)holder).Content.Text = message.contentP;
+                    }
                     ((ReceivedMessageHolder)holder).Sender.Text = message.senderP;
                     break;
             }

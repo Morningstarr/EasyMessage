@@ -65,6 +65,11 @@ namespace EasyMessage.Adapters
             messagesList = connection.Table<Message>().ToList();
             return messagesList.Find(x => x.dialogName == item.dialogName && x.contentP == item.contentP && x.timeP == item.timeP);
         }
+        public Message FindItemI(Message item)
+        {
+            messagesList = connection.Table<Message>().ToList();
+            return messagesList.Find(x => x.contentP == item.contentP && x.timeP == item.timeP);
+        }
         public int SaveItem(Message item)
         {
             messagesList = connection.Table<Message>().ToList();

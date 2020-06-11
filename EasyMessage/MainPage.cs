@@ -205,7 +205,8 @@ namespace EasyMessage
                             messages.Remove(c);
                             refresh_dialogs();
                             ContactsController.instance.CreateTable();
-                            ContactsController.instance.SaveItem(new Contact { contactAddressP = c.senderP, dialogNameP = temp.dialogName, contactNameP = "user name" }, false);
+                            ContactsController.instance.SaveItem(new Contact { contactAddressP = c.senderP, dialogNameP = temp.dialogName, 
+                                contactNameP = "user name", contactRsaOpenKeyP = "no key" }, false);
                             Task<int> firstIdtask = FirebaseController.instance.ReturnLastId(AccountsController.mainAccP.emailP, this);
                             int firstId = await firstIdtask;
                             FirebaseController.instance.AddContact(c.senderP, AccountsController.mainAccP.emailP, firstId + 1, temp.dialogName);

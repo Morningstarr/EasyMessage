@@ -62,7 +62,7 @@ namespace EasyMessage
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                 SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
                 ContactsController.instance.CreateTable();
-                SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
+                //SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
 
                 if (FirebaseController.instance.app == null)
                 {
@@ -135,6 +135,9 @@ namespace EasyMessage
                                     && ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP != "no key") 
                                 {
                                     lastMessage.contentP = c.Encrypt(messageContent.Text, ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP);
+                                    lastMessage.decodedP = messageContent.Text;
+                                    MessagesController.instance.CreateTable();
+                                    MessagesController.instance.SaveItem(lastMessage);
                                 }
                                 else
                                 {
