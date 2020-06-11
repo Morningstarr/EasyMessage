@@ -197,11 +197,9 @@ namespace EasyMessage
                 progress.Visibility = ViewStates.Invisible;
                 AccountsController.mainAccP = null;
                 AccountsController.instance.CreateTable();
-                foreach(var acc in AccountsController.instance.deviceAccsP)
-                {
-                    acc.isMainP = false;
-                    AccountsController.instance.SaveItem(acc);
-                }
+                var acc = AccountsController.instance.deviceAccsP.Find(x => x.isMainP == true);
+                acc.isMainP = false;
+                AccountsController.instance.SaveItem(acc);
                 Finish();
                 Intent intent = new Intent(this, typeof(SignUp));
                 intent.SetFlags(ActivityFlags.ClearTask);
