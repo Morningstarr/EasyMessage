@@ -122,7 +122,8 @@ namespace EasyMessage
                                 flags = flags,
                                 access = acess,
                                 receiverP = receiver,
-                                timeP = DateTime.Now.ToString()
+                                timeP = DateTime.Now.ToString(),
+                                dialogName = dialog
                             };
                             if (!encryption)
                             {
@@ -137,7 +138,7 @@ namespace EasyMessage
                                     lastMessage.contentP = c.Encrypt(messageContent.Text, ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP);
                                     lastMessage.decodedP = messageContent.Text;
                                     MessagesController.instance.CreateTable();
-                                    MessagesController.instance.SaveItem(lastMessage);
+                                    MessagesController.instance.SaveItem(lastMessage, true);
                                 }
                                 else
                                 {

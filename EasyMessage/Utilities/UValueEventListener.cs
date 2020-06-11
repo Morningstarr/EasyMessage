@@ -9,6 +9,7 @@ using EasyMessage.Utilities;
 using EasyMessage.Adapters;
 using EasyMessage.Encryption;
 using EasyMessage.Controllers;
+using Android.Net;
 
 namespace EasyMessage
 {
@@ -18,6 +19,8 @@ namespace EasyMessage
         string dialogName;
         Activity context;
         List<string> names = new List<string>();
+        ConnectivityManager connectivityManager;
+        NetworkInfo networkInfo;
 
         public UValueEventListener(EventHandler OnChange, Activity _context, string _dialogName)
         {
@@ -53,7 +56,9 @@ namespace EasyMessage
                     senderP = t[4].Value.ToString(),
                     timeP = t[5].Value.ToString(),
                     access = acs,
-                    dialogName = dialogName
+                    dialogName = dialogName,
+                    flagsP = Convert.ToInt32(fls[0]),
+                    accessP = Convert.ToInt32(acs[0])
                 };
                 if (fls[0] != MessageFlags.Key)
                 {
@@ -66,7 +71,7 @@ namespace EasyMessage
                         }
                         else
                         {
-                            //todo сообщение, которое я отправлял как отобразить
+                            temp.contentP = t[1].Value.ToString();
                         }
                     }
                     else
@@ -79,12 +84,12 @@ namespace EasyMessage
                         var mess = MessagesController.instance.GetItems().ToList();
                         if (mess.Count < 50)
                         {
-                            MessagesController.instance.SaveItem(temp, true);
+                            MessagesController.instance.SaveItem(temp, 0);
                         }
                         else
                         {
                             MessagesController.instance.DeleteItem(mess[0].Id);
-                            MessagesController.instance.SaveItem(temp, true);
+                            MessagesController.instance.SaveItem(temp, 0);
                         }
                     }
                 }
@@ -117,8 +122,13 @@ namespace EasyMessage
                                 deletedP = tempC.deletedP
                             });
                         }
-                        await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, temp.senderP,
+                        connectivityManager = (ConnectivityManager)context.GetSystemService(Android.Content.Context.ConnectivityService);
+                        networkInfo = connectivityManager.ActiveNetworkInfo;
+                        if (networkInfo != null && networkInfo.IsConnected == true)
+                        {
+                            await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, temp.senderP,
                             t[1].Value.ToString(), context);
+                        }
                     }
                 }
             }
