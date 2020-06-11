@@ -547,37 +547,14 @@ namespace EasyMessage
 
         public async Task<List<MyDialog>> FindDialogs(string userMail, Activity context)
         {
-            #region userListener
-            //if(app == null)
-            //{
-            //    initFireBaseAuth();
-            //}
-            //DatabaseReference oRoot = FirebaseDatabase.Instance.Reference.Root;
-            //DatabaseReference oUsernamesRef = oRoot.Child("chats");
-            //bool result = false;
-
-            //UValueEventListener userListener = new UValueEventListener((sender, e) =>
-            //{
-            //    result = (e as UEventArgs).value;
-            //    if (result)
-            //    {
-            //        //dialogNames.Add((e as UEventArgs).dialogNames);
-            //        dialogNames = (e as UEventArgs).dialogNames;
-            //    }
-
-            //}, userMail);
-
-            //oUsernamesRef.AddListenerForSingleValueEvent(userListener);
-
-            //return dialogNames;
-            #endregion
+            List<MyDialog> dict = new List<MyDialog>();
             try
             {
                 if(app == null)
                 {
                     initFireBaseAuth();
                 }
-                List<MyDialog> dict = new List<MyDialog>();
+                
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
                 IReadOnlyCollection<FirebaseObject<object>> p = null;
                 try
@@ -600,8 +577,20 @@ namespace EasyMessage
                         if (d.Current.Key.Contains(userlogin))
                         {
                             string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
-                            var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
-                            dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+                            int i = 0; 
+                            int x = -1; 
+                            int count = -1; 
+                            while (i != -1)
+                            {
+                                i = s.IndexOf("{", x + 1); 
+                                x = i; 
+                                count++; 
+                            }
+                            if(count < 2)
+                            {
+                                var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
+                                dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+                            }
 
                         }
                         d.MoveNext();
@@ -615,7 +604,7 @@ namespace EasyMessage
             }
             catch(Newtonsoft.Json.JsonReaderException exc)
             {
-                return null;
+                return dict;
             }
             catch (Exception ex)
             {

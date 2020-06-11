@@ -19,6 +19,7 @@ using Android.Graphics;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
 using Android.Support.V4.View;
+using EasyMessage.Adapters;
 
 namespace EasyMessage
 {
@@ -167,16 +168,10 @@ namespace EasyMessage
                 {
                     AccountsController.mainAccP = null;
                     AccountsController.instance.CreateTable();
-                    //находить по id только текущего пользователя (тоже самое в EditProfile) ???
-                    foreach (var acc in AccountsController.instance.deviceAccsP)
-                    {
-                        acc.isMainP = false;
-                        AccountsController.instance.SaveItem(acc);
-                    }
-                    Finish();
-                    Intent intent = new Intent(this, typeof(SignUp));
-                    intent.SetFlags(ActivityFlags.ClearTask);
-                    StartActivity(intent);
+                    //находить по id только текущего пользователя (тоже самое в EditProfile)
+                    var acc = AccountsController.instance.deviceAccsP.Find(x => x.isMainP == true);
+                    acc.isMainP = false;
+                    AccountsController.instance.SaveItem(acc);
                     FirebaseController.instance.initFireBaseAuth();
                     FirebaseController.instance.LogOut();
                     ContactsController.instance.CreateTable();
@@ -184,6 +179,21 @@ namespace EasyMessage
                     {
                         ContactsController.instance.DeleteItem(item.Id);
                     }
+                    DialogsController.instance.CreateTable();
+                    foreach(var d in DialogsController.instance.GetItems().ToList())
+                    {
+                        DialogsController.instance.DeleteItem(d.Id);
+                    }
+                    MessagesController.instance.CreateTable();
+                    foreach(var m in MessagesController.instance.GetItems().ToList())
+                    {
+                        MessagesController.instance.DeleteItem(m.Id);
+                    }
+                    Finish();
+                    Intent intent = new Intent(this, typeof(SignUp));
+                    intent.SetFlags(ActivityFlags.ClearTask);
+                    StartActivity(intent);
+                    
                 });
                 Dialog dialog = builder.Create();
                 dialog.Show();
@@ -214,14 +224,23 @@ namespace EasyMessage
                     AccountsController.instance.CreateTable();
                     AccountsController.instance.DeleteItem(AccountsController.mainAccP.Id);
                     AccountsController.mainAccP = null;
-                    
-                    FirebaseController.instance.initFireBaseAuth();
-                    FirebaseController.instance.DeleteUser(this);
-
                     foreach (var item in ContactsController.instance.GetItems())
                     {
                         ContactsController.instance.DeleteItem(item.Id);
                     }
+                    DialogsController.instance.CreateTable();
+                    foreach (var d in DialogsController.instance.GetItems().ToList())
+                    {
+                        DialogsController.instance.DeleteItem(d.Id);
+                    }
+                    MessagesController.instance.CreateTable();
+                    foreach (var m in MessagesController.instance.GetItems().ToList())
+                    {
+                        MessagesController.instance.DeleteItem(m.Id);
+                    }
+                    FirebaseController.instance.initFireBaseAuth();
+                    FirebaseController.instance.DeleteUser(this);
+
                 });
                 Dialog dialog = builder.Create();
                 dialog.Show();
