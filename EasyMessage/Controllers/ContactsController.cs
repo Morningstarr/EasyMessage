@@ -67,7 +67,7 @@ namespace EasyMessage.Controllers
         }
         public int SaveItem(Contact item)
         {
-            if (item.Id != 0)
+            if (item.Id != 0 || FindContact(item.contactAddressP) != null)
             {
                 connection.Update(item);
                 return item.Id;

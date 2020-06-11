@@ -131,21 +131,16 @@ namespace EasyMessage
                             else
                             {
                                 CryptoProvider c = new CryptoProvider();
-                                //убрать
-                                //ContactsController.instance.CreateTable();
-                                //ContactsController.instance.DeleteItem(1);
-                                //
-                                if (ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP != null) 
+                                if (ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP != null
+                                    && ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP != "no key") 
                                 {
                                     lastMessage.contentP = c.Encrypt(messageContent.Text, ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP);
                                 }
                                 else
                                 {
-                                    lastMessage.contentP = c.Encrypt(messageContent.Text, "<RSAKeyValue><Modulus>oNdByJtm/6mONI2FgInS" +
-                                    "PPrSOB4hXPkq2zWBmFiUChR2cds1ALxTnxq+IcZtwRcNq8wh" +
-                                    "iaxTDfiKgehBqljxuPo6dqYnKjBBWhV71/Zdc503BPFaHqbSAz" +
-                                    "yZthevTE9ymwS+FU7cPVkJp4kOwvhh6QCKbcfv4UVlb7DoTeZo7" +
-                                    "Nk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+                                    Utils.MessageBox("Невозможно отправить зашифрованное сообщение! Собеседник не предоставил соотетствующий ключ.", this);
+                                    loadProgress.Visibility = ViewStates.Invisible;
+                                    return;
                                 }
                             }
                             Task<bool> sendTask = MessagingController.instance.SendMessage(lastMessage, dialog, this);

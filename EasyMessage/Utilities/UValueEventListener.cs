@@ -41,22 +41,22 @@ namespace EasyMessage
                 var flag = t[2].Child("0").Value;
                 List<MessageFlags> fls = new List<MessageFlags>();
                 fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
-
+                
+                var access = t[0].Child("0").Value;
+                List<AccessFlags> acs = new List<AccessFlags>();
+                acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
+                Message temp = new Message
+                {
+                    /*contentP = t[1].Value.ToString(),*/
+                    flags = fls,
+                    receiverP = t[3].Value.ToString(),
+                    senderP = t[4].Value.ToString(),
+                    timeP = t[5].Value.ToString(),
+                    access = acs,
+                    dialogName = dialogName
+                };
                 if (fls[0] != MessageFlags.Key)
                 {
-                    var access = t[0].Child("0").Value;
-                    List<AccessFlags> acs = new List<AccessFlags>();
-                    acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
-                    Message temp = new Message
-                    {
-                        /*contentP = t[1].Value.ToString(),*/
-                        flags = fls,
-                        receiverP = t[3].Value.ToString(),
-                        senderP = t[4].Value.ToString(),
-                        timeP = t[5].Value.ToString(),
-                        access = acs,
-                        dialogName = dialogName
-                    };
                     if (fls[0] == MessageFlags.Encoded)
                     {
                         if (t[4].Value.ToString() != AccountsController.mainAccP.emailP)
@@ -85,6 +85,37 @@ namespace EasyMessage
                         {
                             MessagesController.instance.DeleteItem(mess[0].Id);
                             MessagesController.instance.SaveItem(temp, true);
+                        }
+                    }
+                }
+                else
+                {
+                    if (temp.senderP != AccountsController.mainAccP.emailP)
+                    {
+                        ContactsController.instance.CreateTable();
+                        Contact tempC = ContactsController.instance.FindContact(temp.senderP);
+                        if (tempC == null)
+                        {
+                            ContactsController.instance.SaveItem(new Contact
+                            {
+                                contactAddressP = temp.senderP,
+                                contactNameP = "user name",
+                                contactRsaOpenKeyP = t[1].Value.ToString(),
+                                dialogNameP = temp.dialogName,
+                                deletedP = false
+                            });
+                        }
+                        else
+                        {
+                            ContactsController.instance.SaveItem(new Contact
+                            {
+                                contactAddressP = tempC.contactAddressP,
+                                contactNameP = tempC.contactNameP,
+                                contactRsaOpenKeyP = t[1].Value.ToString(),
+                                dialogNameP = tempC.dialogNameP,
+                                Id = tempC.Id,
+                                deletedP = tempC.deletedP
+                            });
                         }
                     }
                 }
