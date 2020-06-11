@@ -32,7 +32,7 @@ namespace EasyMessage
             //
         }
 
-        public void OnChildAdded(DataSnapshot snapshot, string previousChildName)
+        public async void OnChildAdded(DataSnapshot snapshot, string previousChildName)
         {
             IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
             List<DataSnapshot> t = items.ToList();
@@ -117,6 +117,8 @@ namespace EasyMessage
                                 deletedP = tempC.deletedP
                             });
                         }
+                        await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, temp.senderP,
+                            t[1].Value.ToString(), context);
                     }
                 }
             }

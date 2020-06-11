@@ -17,8 +17,6 @@ namespace EasyMessage.Encryption
     class CryptoProvider
     {
         TripleDESCryptoServiceProvider tDes = new TripleDESCryptoServiceProvider();
-
-        string hash;
         public byte[] initVect_p { get; set; }
         public string initText_p { get; set; }
 
@@ -194,7 +192,7 @@ namespace EasyMessage.Encryption
                 return "";
             }
 
-            initText_p = TextFromMemory(data, decryptedKey, initvec);
+            initText_p = TextFromMemory(data, decryptedKey, initvec).TrimEnd('\0');
             return initText_p;
 
         }
