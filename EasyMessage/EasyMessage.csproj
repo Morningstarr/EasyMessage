@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="Adapters\SettingsItemAdapter.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Adapters\OldDialogItemAdapter.cs" />
     <Compile Include="Adapters\RecyclerViewAdapter.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Encryption\CryptoController.cs" />
     <Compile Include="Encryption\CryptoProvider.cs" />
     <Compile Include="Entities\MyDialog.cs" />
+    <Compile Include="Entities\SettingsItem.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="SearchUser.cs" />
     <Compile Include="Utilities\AccessFlags.cs" />

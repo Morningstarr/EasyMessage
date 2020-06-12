@@ -113,6 +113,11 @@ namespace EasyMessage
 
                 navigation = FindViewById<NavigationView>(Resource.Id.navigationMain);
                 navigation.SetNavigationItemSelectedListener(this);
+                var header = navigation.GetHeaderView(0);
+                TextView name = header.FindViewById<TextView>(Resource.Id.nav_bar_name);
+                name.Text = AccountsController.mainAccP.loginP;
+                TextView ml = header.FindViewById<TextView>(Resource.Id.nav_bar_addr);
+                ml.Text = AccountsController.mainAccP.emailP;
 
                 checkProgress = FindViewById<ProgressBar>(Resource.Id.checkProgress);
                 dialogs = FindViewById<ListView>(Resource.Id.dialogsList);

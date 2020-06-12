@@ -28,8 +28,6 @@ namespace EasyMessage
     {
         private ListView list;
         private TextView username;
-        private Button deleteUser;
-        private Button changeUser;
         private ProgressBar pbar;
         private DrawerLayout drawer;
         private Android.Support.V7.Widget.Toolbar tb;
@@ -54,21 +52,6 @@ namespace EasyMessage
                 item_click(sender, e);
             };
 
-            deleteUser = FindViewById<Button>(Resource.Id.button1);
-            changeUser = FindViewById<Button>(Resource.Id.button2);
-            deleteUser.Text = "Удалить учетную запись";
-            changeUser.Text = "Сменить учетную запись";
-
-            deleteUser.Click += delegate
-            {
-                delete_user();
-            };
-
-            changeUser.Click += delegate
-            {
-                change_user();
-            };
-
             tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.tooolbarCommon);
 
             drawer = FindViewById<DrawerLayout>(Resource.Id.drawerLayout1);
@@ -78,6 +61,11 @@ namespace EasyMessage
 
             navigation = FindViewById<NavigationView>(Resource.Id.navigationMain);
             navigation.SetNavigationItemSelectedListener(this);
+            var header = navigation.GetHeaderView(0);
+            TextView name = header.FindViewById<TextView>(Resource.Id.nav_bar_name);
+            name.Text = AccountsController.mainAccP.loginP;
+            TextView ml = header.FindViewById<TextView>(Resource.Id.nav_bar_addr);
+            ml.Text = AccountsController.mainAccP.emailP;
 
             SetSupportActionBar(tb);
             Android.Support.V7.App.ActionBar abar = SupportActionBar;
@@ -152,106 +140,6 @@ namespace EasyMessage
             }
         }
 
-        private void change_user()
-        {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Предупреждение");
-            builder.SetMessage("Вы уверены, что хотите сменить учетную запись?");
-            builder.SetCancelable(true);
-            builder.SetNegativeButton("Нет", (s, ev) =>
-            {
-
-            });
-            try
-            {
-                builder.SetPositiveButton("Да", (s, ev) =>
-                {
-                    AccountsController.mainAccP = null;
-                    AccountsController.instance.CreateTable();
-                    //находить по id только текущего пользователя (тоже самое в EditProfile)
-                    var acc = AccountsController.instance.deviceAccsP.Find(x => x.isMainP == true);
-                    acc.isMainP = false;
-                    AccountsController.instance.SaveItem(acc);
-                    FirebaseController.instance.initFireBaseAuth();
-                    FirebaseController.instance.LogOut();
-                    ContactsController.instance.CreateTable();
-                    foreach (var item in ContactsController.instance.GetItems())
-                    {
-                        ContactsController.instance.DeleteItem(item.Id);
-                    }
-                    DialogsController.instance.CreateTable();
-                    foreach(var d in DialogsController.instance.GetItems().ToList())
-                    {
-                        DialogsController.instance.DeleteItem(d.Id);
-                    }
-                    MessagesController.instance.CreateTable();
-                    foreach(var m in MessagesController.instance.GetItems().ToList())
-                    {
-                        MessagesController.instance.DeleteItem(m.Id);
-                    }
-                    Finish();
-                    Intent intent = new Intent(this, typeof(SignUp));
-                    intent.SetFlags(ActivityFlags.ClearTask);
-                    StartActivity(intent);
-                    
-                });
-                Dialog dialog = builder.Create();
-                dialog.Show();
-                return;
-            }
-            catch(Exception ex)
-            {
-                Utils.MessageBox(ex.Message, this);
-            }
-        }
-
-        private void delete_user()
-        {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Предупреждение");
-            builder.SetMessage("Вы уверены, что хотите удалить учетную запись?");
-            builder.SetCancelable(true);
-            builder.SetNegativeButton("Нет", (s, ev) =>
-            {
-
-            });
-            try
-            {
-                builder.SetPositiveButton("Да", (s, ev) =>
-                {
-                    pbar.Visibility = ViewStates.Visible;
-                    disableControls();
-                    AccountsController.instance.CreateTable();
-                    AccountsController.instance.DeleteItem(AccountsController.mainAccP.Id);
-                    AccountsController.mainAccP = null;
-                    foreach (var item in ContactsController.instance.GetItems())
-                    {
-                        ContactsController.instance.DeleteItem(item.Id);
-                    }
-                    DialogsController.instance.CreateTable();
-                    foreach (var d in DialogsController.instance.GetItems().ToList())
-                    {
-                        DialogsController.instance.DeleteItem(d.Id);
-                    }
-                    MessagesController.instance.CreateTable();
-                    foreach (var m in MessagesController.instance.GetItems().ToList())
-                    {
-                        MessagesController.instance.DeleteItem(m.Id);
-                    }
-                    FirebaseController.instance.initFireBaseAuth();
-                    FirebaseController.instance.DeleteUser(this);
-
-                });
-                Dialog dialog = builder.Create();
-                dialog.Show();
-                return;
-            }
-            catch (Exception ex)
-            {
-                Utils.MessageBox(ex.Message, this);
-            }
-        }
-
         protected override void OnRestart()
         {
             base.OnRestart();
@@ -284,8 +172,6 @@ namespace EasyMessage
         public void disableControls()
         {
             list.Enabled = false;
-            deleteUser.Enabled = false;
-            changeUser.Enabled = false;
         }
 
         public void OnComplete(Task task)
