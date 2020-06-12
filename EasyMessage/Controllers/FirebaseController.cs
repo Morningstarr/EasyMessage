@@ -98,7 +98,40 @@ namespace EasyMessage
             return dialogName;
         }
 
-        public async void AddContactFolder(string accountName, Activity context)
+        public async Task<List<string>> GetKeys(string userName, Activity context)
+        {
+            List<string> keys = new List<string>();
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string s = userName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var c = await client.Child(s).OnceAsync<Contact>();
+                var enumerator = c.GetEnumerator();
+                enumerator.MoveNext();
+                if (enumerator.Current != null)
+                {
+                    Contact temp = enumerator.Current.Object;
+                    keys.Add(temp.contactRsaOpenKeyP);
+                    keys.Add(temp.contactAddressP);
+                }
+                else
+                {
+                    throw new Exception("Ошибка получения данных");
+                }
+                return keys;
+            }
+            catch(Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return keys;
+            }
+        }
+
+        public async void AddContactFolder(string accountName, Activity context, string open, string priv)
         {
             try
             {
@@ -111,7 +144,9 @@ namespace EasyMessage
                 string s = accountName.Replace(".", ",");
                 userNode.Child(s);
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
-                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 0, contactAddressP = "initialContact", contactNameP = "initialContact" }));
+                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 0, 
+                    contactAddressP = priv, contactNameP = "initialContact", contactRsaOpenKeyP =  open
+                }));
             }
             catch(Exception ex)
             {
@@ -228,7 +263,7 @@ namespace EasyMessage
             }
         }
 
-        public async void AddContact(string newContact, string accountName, int id)
+        public async void AddContact(string newContact, string accountName, int id, string dialogName)
         {
             if (app == null)
             {
@@ -239,8 +274,82 @@ namespace EasyMessage
             string s = accountName.Replace(".", ",");
             userNode.Child(s);
             client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
-            var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = id, contactAddressP = newContact, contactNameP = "user name" }));
+            //var existing = await client.Child(s).OnceAsync<Contact>();
+            //var enumerator = existing.GetEnumerator();
+            //enumerator.MoveNext();
+            //while (enumerator.Current != null)
+            //{
+            //    if(enumerator.Current.Object.contactAddressP == newContact)
+            //    {
+            //        await client.Child(s).PutAsync(JsonConvert.SerializeObject(new Contact
+            //        {
+            //            Id = id,
+            //            contactAddressP = newContact,
+            //            contactNameP = "user name",
+            //            contactRsaOpenKeyP = "no key",
+            //            dialogNameP = dialogName
+            //        }));
+            //    }
+            //}
+            //else
+            //{
+                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact
+                {
+                    Id = id,
+                    contactAddressP = newContact,
+                    contactNameP = "user name",
+                    contactRsaOpenKeyP = "no key",
+                    dialogNameP = dialogName
+                }));
+                
+            //}
         }
+
+        public async Task<bool> InsertKey(string accountName, string contactEmail, string key, Activity context)
+        {
+            try
+            {
+                if (app == null)
+                {
+                    initFireBaseAuth();
+                }
+                string s = accountName.Replace(".", ",");
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                var p = await client.Child(s).OnceAsync<Contact>();
+                //var p = await client.Child(contactEmail).OnceAsync<Contact>();
+                var d = p.GetEnumerator();
+                d.MoveNext();
+
+                while (d.Current != null)
+                {
+                    if (d.Current.Object.contactAddressP == contactEmail)
+                    {
+                        client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/" + s + "/");
+                        await client.Child(d.Current.Key).PutAsync(JsonConvert.SerializeObject(new Contact
+                        {
+                            contactAddressP = d.Current.Object.contactAddressP,
+                            Id = d.Current.Object.Id,
+                            contactNameP = d.Current.Object.contactNameP,
+                            dialogNameP = d.Current.Object.dialogNameP,
+                            contactRsaOpenKeyP = key
+                        }));
+                        return true;
+                    }
+                    d.MoveNext();
+                }
+                return false;
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return false;
+            }
+        }
+
 
         public async Task<int> ReturnLastId(string accountName, Activity context)
         {
@@ -308,6 +417,10 @@ namespace EasyMessage
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(receiverAddress, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP +
                 " принял Ваш запрос", flags, acess)));
+            flags = new List<MessageFlags>();
+            flags.Add(MessageFlags.Key);
+            var messages4 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
+                new Message(receiverAddress, AccountsController.mainAccP.emailP, AccountsController.mainAccP.openKeyRsaP, flags, acess)));
 
             if (messages3.Key != null)
             {
@@ -434,37 +547,14 @@ namespace EasyMessage
 
         public async Task<List<MyDialog>> FindDialogs(string userMail, Activity context)
         {
-            #region userListener
-            //if(app == null)
-            //{
-            //    initFireBaseAuth();
-            //}
-            //DatabaseReference oRoot = FirebaseDatabase.Instance.Reference.Root;
-            //DatabaseReference oUsernamesRef = oRoot.Child("chats");
-            //bool result = false;
-
-            //UValueEventListener userListener = new UValueEventListener((sender, e) =>
-            //{
-            //    result = (e as UEventArgs).value;
-            //    if (result)
-            //    {
-            //        //dialogNames.Add((e as UEventArgs).dialogNames);
-            //        dialogNames = (e as UEventArgs).dialogNames;
-            //    }
-
-            //}, userMail);
-
-            //oUsernamesRef.AddListenerForSingleValueEvent(userListener);
-
-            //return dialogNames;
-            #endregion
+            List<MyDialog> dict = new List<MyDialog>();
             try
             {
                 if(app == null)
                 {
                     initFireBaseAuth();
                 }
-                List<MyDialog> dict = new List<MyDialog>();
+                
                 client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
                 IReadOnlyCollection<FirebaseObject<object>> p = null;
                 try
@@ -487,8 +577,20 @@ namespace EasyMessage
                         if (d.Current.Key.Contains(userlogin))
                         {
                             string s = d.Current.Object.ToString().Substring(d.Current.Object.ToString().IndexOf(":") + 1);
-                            var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
-                            dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+                            int i = 0; 
+                            int x = -1; 
+                            int count = -1; 
+                            while (i != -1)
+                            {
+                                i = s.IndexOf("{", x + 1); 
+                                x = i; 
+                                count++; 
+                            }
+                            if(count < 2)
+                            {
+                                var t = JsonConvert.DeserializeObject<Message>(s.Substring(0, s.Length - 1));
+                                dict.Add(new MyDialog { dialogName = d.Current.Key, lastMessage = t });
+                            }
 
                         }
                         d.MoveNext();
@@ -502,7 +604,7 @@ namespace EasyMessage
             }
             catch(Newtonsoft.Json.JsonReaderException exc)
             {
-                return null;
+                return dict;
             }
             catch (Exception ex)
             {

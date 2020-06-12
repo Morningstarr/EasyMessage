@@ -43,5 +43,24 @@ namespace EasyMessage.Entities
             get { return isMain; }
             set { isMain = value; }
         }
+        private string openKeyRsa;
+        public string openKeyRsaP
+        {
+            get { return openKeyRsa; }
+            set { openKeyRsa = value; }
+        }
+        private string privateKeyRsa;
+        public string privateKeyRsaP
+        {
+            get { return privateKeyRsa; }
+            set { privateKeyRsa = value; }
+        }
+        private string openKeyTdes;
+        public string openKeyTdesP
+        {
+            get { return openKeyTdes; }
+            set { openKeyTdes = value; }
+        }
+
     }
 }

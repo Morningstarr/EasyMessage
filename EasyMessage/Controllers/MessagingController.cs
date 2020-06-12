@@ -14,6 +14,7 @@ using Firebase.Database;
 using Newtonsoft.Json;
 using EasyMessage.Entities;
 using Message = EasyMessage.Entities.Message;
+using EasyMessage.Encryption;
 //using FirebaseQuery = Firebase.Database.Query;
 
 namespace EasyMessage.Controllers
@@ -24,6 +25,38 @@ namespace EasyMessage.Controllers
         public FirebaseClient client = null;
         //private FirebaseDatabase database;
         //public 
+
+        /*public async Task<bool> SendKey(string dialogName, Activity context)
+        {
+            if (FirebaseController.instance.app == null)
+            {
+                FirebaseController.instance.initFireBaseAuth();
+            }
+            try
+            {
+                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+
+                var p = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(new Message { contentP = AccountsController.mainAccP.openKeyRsaP,
+                }));
+                if (p != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Newtonsoft.Json.JsonReaderException exc)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Utils.MessageBox(ex.Message, context);
+                return false;
+            }
+        }*/
 
         public void ReturnLastMessages(string dialogName, Activity context)
         {
@@ -125,7 +158,26 @@ namespace EasyMessage.Controllers
                 while (enumerator.Current != null)
                 {
                     Message temp = enumerator.Current.Object;
-                    messageList.Add(temp);
+                    if (temp.flags[0] != MessageFlags.Key)
+                    {
+                        if (temp.flags[0] != MessageFlags.Encoded)
+                        {
+                            messageList.Add(temp);
+                        }
+                        else
+                        {
+                            if (temp.senderP != AccountsController.mainAccP.emailP)
+                            {
+                                CryptoProvider c = new CryptoProvider();
+                                temp.contentP = c.Decrypt(temp.contentP, AccountsController.mainAccP.privateKeyRsaP);
+                                messageList.Add(temp);
+                            }
+                            else
+                            {
+                                messageList.Add(temp);
+                            }
+                        }
+                    }
                     enumerator.MoveNext();
                 }
                 return messageList;

@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using SQLite;
 
 namespace EasyMessage.Entities
@@ -47,6 +48,13 @@ namespace EasyMessage.Entities
         {
             get { return deleted; }
             set { deleted = value; }
+        }
+        [JsonIgnore]
+        private string contactRsaOpenKey;
+        public string contactRsaOpenKeyP
+        {
+            get { return contactRsaOpenKey; }
+            set { contactRsaOpenKey = value; }
         }
     }
 }

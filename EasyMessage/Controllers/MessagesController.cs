@@ -63,7 +63,12 @@ namespace EasyMessage.Adapters
         public Message FindItem(Message item)
         {
             messagesList = connection.Table<Message>().ToList();
-            return messagesList.Find(x => x.dialogName == item.dialogName && x.contentP == item.contentP && x.timeP == item.timeP);
+            return messagesList.Find(x => x.contentP == item.contentP && x.timeP == item.timeP);
+        }
+        public Message FindItemI(Message item)
+        {
+            messagesList = connection.Table<Message>().ToList();
+            return messagesList.Find(x => x.contentP == item.contentP && x.timeP == item.timeP);
         }
         public int SaveItem(Message item)
         {
@@ -84,6 +89,19 @@ namespace EasyMessage.Adapters
                     return 0;
                 }
             }
+        }
+
+        public int SaveItem(Message item, int i)
+        {
+            if (messagesList.Find(x => x.contentP == item.contentP && x.timeP == item.timeP) == null)
+            {
+                return connection.Insert(item);
+            }
+            else
+            {
+                return /*connection.Update(item)*/ 0;
+            }
+
         }
     }
 }

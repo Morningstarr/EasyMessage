@@ -24,6 +24,7 @@ using Android.Graphics.Drawables;
 using Android.Graphics;
 using Android.Net;
 using EasyMessage.Utilities;
+using EasyMessage.Encryption;
 
 namespace EasyMessage
 {
@@ -88,6 +89,14 @@ namespace EasyMessage
             base.OnCreate(savedInstanceState);
             try
             {
+                //TextView name = FindViewById<TextView>(Resource.Id.nav_bar_name);
+                //name.Text = AccountsController.mainAccP.loginP;
+                //TextView ml = FindViewById<TextView>(Resource.Id.nav_bar_addr);
+                //ml.Text = AccountsController.mainAccP.emailP;
+                //CryptoProvider c = new CryptoProvider();
+                //CryptoProvider.Encrupt("privet", AccountsController.mainAccP.openKeyRsaP,
+                    //AccountsController.mainAccP.privateKeyRsaP, c);
+
                 connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
                 networkInfo = null;
 
@@ -104,6 +113,11 @@ namespace EasyMessage
 
                 navigation = FindViewById<NavigationView>(Resource.Id.navigationMain);
                 navigation.SetNavigationItemSelectedListener(this);
+                var header = navigation.GetHeaderView(0);
+                TextView name = header.FindViewById<TextView>(Resource.Id.nav_bar_name);
+                name.Text = AccountsController.mainAccP.loginP;
+                TextView ml = header.FindViewById<TextView>(Resource.Id.nav_bar_addr);
+                ml.Text = AccountsController.mainAccP.emailP;
 
                 checkProgress = FindViewById<ProgressBar>(Resource.Id.checkProgress);
                 dialogs = FindViewById<ListView>(Resource.Id.dialogsList);
@@ -200,13 +214,14 @@ namespace EasyMessage
                             messages.Remove(c);
                             refresh_dialogs();
                             ContactsController.instance.CreateTable();
-                            ContactsController.instance.SaveItem(new Contact { contactAddressP = c.senderP, dialogNameP = temp.dialogName, contactNameP = "user name" }, false);
+                            ContactsController.instance.SaveItem(new Contact { contactAddressP = c.senderP, dialogNameP = temp.dialogName, 
+                                contactNameP = "user name", contactRsaOpenKeyP = "no key" }, false);
                             Task<int> firstIdtask = FirebaseController.instance.ReturnLastId(AccountsController.mainAccP.emailP, this);
                             int firstId = await firstIdtask;
-                            FirebaseController.instance.AddContact(c.senderP, AccountsController.mainAccP.emailP, firstId + 1);
+                            FirebaseController.instance.AddContact(c.senderP, AccountsController.mainAccP.emailP, firstId + 1, temp.dialogName);
                             Task<int> secondIdtask = FirebaseController.instance.ReturnLastId(c.senderP, this);
                             int secondId = await secondIdtask;
-                            FirebaseController.instance.AddContact(AccountsController.mainAccP.emailP, c.senderP, secondId + 1);
+                            FirebaseController.instance.AddContact(AccountsController.mainAccP.emailP, c.senderP, secondId + 1, temp.dialogName);
                             Utils.MessageBox("Успешно!", this);
                         }
                         else
@@ -293,45 +308,12 @@ namespace EasyMessage
                             DialogsController.instance.SaveItem(d);
                         }
 
-                        var newDialos = oldDialogs.FindAll(x => Convert.ToInt32(x.lastMessage.flags[0]) == 3);
-                        if (newDialos != null)
+                        var newDialos = oldDialogs.FindAll(x => Convert.ToInt32(x.lastMessage.flags[0]) == 6);
+                        if (newDialos != null && newDialos.Count > 0)
                         {
-                            ContactsController.instance.CreateTable();
-                            foreach (var d in newDialos)
-                            {
-                                if (d.lastMessage.receiverP != AccountsController.mainAccP.emailP)
-                                {
-                                    if (ContactsController.instance.FindContact(d.lastMessage.receiverP) == null)
-                                    {
-                                        ContactsController.instance.SaveItem(new Contact
-                                        {
-                                            contactAddressP = d.lastMessage.receiverP,
-                                            contactNameP = "user name",
-                                            deletedP = false,
-                                            dialogNameP = d.dialogName
-                                        });
-                                    }
-                                }
-                                else
-                                {
-                                    if (d.lastMessage.senderP != AccountsController.mainAccP.emailP)
-                                    {
-                                        if (ContactsController.instance.FindContact(d.lastMessage.senderP) == null)
-                                        {
-                                            ContactsController.instance.SaveItem(new Contact
-                                            {
-                                                contactAddressP = d.lastMessage.senderP,
-                                                contactNameP = "user name",
-                                                deletedP = false,
-                                                dialogNameP = d.dialogName
-                                            });
-                                        }
-                                    }
-                                }
-                            }
+                            key_exchange(newDialos);
                         }
                     }
-
 
                     if (FirebaseController.instance.app == null)
                     {
@@ -357,6 +339,116 @@ namespace EasyMessage
                 Utils.MessageBox("Обновление невозможно. Проверьте подключение к интернету и повторите запрос.", this);
                 return false;
             }
+        }
+
+        public async void key_exchange(List<MyDialog> newDialos)
+        {
+            ContactsController.instance.CreateTable();
+            foreach (var d in newDialos)
+            {
+                List<AccessFlags> acs = new List<AccessFlags>();
+                /*acs.Add(AccessFlags.None);*/
+                List<MessageFlags> flgs = new List<MessageFlags>();
+                flgs.Add(MessageFlags.Key);
+
+                Message m = new Message
+                {
+                    contentP = AccountsController.mainAccP.openKeyRsaP,
+                    senderP = AccountsController.mainAccP.emailP,
+                    receiverP = d.receiverP == AccountsController.mainAccP.emailP ? d.senderP : d.receiverP,
+                    flags = flgs,
+                    timeP = DateTime.Now.ToString()
+                };
+                if (d.lastMessage.receiverP == AccountsController.mainAccP.emailP)
+                {
+                    if (d.lastMessage.access[0] == AccessFlags.None)
+                    {
+                        acs.Add(AccessFlags.Special);
+                        m.access = acs;
+                        await MessagingController.instance.SendMessage(m, d.dialogName, this);
+                    }
+                    Contact contact = ContactsController.instance.FindContact(d.lastMessage.senderP);
+                    if (contact == null)
+                    {
+                        ContactsController.instance.SaveItem(new Contact
+                        {
+                            contactRsaOpenKeyP = d.lastMessage.contentP,
+                            contactAddressP = d.lastMessage.senderP,
+                            contactNameP = "user name",
+                            deletedP = false,
+                            dialogNameP = d.dialogName
+                        });
+                    }
+                    else
+                    {
+                        if (contact.contactRsaOpenKeyP == null)
+                        {
+                            contact.contactRsaOpenKeyP = d.lastMessage.contentP;
+                            ContactsController.instance.SaveItem(contact);
+                        }
+                    }
+                    //будет выполняться постоянно пока в переписке нет писем??
+                    await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, d.lastMessage.senderP, d.lastMessage.contentP,
+                            this);
+                    //}
+                }
+
+            }
+        }
+
+        public async void key_exchange(Message newM)
+        {
+            ContactsController.instance.CreateTable();
+            //foreach (var d in newDialos)
+            //{
+                List<AccessFlags> acs = new List<AccessFlags>();
+                /*acs.Add(AccessFlags.None);*/
+                List<MessageFlags> flgs = new List<MessageFlags>();
+                flgs.Add(MessageFlags.Key);
+
+                Message m = new Message
+                {
+                    contentP = AccountsController.mainAccP.openKeyRsaP,
+                    senderP = AccountsController.mainAccP.emailP,
+                    receiverP = newM.receiverP == AccountsController.mainAccP.emailP ? newM.senderP : newM.receiverP,
+                    flags = flgs,
+                    timeP = DateTime.Now.ToString()
+                };
+                if (newM.receiverP == AccountsController.mainAccP.emailP)
+                {
+                    if (newM.access[0] == AccessFlags.None)
+                    {
+                        acs.Add(AccessFlags.Special);
+                        m.access = acs;
+                        await MessagingController.instance.SendMessage(m, newM.dialogName, this);
+                    }
+                    Contact contact = ContactsController.instance.FindContact(newM.senderP);
+                    if (contact == null)
+                    {
+                        ContactsController.instance.SaveItem(new Contact
+                        {
+                            contactRsaOpenKeyP = newM.contentP,
+                            contactAddressP = newM.senderP,
+                            contactNameP = "user name",
+                            deletedP = false,
+                            dialogNameP = newM.dialogName
+                        });
+                    }
+                    else
+                    {
+                        if (contact.contactRsaOpenKeyP == null)
+                        {
+                            contact.contactRsaOpenKeyP = newM.contentP;
+                            ContactsController.instance.SaveItem(contact);
+                        }
+                    }
+                    //будет выполняться постоянно пока в переписке нет писем??
+                    await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, newM.senderP, newM.contentP,
+                            this);
+                    //}
+                }
+
+            //}
         }
 
         private void refresh_dialogs()
@@ -403,10 +495,13 @@ namespace EasyMessage
                         //navigation.
                     }
                     return true;
-                case 2131230894:
-                    checkProgress.Visibility = ViewStates.Visible;
+                case 2131230896:
+                    /*checkProgress.Visibility = ViewStates.Visible;
                     fillOld();
-                    checkProgress.Visibility = ViewStates.Invisible;
+                    checkProgress.Visibility = ViewStates.Invisible;*/
+                    this.Recreate();
+
+
                     return true;
             }
             return base.OnOptionsItemSelected(item);
@@ -440,7 +535,7 @@ namespace EasyMessage
                     access = acs,
                     receiverP = a[3].Value.ToString(),
                     senderP = a[4].Value.ToString(),
-                    timeP = a[5].Value.ToString()
+                    timeP = a[5].Value.ToString(),
                 };
 
                 MyDialog md = oldDialogs.Find(x => x.contentP == m.contentP && x.timeP == m.timeP);
@@ -460,6 +555,7 @@ namespace EasyMessage
                         }
                         else
                         {
+                            m.dialogName = oldDialogs[temp].dialogName;
                             oldDialogs[temp].lastMessage = m;
                             oldDialogs[temp].accessFlag = Convert.ToInt32(m.access[0]);
                             oldDialogs[temp].contentP = m.contentP;
@@ -479,6 +575,7 @@ namespace EasyMessage
                     }
                     else
                     {
+                        m.dialogName = oldDialogs[temp].dialogName;
                         oldDialogs[temp].lastMessage = m;
                         oldDialogs[temp].accessFlag = Convert.ToInt32(m.access[0]);
                         oldDialogs[temp].contentP = m.contentP;

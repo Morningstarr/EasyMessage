@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using Android.App;
 using EasyMessage.Utilities;
 using EasyMessage.Adapters;
+using EasyMessage.Encryption;
+using EasyMessage.Controllers;
+using Android.Net;
 
 namespace EasyMessage
 {
@@ -16,6 +19,8 @@ namespace EasyMessage
         string dialogName;
         Activity context;
         List<string> names = new List<string>();
+        ConnectivityManager connectivityManager;
+        NetworkInfo networkInfo;
 
         public UValueEventListener(EventHandler OnChange, Activity _context, string _dialogName)
         {
@@ -30,7 +35,7 @@ namespace EasyMessage
             //
         }
 
-        public void OnChildAdded(DataSnapshot snapshot, string previousChildName)
+        public async void OnChildAdded(DataSnapshot snapshot, string previousChildName)
         {
             IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
             List<DataSnapshot> t = items.ToList();
@@ -39,32 +44,91 @@ namespace EasyMessage
                 var flag = t[2].Child("0").Value;
                 List<MessageFlags> fls = new List<MessageFlags>();
                 fls.Add((MessageFlags)Convert.ToInt32(flag.ToString()));
-
+                
                 var access = t[0].Child("0").Value;
                 List<AccessFlags> acs = new List<AccessFlags>();
                 acs.Add((AccessFlags)Convert.ToInt32(access.ToString()));
                 Message temp = new Message
                 {
-                    contentP = t[1].Value.ToString(),
+                    /*contentP = t[1].Value.ToString(),*/
                     flags = fls,
                     receiverP = t[3].Value.ToString(),
                     senderP = t[4].Value.ToString(),
                     timeP = t[5].Value.ToString(),
                     access = acs,
-                    dialogName = dialogName
+                    dialogName = dialogName,
+                    flagsP = Convert.ToInt32(fls[0]),
+                    accessP = Convert.ToInt32(acs[0])
                 };
-                MessagesController.instance.CreateTable();
-                if(MessagesController.instance.FindItem(temp) == null)
+                if (fls[0] != MessageFlags.Key)
                 {
-                    var mess = MessagesController.instance.GetItems().ToList();
-                    if (mess.Count < 50)
+                    if (fls[0] == MessageFlags.Encoded)
                     {
-                        MessagesController.instance.SaveItem(temp, true);
+                        if (t[4].Value.ToString() != AccountsController.mainAccP.emailP)
+                        {
+                            CryptoProvider c = new CryptoProvider();
+                            temp.contentP = c.Decrypt(t[1].Value.ToString(), AccountsController.mainAccP.privateKeyRsaP);
+                        }
+                        else
+                        {
+                            temp.contentP = t[1].Value.ToString();
+                        }
                     }
                     else
                     {
-                        MessagesController.instance.DeleteItem(mess[0].Id);
-                        MessagesController.instance.SaveItem(temp, true);
+                        temp.contentP = t[1].Value.ToString();
+                    }
+                    MessagesController.instance.CreateTable();
+                    if (MessagesController.instance.FindItem(temp) == null)
+                    {
+                        var mess = MessagesController.instance.GetItems().ToList();
+                        if (mess.Count < 50)
+                        {
+                            MessagesController.instance.SaveItem(temp, 0);
+                        }
+                        else
+                        {
+                            MessagesController.instance.DeleteItem(mess[0].Id);
+                            MessagesController.instance.SaveItem(temp, 0);
+                        }
+                    }
+                }
+                else
+                {
+                    if (temp.senderP != AccountsController.mainAccP.emailP)
+                    {
+                        ContactsController.instance.CreateTable();
+                        Contact tempC = ContactsController.instance.FindContact(temp.senderP);
+                        if (tempC == null)
+                        {
+                            ContactsController.instance.SaveItem(new Contact
+                            {
+                                contactAddressP = temp.senderP,
+                                contactNameP = "user name",
+                                contactRsaOpenKeyP = t[1].Value.ToString(),
+                                dialogNameP = temp.dialogName,
+                                deletedP = false
+                            });
+                        }
+                        else
+                        {
+                            ContactsController.instance.SaveItem(new Contact
+                            {
+                                contactAddressP = tempC.contactAddressP,
+                                contactNameP = tempC.contactNameP,
+                                contactRsaOpenKeyP = t[1].Value.ToString(),
+                                dialogNameP = tempC.dialogNameP,
+                                Id = tempC.Id,
+                                deletedP = tempC.deletedP
+                            });
+                        }
+                        connectivityManager = (ConnectivityManager)context.GetSystemService(Android.Content.Context.ConnectivityService);
+                        networkInfo = connectivityManager.ActiveNetworkInfo;
+                        if (networkInfo != null && networkInfo.IsConnected == true)
+                        {
+                            await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, temp.senderP,
+                            t[1].Value.ToString(), context);
+                        }
                     }
                 }
             }

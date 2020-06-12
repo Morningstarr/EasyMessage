@@ -67,7 +67,14 @@ namespace EasyMessage.Adapters
 			//var pic = view.FindViewById<ImageView>(Resource.Id.contactImage);
 
 			contact.Text = _items[position].senderP == AccountsController.mainAccP.emailP ? _items[position].receiverP : _items[position].senderP;
-			lastMess.Text = _items[position].contentP;
+			if (_items[position].messageFlag == 6 || _items[position].messageFlag == 5)
+			{
+				lastMess.Text ="*содержимое скрыто*";
+			}
+			else
+			{
+				lastMess.Text = _items[position].contentP;
+			}
 			//pic.SetBackgroundResource(Convert.ToInt32(_items[position].picturePathP));
 
 			return view;

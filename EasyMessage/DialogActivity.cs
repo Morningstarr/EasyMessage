@@ -16,6 +16,7 @@ using Android.Views;
 using Android.Widget;
 using EasyMessage.Adapters;
 using EasyMessage.Controllers;
+using EasyMessage.Encryption;
 using EasyMessage.Entities;
 using EasyMessage.Utilities;
 using Firebase.Database;
@@ -37,6 +38,7 @@ namespace EasyMessage
         private string receiver;
         private Message lastMessage;
         private int flag = 0;
+        private bool encryption;
         ConnectivityManager connectivityManager;
         NetworkInfo networkInfo;
         protected async override void OnCreate(Bundle savedInstanceState)
@@ -59,7 +61,8 @@ namespace EasyMessage
                 SupportActionBar.SetHomeButtonEnabled(true);
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                 SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
-                SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
+                ContactsController.instance.CreateTable();
+                //SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
 
                 if (FirebaseController.instance.app == null)
                 {
@@ -99,20 +102,51 @@ namespace EasyMessage
                         if (networkInfo != null && networkInfo.IsConnected == true)
                         {
                             loadProgress.Visibility = ViewStates.Visible;
+
                             List<MessageFlags> flags = new List<MessageFlags>();
-                            flags.Add(MessageFlags.NotEncoded);
+                            if (encryption)
+                            {
+                                flags.Add(MessageFlags.Encoded);
+                            }
+                            else
+                            {
+                                flags.Add(MessageFlags.NotEncoded);
+                            }
 
                             List<AccessFlags> acess = new List<AccessFlags>();
                             acess.Add(AccessFlags.NotRead);
                             lastMessage = new Message
                             {
-                                contentP = messageContent.Text,
+                                //contentP = messageContent.Text,
                                 senderP = AccountsController.mainAccP.emailP,
                                 flags = flags,
                                 access = acess,
                                 receiverP = receiver,
-                                timeP = DateTime.Now.ToString()
+                                timeP = DateTime.Now.ToString(),
+                                dialogName = dialog
                             };
+                            if (!encryption)
+                            {
+                                lastMessage.contentP = messageContent.Text;
+                            }
+                            else
+                            {
+                                CryptoProvider c = new CryptoProvider();
+                                if (ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP != null
+                                    && ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP != "no key") 
+                                {
+                                    lastMessage.contentP = c.Encrypt(messageContent.Text, ContactsController.instance.FindContact(receiver).contactRsaOpenKeyP);
+                                    lastMessage.decodedP = messageContent.Text;
+                                    MessagesController.instance.CreateTable();
+                                    MessagesController.instance.SaveItem(lastMessage, true);
+                                }
+                                else
+                                {
+                                    Utils.MessageBox("Невозможно отправить зашифрованное сообщение! Собеседник не предоставил соотетствующий ключ.", this);
+                                    loadProgress.Visibility = ViewStates.Invisible;
+                                    return;
+                                }
+                            }
                             Task<bool> sendTask = MessagingController.instance.SendMessage(lastMessage, dialog, this);
                             bool sent = await sendTask;
                             if (sent)
@@ -167,6 +201,13 @@ namespace EasyMessage
             }
         }
 
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.dialog_menu, menu);
+            return true;
+        }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -174,6 +215,18 @@ namespace EasyMessage
                 case Android.Resource.Id.Home:
                     flag = -1;
                     Finish();
+                    return true;
+                case 2131230822:
+                    if (item.IsChecked)
+                    {
+                        item.SetChecked(false);
+                        encryption = false;
+                    }
+                    else
+                    {
+                        item.SetChecked(true);
+                        encryption = true;
+                    }
                     return true;
                 default:
                     return true;
@@ -216,16 +269,25 @@ namespace EasyMessage
                         DialogsController.instance.UpdateItem(dialog);
                         DialogsController.currDialP = new MyDialog();
                     }
-
+                    
                     Message m = new Message
                     {
-                        contentP = a[1].Value.ToString(),
+                        
                         flags = fls,
                         receiverP = a[3].Value.ToString(),
                         senderP = a[4].Value.ToString(),
                         timeP = a[5].Value.ToString(),
                         access = acs
                     };
+                    if (fls[0] == MessageFlags.Encoded && m.senderP != AccountsController.mainAccP.emailP)
+                    {
+                        CryptoProvider c = new CryptoProvider();
+                        m.contentP = c.Decrypt(a[1].Value.ToString(), AccountsController.mainAccP.privateKeyRsaP);
+                    }
+                    else
+                    {
+                        m.contentP = a[1].Value.ToString();
+                    }
 
                     if (messageList.Find(x => x.timeP == m.timeP && x.contentP == m.contentP) == null)
                     {

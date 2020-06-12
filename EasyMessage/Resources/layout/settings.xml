@@ -19,16 +19,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/relativeSettings" >
-            <TextView
-                android:text="settings"
-                android:layout_width="wrap_content"
+            <ListView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"/>
+                android:id="@+id/setts" />
+            
         </RelativeLayout>
         <android.support.design.widget.NavigationView
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:id="@id/navigationMain"
+            app:headerLayout="@layout/nav_header_main"
             android:choiceMode="singleChoice"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"

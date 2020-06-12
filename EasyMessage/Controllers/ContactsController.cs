@@ -78,6 +78,19 @@ namespace EasyMessage.Controllers
             }
         }
 
+        public int SaveItem(Contact item, int i)
+        {
+            CreateTable();
+            if (FindContact(item.contactAddressP) != null)
+            {
+                connection.Update(item);
+                return item.Id;
+            }
+            else
+            {
+                return connection.Insert(item);
+            }
+        }
         public string ReturnContactName(string receiver)
         {
             CreateTable();

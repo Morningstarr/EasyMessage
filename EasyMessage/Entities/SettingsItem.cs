@@ -10,13 +10,11 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace EasyMessage.Utilities
+namespace EasyMessage.Entities
 {
-    public enum AccessFlags
+    public class SettingsItem
     {
-        None = 0,
-        Read = 1,
-        NotRead = 2,
-        Special = 3
+        public string sett_value { get; set; }
+        public string sett_description { get; set; }
     }
 }

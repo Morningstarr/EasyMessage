@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Adapters\ContactItemAdapter.cs" />
     <Compile Include="Adapters\DialogItemAdapter.cs" />
+    <Compile Include="Adapters\SettingsItemAdapter.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Adapters\OldDialogItemAdapter.cs" />
     <Compile Include="Adapters\RecyclerViewAdapter.cs" />
@@ -76,7 +77,10 @@
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="DialogActivity.cs" />
     <Compile Include="EditContactData.cs" />
+    <Compile Include="Encryption\CryptoController.cs" />
+    <Compile Include="Encryption\CryptoProvider.cs" />
     <Compile Include="Entities\MyDialog.cs" />
+    <Compile Include="Entities\SettingsItem.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="SearchUser.cs" />
     <Compile Include="Utilities\AccessFlags.cs" />
@@ -301,6 +305,38 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Menu\dialog_menu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\person.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\dialogs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\contacts.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\nav_header_main.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\side_nav_bar.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\whiteuser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\white.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

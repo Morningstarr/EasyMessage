@@ -46,6 +46,8 @@ namespace EasyMessage.Entities
         public int flagsP { get; set; }
         [JsonIgnore]
         public int accessP { get; set; }
+        [JsonIgnore]
+        public string decodedP { get; set; }
         /*public string timeP
         {
             get { return time; }

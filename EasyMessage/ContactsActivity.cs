@@ -74,11 +74,16 @@ namespace EasyMessage
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, Resource.String.openDrawer, Resource.String.closeDrawer);
             toggle.SyncState();
 
-            navigation = FindViewById<NavigationView>(Resource.Id.navigationMain);
-            navigation.SetNavigationItemSelectedListener(this);
-
             SetSupportActionBar(tb);
             Android.Support.V7.App.ActionBar abar = SupportActionBar;
+
+            navigation = FindViewById<NavigationView>(Resource.Id.navigationMain);
+            navigation.SetNavigationItemSelectedListener(this);
+            var header = navigation.GetHeaderView(0);
+            TextView name = header.FindViewById<TextView>(Resource.Id.nav_bar_name);
+            name.Text = AccountsController.mainAccP.loginP;
+            TextView ml = header.FindViewById<TextView>(Resource.Id.nav_bar_addr);
+            ml.Text = AccountsController.mainAccP.emailP;
 
             abar.SetHomeButtonEnabled(true);
             abar.SetDisplayShowTitleEnabled(true);

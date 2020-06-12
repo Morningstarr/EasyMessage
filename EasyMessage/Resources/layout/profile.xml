@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,63 +14,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@id/drawerLayout1">
-        <RelativeLayout
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/relativeSettings" >
             <ImageView
-        android:layout_width="170.0dp"
-        android:layout_height="125.0dp"
-        android:maxWidth="125px"
-        android:maxHeight="125px"
-        android:id="@+id/photo"
-        android:background="@drawable/avatar"
-        android:layout_marginRight="0.0dp"
-        android:layout_marginLeft="15.0dp"
-        android:layout_marginTop="25dp" />
+                android:layout_width="125dp"
+                android:layout_height="125.0dp"
+                android:maxWidth="125px"
+                android:maxHeight="125px"
+                android:id="@+id/photo"
+                android:background="@drawable/person"
+                android:layout_marginTop="25dp" 
+            android:layout_gravity="center"/>
     <TextView
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="200dp"
-        android:layout_marginTop="65dp" 
+        android:layout_marginTop="35dp" 
         android:textColor="@android:color/black"
     android:textSize="20sp"
     android:text="Username"
-    android:id="@+id/username"/>
+    android:gravity="center"
+    android:id="@+id/username"
+            android:layout_gravity="center"/>
    <ListView
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:id="@+id/settingslist"
-        android:layout_marginTop="180.0dp">
+        android:layout_marginTop="30.0dp">
     </ListView>
-    <Button
-        android:text="Delete"
-        android:maxWidth="220dp"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="400dp"
-        android:id="@+id/button1" />
-    <Button
-        android:text="Exit"
-        android:maxWidth="220dp"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="455dp"
-        android:id="@+id/button2" />
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar3" 
         android:layout_centerInParent="true"
     android:visibility="invisible"/>
-        </RelativeLayout>
+        </LinearLayout>
         <android.support.design.widget.NavigationView
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:id="@id/navigationMain"
+            app:headerLayout="@layout/nav_header_main"
             android:choiceMode="singleChoice"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"

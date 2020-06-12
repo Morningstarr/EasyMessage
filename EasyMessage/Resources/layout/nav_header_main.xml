@@ -1,0 +1,40 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@drawable/side_nav_bar"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingBottom="15dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="30dp"
+    android:paddingTop="0dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="55dp"
+        android:paddingBottom="5dp"
+        app:srcCompat="@drawable/white" />
+    <TextView
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:id="@+id/nav_bar_name"
+        android:paddingLeft="15dp"
+        />
+
+    <TextView
+        android:id="@+id/nav_bar_addr"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:paddingLeft="15dp"
+        android:textColor="@android:color/white"
+        android:text="android.studio@android.com" />
+
+</LinearLayout>
