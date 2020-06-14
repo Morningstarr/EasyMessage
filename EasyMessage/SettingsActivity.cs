@@ -185,7 +185,10 @@ namespace EasyMessage
                     MessagesController.instance.CreateTable();
                     foreach (var m in MessagesController.instance.GetItems().ToList())
                     {
-                        MessagesController.instance.DeleteItem(m.Id);
+                        if (m.decodedP == null)
+                        {
+                            MessagesController.instance.DeleteItem(m.Id);
+                        }
                     }
                     Finish();
                     Intent intent = new Intent(this, typeof(SignUp));
@@ -251,7 +254,7 @@ namespace EasyMessage
 
         public void OnComplete(Task task)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

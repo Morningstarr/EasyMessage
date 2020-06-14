@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Widget;
 using EasyMessage.Controllers;
 using EasyMessage.Entities;
+using EasyMessage.Utilities;
 using Newtonsoft.Json;
 
 namespace EasyMessage
@@ -48,6 +49,27 @@ namespace EasyMessage
                     this);
                 bool result = await deleteTask;
                 ContactsController.instance.CreateTable();
+                List<AccessFlags> acs = new List<AccessFlags>();
+                acs.Add(AccessFlags.Deleted);
+                List<MessageFlags> fls = new List<MessageFlags>();
+                fls.Add(MessageFlags.NotEncoded);
+                string dial = ContactsController.currContP.dialogNameP;
+                if (dial == null)
+                {
+                    DialogsController.instance.CreateTable();
+                    var ds = DialogsController.instance.GetItems().ToList();
+                    var changedMail = ContactsController.currContP.contactAddressP.Replace(".", ",");
+                    dial = ds.Find(x => x.dialogName.Contains(changedMail)).dialogName;
+                }
+                await MessagingController.instance.SendMessage(new Entities.Message
+                {
+                    contentP = "Contact data deleted",
+                    senderP = AccountsController.mainAccP.emailP,
+                    access = acs,
+                    flags = fls,
+                    receiverP = ContactsController.currContP.contactAddressP,
+                    timeP = DateTime.Now.ToString()                    
+                },  dial, this);
                 int a = ContactsController.instance.DeleteItem(ContactsController.currContP.Id);
                 ContactsController.currContP.deletedP = true;
                 deletePrg.Visibility = ViewStates.Invisible;
@@ -66,12 +88,23 @@ namespace EasyMessage
             {
                 Intent i = new Intent(this, typeof(DialogActivity));
                 i.SetFlags(ActivityFlags.NoAnimation);
-                MyDialog temp = DialogsController.instance.FindDialog(ContactsController.currContP.dialogNameP);
+                string dial = ContactsController.currContP.dialogNameP;
+                MyDialog temp = null;
+                if (dial != null)
+                {
+                    temp = DialogsController.instance.FindDialog(dial);
+                }
+                else
+                {
+                    DialogsController.instance.CreateTable();
+                    var ds = DialogsController.instance.GetItems().ToList();
+                    var changedMail = ContactsController.currContP.contactAddressP.Replace(".", ",");
+                    temp = ds.Find(x => x.dialogName.Contains(changedMail));
+                }
                 DialogsController.currDialP = temp;
                 i.PutExtra("dialogName", temp.dialogName);
                 i.PutExtra("receiver",
-                    temp.receiverP == AccountsController.mainAccP.emailP ? temp.senderP : temp.receiverP); //изменил (убрал .lastMessage) возможно поэтому что-то сломалось
-                i.PutExtra("flag", 1);
+                    temp.receiverP == AccountsController.mainAccP.emailP ? temp.senderP : temp.receiverP); 
                 StartActivity(i);
             };
 

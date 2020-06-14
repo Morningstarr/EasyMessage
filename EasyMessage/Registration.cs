@@ -8,6 +8,7 @@ using Android.Content;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
+using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EasyMessage.Controllers;
@@ -18,8 +19,8 @@ using Firebase.Auth;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Registration")]
-    public class Registration : Activity
+    [Activity(Label = "Registration", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
+    public class Registration : AppCompatActivity
     {
         private EditText email;
         private EditText login;
@@ -146,6 +147,8 @@ namespace EasyMessage
 
         public void edit_controls(bool c)
         {
+            chb1.Enabled = c;
+            chb2.Enabled = c;
             email.Enabled = c;
             login.Enabled = c;
             password.Enabled = c;

@@ -194,12 +194,5 @@ namespace EasyMessage
             }
             return base.OnOptionsItemSelected(item);
         }
-
-        private void sendMessage(string rec, string mes, string sendr)
-        {
-            //FirebaseDatabase.Instance.GetReference("chat").AddValueEventListener(this);
-            //var items = await  
-            FirebaseController.instance.SendMessage("7", "8", "9", this);
-        }
     }
 }

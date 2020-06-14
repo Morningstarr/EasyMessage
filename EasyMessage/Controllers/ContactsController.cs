@@ -93,9 +93,16 @@ namespace EasyMessage.Controllers
         }
         public string ReturnContactName(string receiver)
         {
-            CreateTable();
-            contactList = connection.Table<Contact>().ToList();
-            return contactList.Find(x => x.contactAddressP == receiver).contactNameP;
+            try
+            {
+                CreateTable();
+                contactList = connection.Table<Contact>().ToList();
+                return contactList.Find(x => x.contactAddressP == receiver).contactNameP;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

@@ -105,6 +105,10 @@ namespace EasyMessage
             edit_contols(false);
             try
             {
+                if (eMail.Text.Length < 1 || pss.Text.Length < 1)
+                {
+                    throw new Exception("Заполните все поля!");
+                }
                 FirebaseController.instance.initFireBaseAuth();
                 string s = await FirebaseController.instance.LoginUser(eMail.Text, pss.Text);
                 if (s != string.Empty)
@@ -186,6 +190,7 @@ namespace EasyMessage
 
         public void edit_contols(bool c)
         {
+            chBox.Enabled = c;
             ok.Enabled = c;
             eMail.Enabled = c;
             pss.Enabled = c;

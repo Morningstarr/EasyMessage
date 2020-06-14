@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EasyMessage.Adapters.ContactItemAdapter" Collapsed="true">
+    <Position X="5.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAACAAAAAQAABAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Adapters\ContactItemAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Adapters.DialogItemAdapter" Collapsed="true">
+    <Position X="3.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAACAAAAAQAABAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Adapters\DialogItemAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Adapters.OldDialogItemAdapter" Collapsed="true">
+    <Position X="3.5" Y="11" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAACAAAAAQAABAAAAAAAAABAABAAAA=</HashCode>
+      <FileName>Adapters\OldDialogItemAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Adapters.RecyclerViewAdapter" Collapsed="true">
+    <Position X="4.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAEAAAAAAAAAEAAAAAgAAAAAAAAAEAAAAAQQAAA=</HashCode>
+      <FileName>Adapters\RecyclerViewAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Adapters.SettingsItemAdapter" Collapsed="true">
+    <Position X="3.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAACAAAAAQAABAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Adapters\SettingsItemAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Adapters.MessagesController" Collapsed="true">
+    <Position X="3.5" Y="5.75" Width="2.5" />
+    <Members>
+      <Field Name="currMess" Hidden="true" />
+      <Property Name="currMessP" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAAAAACAAAFEAABQABAAAAAABAAgAAEAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\MessagesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.ListItemAdapter" Collapsed="true">
+    <Position X="3.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAACAAAAAQAABAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Adapters\ListItemAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.ContactDetails" Collapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CEACACAAAAAAAAgAAAAAAQAAgCAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>ContactDetails.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.ContactsActivity" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAgQAAAAAABAAAAACIAAAgSAAAAAAADBAggEAAAA=</HashCode>
+      <FileName>ContactsActivity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.FirebaseController" Collapsed="true">
+    <Position X="3.5" Y="12.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIYAASBAUIACIEEkgAEAAAAABBAQIAECEABBAAAAE=</HashCode>
+      <FileName>Controllers\FirebaseController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.DialogActivity" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAFCAAQACAAAQAAAAIACAAAAwCAQgBAEBBACAgAAABA=</HashCode>
+      <FileName>DialogActivity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.EditContactData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACCAAAAAAAgAAAIAAAAAAgCAAEAAAAIAAAAAAAAA=</HashCode>
+      <FileName>EditContactData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.EditProfileData" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAIAAAAAAIAAACAAAAgCAAgAAIAIAQAIAAAAA=</HashCode>
+      <FileName>EditProfileData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.ForgotPassword" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAACAEAAAAABABAAAAAAAAgCAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>ForgotPassword.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.MainActivity" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACACAAAAAAAAAAAAAAAAACAAAAAAAAAAAgCAAAA=</HashCode>
+      <FileName>MainActivity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.MainPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABiAAQAAAAIABgAAAACIEAAgSAAgAABAFBIApFAABA=</HashCode>
+      <FileName>MainPage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.Profile" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAiAAAAAAABAAAAAAIAEEgSAAAAAAAABAAgEACAA=</HashCode>
+      <FileName>Profile.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.Registration" Collapsed="true">
+    <Position X="11" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAACAAAAAAgAAAgAAAAJCEAACAABAAAAgAIECA=</HashCode>
+      <FileName>Registration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.SearchUser" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAIAAhAAACAAAAgCAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>SearchUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.SettingsActivity" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAABAgAAAAIAAAgSIAAAAAAABAAgEACAA=</HashCode>
+      <FileName>SettingsActivity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.SignUp" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACACAAQBAAAAAAIAAAAEgCAAQAAgAUAAAAAAAQA=</HashCode>
+      <FileName>SignUp.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.Splash" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAQBAAAAA=</HashCode>
+      <FileName>Splash.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.UEventArgs" Collapsed="true">
+    <Position X="11" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\UEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Utils" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAIAAAAAAAAAhAAAACAAAAAAAAAAAAIAAAAAAE=</HashCode>
+      <FileName>Utilities\Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.UValueEventListener" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABCAAQAAQAAACAAAAAAAAQAAAABAAAAABABAIAAAAA=</HashCode>
+      <FileName>Utilities\UValueEventListener.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="EasyMessage.Controllers.AccountsController">
+    <Position X="7.75" Y="9.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAEAABQABBAAEAABAQgAAAAAAAAAAAEA=</HashCode>
+      <FileName>Controllers\AccountsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Controllers.ContactsController" Collapsed="true">
+    <Position X="0.5" Y="10.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAGAABQABAAAAAABKAgAAAAAAAAAAEAA=</HashCode>
+      <FileName>Controllers\ContactsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Controllers.DialogsController" Collapsed="true">
+    <Position X="0.5" Y="12.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAQAAQAAAAAEAABQABAAAACABAAiAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\DialogsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Controllers.MessagingController" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABCAAAAAIAAAAAAACAAAAAAAABAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Controllers\MessagingController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Encryption.CryptoProvider" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAAEAAAAQAQAAAAAAAAAAAEACAAAAAwAAAQA=</HashCode>
+      <FileName>Encryption\CryptoProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Entities.Account">
+    <Position X="0.5" Y="8.5" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAEACAAgAAAAAgACAAAAAAABAAEAAgAAEAA=</HashCode>
+      <FileName>Entities\Account.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Entities.Contact" Collapsed="true">
+    <Position X="0.5" Y="10" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAACAQAQAAAAACAAAAAQAAAAABABAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Entities\Contact.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Entities.ItemTemplate" Collapsed="true">
+    <Position X="5.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAABAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Entities\ItemTemplate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Entities.Message">
+    <Position X="13" Y="6" Width="2.25" />
+    <Members>
+      <Property Name="accessP" Hidden="true" />
+      <Method Name="convertToJsonString" Hidden="true" />
+      <Property Name="flagsP" Hidden="true" />
+      <Method Name="HashModel" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIAGAAgAQABAAAAAAAAACAIAAAABAAAABAABAAAAAAQ=</HashCode>
+      <FileName>Entities\Message.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Entities.MyDialog" Collapsed="true">
+    <Position X="0.5" Y="11.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAACAAAIAACAAAAACAIAAAABAAAABAABAAAAABA=</HashCode>
+      <FileName>Entities\MyDialog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EasyMessage.Entities.SettingsItem" Collapsed="true">
+    <Position X="5.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\SettingsItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="EasyMessage.MessageFlags" Collapsed="true">
+    <Position X="2.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAABAAAQAAAAAAAIAAAAAgAAAAAQAAAAAAAA=</HashCode>
+      <FileName>MessageFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EasyMessage.Utilities.AccessFlags" Collapsed="true">
+    <Position X="0.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACABAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Utilities\AccessFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

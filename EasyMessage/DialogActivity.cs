@@ -62,7 +62,13 @@ namespace EasyMessage
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                 SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor("#2196f3")));
                 ContactsController.instance.CreateTable();
-                //SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
+                if (receiver != null)
+                {
+                    if(ContactsController.instance.ReturnContactName(receiver) != null)
+                    {
+                        SupportActionBar.Title = ContactsController.instance.ReturnContactName(receiver);
+                    }
+                }
 
                 if (FirebaseController.instance.app == null)
                 {
@@ -167,6 +173,11 @@ namespace EasyMessage
                     }
 
                 };
+                if(DialogsController.currDialP.lastMessage.access[0] == AccessFlags.Deleted)
+                {
+                    send.Visibility = ViewStates.Invisible;
+                    messageContent.Visibility = ViewStates.Invisible;
+                }
             }
             catch(Exception ex)
             {

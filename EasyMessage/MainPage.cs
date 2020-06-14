@@ -132,7 +132,7 @@ namespace EasyMessage
                 abar.SetDisplayHomeAsUpEnabled(true);
 
                 check = FindViewById<Button>(Resource.Id.check);
-
+                check.Text = "Проверить запросы";
                 check.Click += async delegate
                 {
                     networkInfo = connectivityManager.ActiveNetworkInfo;
@@ -347,7 +347,7 @@ namespace EasyMessage
             foreach (var d in newDialos)
             {
                 List<AccessFlags> acs = new List<AccessFlags>();
-                /*acs.Add(AccessFlags.None);*/
+
                 List<MessageFlags> flgs = new List<MessageFlags>();
                 flgs.Add(MessageFlags.Key);
 
@@ -387,7 +387,6 @@ namespace EasyMessage
                             ContactsController.instance.SaveItem(contact);
                         }
                     }
-                    //будет выполняться постоянно пока в переписке нет писем??
                     await FirebaseController.instance.InsertKey(AccountsController.mainAccP.emailP, d.lastMessage.senderP, d.lastMessage.contentP,
                             this);
                     //}

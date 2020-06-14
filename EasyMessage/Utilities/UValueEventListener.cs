@@ -18,7 +18,6 @@ namespace EasyMessage
         EventHandler OnChange;
         string dialogName;
         Activity context;
-        List<string> names = new List<string>();
         ConnectivityManager connectivityManager;
         NetworkInfo networkInfo;
 
@@ -154,12 +153,6 @@ namespace EasyMessage
 
         public void OnDataChange(DataSnapshot snapshot)
         {
-            if (OnChange != null)
-            {
-                IEnumerable<DataSnapshot> items = snapshot.Children?.ToEnumerable<DataSnapshot>();
-                List<DataSnapshot> t = items.ToList();
-
-            }
 
         }
 

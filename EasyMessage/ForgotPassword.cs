@@ -16,7 +16,7 @@ using Android.Widget;
 
 namespace EasyMessage
 {
-    [Activity(Label = "Восстановление пароля", Theme = "@style/Theme.AppCompat.Light.DarkActionBar")]
+    [Activity(Label = "Восстановление пароля")]
     public class ForgotPassword : AppCompatActivity, IOnCompleteListener
     {
         private Button reset;

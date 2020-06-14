@@ -7,7 +7,7 @@
         android:checkable="true"
         android:checked="false"
         easymessage:showAsAction="never"
-        android:title="Encrypt messages">
+        android:title="Шифровать сообщения">
 
   </item>
 </menu>

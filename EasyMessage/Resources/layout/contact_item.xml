@@ -18,7 +18,7 @@
             <ImageView
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:src="@android:drawable/ic_menu_gallery"
+                android:src="@drawable/user"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:id="@+id/contactImage" />

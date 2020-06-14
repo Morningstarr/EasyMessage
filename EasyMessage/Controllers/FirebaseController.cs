@@ -25,10 +25,6 @@ namespace EasyMessage
 
         public FirebaseApp app;
         private FirebaseAuth auth;
-        private List<string> dialogNames = new List<string>();
-        
-        //Firebase.Database database = 
-        //private FirebaseDatabase database;
         private FirebaseClient client;
 
         public void initFireBaseAuth()
@@ -86,7 +82,7 @@ namespace EasyMessage
 
             FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(app);
             DatabaseReference userNode = databaseInstance.GetReference(dialogName);
-            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+            FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             var messages3 = await client.Child(dialogName).PostAsync(JsonConvert.SerializeObject(
                 new Message(contactAddressP, AccountsController.mainAccP.emailP, "Пользователь " + AccountsController.mainAccP.emailP + 
                 " хочет добавить вас в список контактов", flags, acess)));
@@ -108,7 +104,7 @@ namespace EasyMessage
                     initFireBaseAuth();
                 }
                 string s = userName.Replace(".", ",");
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var c = await client.Child(s).OnceAsync<Contact>();
                 var enumerator = c.GetEnumerator();
                 enumerator.MoveNext();
@@ -143,7 +139,7 @@ namespace EasyMessage
                 DatabaseReference userNode = databaseInstance.GetReference("contacts");
                 string s = accountName.Replace(".", ",");
                 userNode.Child(s);
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact { Id = 0, 
                     contactAddressP = priv, contactNameP = "initialContact", contactRsaOpenKeyP =  open
                 }));
@@ -163,7 +159,7 @@ namespace EasyMessage
                     initFireBaseAuth();
                 }
                 string userlogin = accountName.Replace(".", ",");
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var p = await client.Child(userlogin).OnceAsync<Contact>();
                 var d = p.GetEnumerator();
                 d.MoveNext();
@@ -201,7 +197,7 @@ namespace EasyMessage
                 }
                 //List<MyDialog> dict = new List<MyDialog>();
                 string userlogin = accountName.Replace(".", ",");
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var p = await client.Child(userlogin).OnceAsync<Contact>();
                 //var p = await client.Child(contactEmail).OnceAsync<Contact>();
                 var d = p.GetEnumerator();
@@ -241,7 +237,7 @@ namespace EasyMessage
                     initFireBaseAuth();
                 }
                 string s = accountName.Replace(".", ",");
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var c = await client.Child(s).OnceAsync<Contact>();
                 var enumerator = c.GetEnumerator();
                 enumerator.MoveNext();
@@ -273,36 +269,15 @@ namespace EasyMessage
             DatabaseReference userNode = databaseInstance.GetReference("contacts");
             string s = accountName.Replace(".", ",");
             userNode.Child(s);
-            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
-            //var existing = await client.Child(s).OnceAsync<Contact>();
-            //var enumerator = existing.GetEnumerator();
-            //enumerator.MoveNext();
-            //while (enumerator.Current != null)
-            //{
-            //    if(enumerator.Current.Object.contactAddressP == newContact)
-            //    {
-            //        await client.Child(s).PutAsync(JsonConvert.SerializeObject(new Contact
-            //        {
-            //            Id = id,
-            //            contactAddressP = newContact,
-            //            contactNameP = "user name",
-            //            contactRsaOpenKeyP = "no key",
-            //            dialogNameP = dialogName
-            //        }));
-            //    }
-            //}
-            //else
-            //{
-                var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact
-                {
-                    Id = id,
-                    contactAddressP = newContact,
-                    contactNameP = "user name",
-                    contactRsaOpenKeyP = "no key",
-                    dialogNameP = dialogName
-                }));
-                
-            //}
+            FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+            var messages3 = await client.Child(s).PostAsync(JsonConvert.SerializeObject(new Contact
+            {
+                Id = id,
+                contactAddressP = newContact,
+                contactNameP = "user name",
+                contactRsaOpenKeyP = "no key",
+                dialogNameP = dialogName
+            }));
         }
 
         public async Task<bool> InsertKey(string accountName, string contactEmail, string key, Activity context)
@@ -314,7 +289,7 @@ namespace EasyMessage
                     initFireBaseAuth();
                 }
                 string s = accountName.Replace(".", ",");
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var p = await client.Child(s).OnceAsync<Contact>();
                 //var p = await client.Child(contactEmail).OnceAsync<Contact>();
                 var d = p.GetEnumerator();
@@ -350,7 +325,6 @@ namespace EasyMessage
             }
         }
 
-
         public async Task<int> ReturnLastId(string accountName, Activity context)
         {
             int lastId = 0;
@@ -361,7 +335,7 @@ namespace EasyMessage
                     initFireBaseAuth();
                 }
                 string s = accountName.Replace(".", ",");
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/contacts/");
                 var c = await client.Child(s).OnceAsync<object>();
                 var enumerator = c.GetEnumerator();
                 enumerator.MoveNext();
@@ -386,7 +360,7 @@ namespace EasyMessage
                 initFireBaseAuth();
             }
 
-            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
+            FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
 
             var p = await client.Child("chats").OnceAsync<object>();
             var d = p.GetEnumerator();
@@ -409,7 +383,7 @@ namespace EasyMessage
             {
                 initFireBaseAuth();
             }
-            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+            FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Response);
             List<AccessFlags> acess = new List<AccessFlags>();
@@ -439,7 +413,7 @@ namespace EasyMessage
             {
                 initFireBaseAuth();
             }
-            client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
+            FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/chats/");
             List<MessageFlags> flags = new List<MessageFlags>();
             flags.Add(MessageFlags.Denied);
             List<AccessFlags> acess = new List<AccessFlags>();
@@ -512,7 +486,7 @@ namespace EasyMessage
             try
             {
                 List<MyDialog> dict = new List<MyDialog>();
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
 
                 var p = await client.Child("chats").OnceAsync<object>();
                 var d = p.GetEnumerator();
@@ -554,8 +528,8 @@ namespace EasyMessage
                 {
                     initFireBaseAuth();
                 }
-                
-                client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
+
+                FirebaseClient client = new Firebase.Database.FirebaseClient("https://easymessage-1fa08.firebaseio.com/");
                 IReadOnlyCollection<FirebaseObject<object>> p = null;
                 try
                 {
@@ -613,114 +587,6 @@ namespace EasyMessage
             }
         }
 
-        public void SendMessage(string rec, string cont, string sendr, Activity context)
-        {
-            //var messages2 = await client.Child("mail,test21@mail,ru")
-            //.PostAsync(JsonConvert.SerializeObject(new MyDialog { dialogName = "Dialog geniuses1studio@gmail, com + kirill_kovrik@mail, ru",
-            //lastMessage = new Message { contentP = "хочет доабвить вас", receiverP = "geniuses1studio@gmail.com", senderP = "kirill_kovrik@mail.ru",
-            //timeP = DateTime.Now.ToString() } }));
-            //IEnumerator<> enumerator = t.
-            //Message mess = JsonConvert.DeserializeObject<Message>(t.ToString());
-            //JsonConvert.
-            //var m = t as JObject;//.Value<Message>();
-            //var r = m.Children();
-            //JToken token = r as JToken;
-            //var message = r.Value<JToken>();
-            //dict.Add(d.Current.Key, t);
-            /*if ((d.Current.Object).ToString().Split("contentP", StringSplitOptions.None).Length - 1 < 2 && 
-                (d.Current.Object).ToString().Split("contentP", StringSplitOptions.None).Length - 1 > 0)
-            {
-                list.Add(d.Current.Key);
-                d.MoveNext();
-            }*/
-            /*string json = "{'JSON': { \"mail,test21@mail,ru\" : { \"init\" : \"yes\" }}}";
-            JObject newObject = JObject.Parse(json);
-            JObject JsonData = (JObject)newObject["JSON"];
-            string jsonX = JsonConvert.SerializeObject(JsonData);
-
-            var request = WebRequest.CreateHttp("https://easymessage-1fa08.firebaseio.com/chats/.json");
-            request.Method = "PATCH";
-            request.ContentType = "JSON";
-            var buffer = Encoding.UTF8.GetBytes(jsonX);
-            request.ContentLength = buffer.Length;
-            request.GetRequestStream().Write(buffer, 0, buffer.Length);
-            var response = request.GetResponse();
-            json = (new StreamReader(response.GetResponseStream())).ReadToEnd();
-
-            if (app == null)
-            {
-                initFireBaseAuth();
-            }
-            FirebaseDatabase databaseInstance = FirebaseDatabase.GetInstance(app);
-
-            FirebaseDatabase.Instance.GetReference("chats").AddValueEventListener(context);*/
-
-            //var messages2 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет222")));
-
-            //var messages3 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет333")));
-
-            //var messages4 = await client.Child("mail,test21@mail,ru").PostAsync(JsonConvert.SerializeObject(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет444")));
-
-            //var messages5 = await client.Child("mail,test21@mail,ru").OnceAsync<Message>();
-
-            /*foreach(var s in messages5)
-            {
-                Utils.MessageBox(s.Object.contentP, (Activity)context);
-            }*/
-            //Message user = new Message("user1234", "abc", "xyz");
-
-            //Getting Instance of Firebase realtime database
-
-            //Getting Reference to a User node, (it will be created if not already there) 
-            //DatabaseReference oRoot = FirebaseDatabase.Instance.Reference.Root;
-            //DatabaseReference oUsernamesRef = oRoot.Child("chats");
-
-            /*var userListener = new UValueEventListener((sender, e) =>
-            {
-                bool result = (e as UEventArgs).value;
-                if (result)
-                {
-                    Utils.MessageBox("The username you selected already exists. Please choose a different one.", (Activity)context);
-                    //txtUsername.Background = GetDrawable(Resource.Drawable.edittext_modified_states_error);
-                }
-            }, "mail,test21@mailru");
-            oUsernamesRef.AddListenerForSingleValueEvent(userListener);*/
-            //oUsernamesRef.OrderByChild(txtUsername.Text.ToLower()).EqualTo(txtUsername.Text.ToLower()).AddListenerForSingleValueEvent(oListener);
-
-
-            //oUsernamesRef.OrderByChild("username").EqualTo("mail,test21@mail,ru").AddListenerForSingleValueEvent(userListener);
-            /*string json = "{'JSON': { \"mail,test21@mail,ru\" : {\"Hour\": \"10\",\"Minute\" :\"15\",\"Seconds\" :\"26\" }}}";
-            JObject newObject = JObject.Parse(json);
-            JObject JsonData = (JObject)newObject["JSON"];
-            string jsonX = JsonConvert.SerializeObject(JsonData);*/
-            //Writing the User class object to that reference
-            //var p = JsonConvert.SerializeObject();
-
-
-            //var p = user;
-            //userNode.OrderByKey().Ref.ToArray<object>;
-            /*List<string> l = new List<string>();
-            var observable = client
-            .Child("chats")
-            .AsObservable<Message>()
-            .Subscribe(d => l.Add(d.Key));*/
-
-
-            //Firebase.Database.FirebaseObject<Message> messages1 = await client.Child("chats").Child("mail,test21@mail,ru").PostAsync(new Message("kirill.kop.work@gmail.com", "mail.test21@mail.ru", "Привет"));
-            //FirebaseObject<Message> messages2 = await client.Child("chats").Child("mail,test21@mail,ru").PostAsync(new Message("mail.test21@mail.ru", "kirill.kop.work@gmail.com", "Хай"));
-            //await client.Child("chats").Child(messages.Key).PutAsync("mail.test21@mail.ru");
-
-            //messages[0].
-            //
-            //client.Child("-M8GzQJhMwow3y5NtR3E").
-
-            //var items2 = await client.Child("-M8GzQJhMwow3y5NtR3E").OnceAsync<Message>();
-            //FirebaseUser user = FirebaseAuth.Instance.CurrentUser;
-            /*var observable = client
-                    .Child("-M8GzQJhMwow3y5NtR3E")
-                    .AsObservable<Message>()
-                    .Subscribe(d => Console.WriteLine(d.Key));*/
-        }
     }
 
 }
